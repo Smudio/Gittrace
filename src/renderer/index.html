@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiveGit</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg0:#0a0e14;--bg1:#0d1117;--bg2:#161b22;--bg3:#21262d;--bg4:#30363d;
+  --border:#30363d;--border2:#3d444d;
+  --t1:#e6edf3;--t2:#8b949e;--t3:#6e7681;--t4:#484f58;
+  --blue:#58a6ff;--green:#3fb950;--red:#f85149;--orange:#d29922;--purple:#bc8cff;--cyan:#39d2c0;
+}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg0);color:var(--t1);
+  display:flex;flex-direction:column;
+  user-select:none;
+}
+
+/* === TITLE BAR === */
+.titlebar{
+  display:flex;align-items:center;height:38px;
+  background:var(--bg1);border-bottom:1px solid var(--border);
+  flex-shrink:0;-webkit-app-region:drag;
+  padding:0 12px;
+}
+.titlebar-dots{display:flex;gap:8px;margin-right:16px;-webkit-app-region:no-drag}
+.titlebar-dot{
+  width:13px;height:13px;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;color:transparent;transition:all .15s;
+}
+.titlebar-dot:hover{color:rgba(0,0,0,.7)}
+.dot-close{background:#f85149}.dot-close:hover{background:#ff6e64}
+.dot-min{background:#d29922}.dot-min:hover{background:#e5b34a}
+.dot-max{background:#3fb950}.dot-max:hover{background:#56d364}
+.titlebar-title{
+  flex:1;text-align:center;font-size:13px;font-weight:600;
+  color:var(--t2);letter-spacing:.5px;
+}
+.titlebar-path{
+  font-size:11px;color:var(--t3);margin-left:auto;
+  font-family:'Cascadia Code','Consolas',monospace;
+  max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+
+/* === TOOLBAR === */
+.toolbar{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;background:var(--bg1);
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.toolbar button{
+  padding:7px 16px;border-radius:6px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--t1);font-size:12px;font-weight:500;
+  cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;
+}
+.toolbar button:hover{background:var(--bg4);border-color:var(--border2)}
+.toolbar button.primary{background:#1f6feb;border-color:#1f6feb;color:#fff}
+.toolbar button.primary:hover{background:#388bfd}
+.toolbar .repo-name{
+  font-size:13px;font-weight:600;color:var(--t1);
+  display:flex;align-items:center;gap:8px;
+}
+.toolbar .repo-name .branch{
+  font-size:11px;padding:3px 10px;border-radius:12px;
+  background:rgba(88,166,255,.15);color:var(--blue);font-weight:600;
+}
+
+/* === INFO STRIP === */
+.info-strip{
+  display:flex;align-items:center;gap:20px;
+  padding:6px 16px;background:var(--bg2);
+  border-bottom:1px solid var(--border);flex-shrink:0;font-size:12px;
+}
+.info-chip{
+  display:flex;align-items:center;gap:5px;color:var(--t2);
+}
+.info-chip b{color:var(--t1);font-weight:600}
+.info-chip.live{color:var(--green);font-weight:700;margin-left:auto}
+.pulse{
+  display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--green);animation:pulse 2s infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(63,185,80,.6)}
+  70%{box-shadow:0 0 0 7px rgba(63,185,80,0)}
+  100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}
+}
+
+/* === TABS === */
+.tabs{
+  display:flex;gap:0;padding:0 16px;
+  background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.tab{
+  padding:9px 18px;background:none;border:none;
+  color:var(--t3);font-size:12px;font-weight:500;cursor:pointer;
+  border-bottom:2px solid transparent;transition:all .15s;
+}
+.tab:hover{color:var(--t1)}
+.tab.active{color:var(--t1);border-bottom-color:var(--blue)}
+
+/* === MAIN === */
+.main{flex:1;overflow:hidden;position:relative}
+.panel{display:none;height:100%;overflow-y:auto;padding:12px 16px}
+.panel.active{display:block}
+
+/* === WELCOME === */
+.welcome{
+  display:flex;align-items:center;justify-content:center;
+  height:100%;text-align:center;
+}
+.welcome-inner{opacity:.6}
+.welcome-inner h1{font-size:42px;font-weight:200;color:var(--t1);margin-bottom:8px;letter-spacing:-1px}
+.welcome-inner p{font-size:14px;color:var(--t3);margin-bottom:28px}
+.welcome-inner button{
+  padding:12px 28px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--t1);font-size:14px;cursor:pointer;
+  transition:all .2s;
+}
+.welcome-inner button:hover{background:var(--blue);border-color:var(--blue)}
+
+/* === COMMITS === */
+.commit{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:6px;cursor:pointer;
+  transition:background .12s;border:1px solid transparent;
+  margin-bottom:2px;
+}
+.commit:hover{background:var(--bg2);border-color:var(--border)}
+.commit .hash{
+  font-family:'Cascadia Code','Consolas',monospace;
+  color:var(--purple);font-size:12px;font-weight:600;min-width:65px;
+}
+.commit .msg{
+  flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.commit .refs{display:flex;gap:3px;flex-shrink:0}
+.commit .ref{
+  font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;
+  background:rgba(88,166,255,.12);color:var(--blue);
+}
+.commit .ref.tag{background:rgba(210,153,34,.12);color:var(--orange)}
+.commit .ref.remote{background:rgba(188,140,255,.12);color:var(--purple)}
+.commit .author{font-size:12px;color:var(--t3);min-width:110px;text-align:right}
+.commit .date{font-size:12px;color:var(--t4);min-width:90px;text-align:right}
+.push-badge{
+  font-size:9px;padding:2px 6px;border-radius:8px;font-weight:700;
+  flex-shrink:0;letter-spacing:.3px;
+}
+.push-badge.pushed{background:rgba(63,185,80,.14);color:var(--green)}
+.push-badge.local{background:rgba(248,81,73,.14);color:var(--red)}
+
+/* === PUSH OVERVIEW === */
+.push-overview{margin-bottom:20px}
+.push-overview h3{font-size:13px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.push-bar{
+  display:flex;height:28px;border-radius:6px;overflow:hidden;margin-bottom:8px;
+  background:var(--bg3);
+}
+.push-bar .seg-pushed{background:var(--green);transition:width .3s}
+.push-bar .seg-local{background:var(--red);transition:width .3s}
+.push-legend{display:flex;gap:16px;font-size:11px;color:var(--t2)}
+.push-legend span{display:flex;align-items:center;gap:5px}
+.push-legend .dot-g{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.push-legend .dot-r{width:8px;height:8px;border-radius:50%;background:var(--red)}
+.push-summary{
+  display:flex;gap:16px;margin-bottom:12px;
+}
+.push-stat{
+  padding:10px 16px;background:var(--bg2);border-radius:8px;
+  border:1px solid var(--border);flex:1;text-align:center;
+}
+.push-stat .num{font-size:22px;font-weight:700;display:block}
+.push-stat .lbl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px}
+.push-stat.s-local .num{color:var(--red)}
+.push-stat.s-pushed .num{color:var(--green)}
+.push-stat.s-behind .num{color:var(--orange)}
+.untracked-msg{text-align:center;padding:20px;color:var(--t3);font-size:12px}
+
+/* === STATUS === */
+.status-section{margin-bottom:16px}
+.status-section h4{
+  font-size:11px;color:var(--t3);text-transform:uppercase;
+  letter-spacing:.5px;margin-bottom:6px;padding-left:4px;
+}
+.status-file{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 10px;border-radius:5px;cursor:pointer;
+  transition:background .12s;font-size:13px;
+}
+.status-file:hover{background:var(--bg2)}
+.sbadge{
+  font-size:10px;padding:2px 7px;border-radius:8px;font-weight:700;
+  min-width:20px;text-align:center;
+}
+.sbadge.M{background:rgba(210,153,34,.18);color:var(--orange)}
+.sbadge.A{background:rgba(63,185,80,.18);color:var(--green)}
+.sbadge.D{background:rgba(248,81,73,.18);color:var(--red)}
+.sbadge.R{background:rgba(188,140,255,.18);color:var(--purple)}
+.sbadge.S{background:rgba(88,166,255,.18);color:var(--blue)}
+.spath{font-family:'Cascadia Code','Consolas',monospace;font-size:12px}
+
+/* === LIVE === */
+.live-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.live-header h3{font-size:14px;font-weight:600}
+.live-badge{display:flex;align-items:center;gap:6px;color:var(--green);font-size:12px;font-weight:700}
+.live-event{
+  background:var(--bg2);border-radius:7px;margin-bottom:6px;
+  border-left:3px solid var(--blue);animation:slideIn .25s ease;
+  overflow:hidden;
+}
+.live-event.evt-add{border-left-color:var(--green)}
+.live-event.evt-change{border-left-color:var(--orange)}
+.live-event.evt-unlink{border-left-color:var(--red)}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+.live-event-header{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  cursor:pointer;transition:background .12s;user-select:none;
+}
+.live-event-header:hover{background:rgba(255,255,255,.03)}
+
+.live-chevron{
+  font-size:11px;color:var(--t3);flex-shrink:0;
+  transition:transform .2s;width:16px;text-align:center;
+}
+.live-event.expanded .live-chevron{transform:rotate(90deg)}
+
+.live-icon{font-size:15px;margin-top:1px;flex-shrink:0;font-weight:700}
+.live-body{flex:1;min-width:0}
+.live-top{display:flex;align-items:center;gap:8px;margin-bottom:1px}
+.live-type{font-size:10px;text-transform:uppercase;font-weight:700;letter-spacing:.4px}
+.live-type.t-add{color:var(--green)}.live-type.t-change{color:var(--orange)}.live-type.t-unlink{color:var(--red)}
+.live-file{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.live-meta{display:flex;align-items:center;gap:8px;margin-top:2px}
+.live-time{font-size:10px;color:var(--t4)}
+.live-lines{font-size:10px;font-weight:600;display:flex;gap:6px}
+.live-lines .ll-a{color:var(--green)}
+.live-lines .ll-d{color:var(--red)}
+
+.live-diff-area{
+  max-height:0;overflow:hidden;
+  transition:max-height .3s ease;
+  border-top:0px solid transparent;
+}
+.live-event.expanded .live-diff-area{
+  max-height:600px;overflow-y:auto;
+  border-top:1px solid var(--border);
+}
+.live-diff-area .dline{font-size:11px;line-height:1.5}
+.live-diff-area .dline .ln{width:40px;font-size:10px}
+.live-diff-loading{padding:12px 16px;font-size:11px;color:var(--t3)}
+
+.empty-msg{text-align:center;padding:40px;color:var(--t4);font-size:13px}
+
+/* === FILES === */
+.fitem{
+  display:flex;align-items:center;gap:8px;
+  padding:5px 10px;border-radius:4px;cursor:pointer;transition:background .12s;
+  font-size:13px;
+}
+.fitem:hover{background:var(--bg2)}
+.fitem .fi{font-size:13px;flex-shrink:0}
+.fitem .fn{font-family:'Cascadia Code','Consolas',monospace;font-size:12px}
+.fitem.dir{color:var(--t2);font-weight:600}
+
+/* === DIFF MODAL === */
+.modal-bg{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,.6);z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+}
+.modal{
+  background:var(--bg2);border-radius:10px;width:92%;max-width:1050px;
+  max-height:82vh;display:flex;flex-direction:column;
+  border:1px solid var(--border);box-shadow:0 16px 48px rgba(0,0,0,.5);
+}
+.modal-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.modal-head h3{font-size:13px;font-weight:600}
+.modal-close{
+  background:none;border:none;color:var(--t3);font-size:20px;
+  cursor:pointer;padding:2px 6px;border-radius:4px;transition:all .15s;
+}
+.modal-close:hover{background:var(--bg4);color:var(--t1)}
+.modal-body{overflow-y:auto;flex:1;font-family:'Cascadia Code','Consolas',monospace;font-size:12px}
+
+/* Diff rendering */
+.dfile{
+  padding:8px 14px;background:var(--bg3);color:var(--t1);font-weight:600;
+  position:sticky;top:0;z-index:1;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;font-size:12px;
+}
+.dfile .stats{font-weight:400;font-size:11px;display:flex;gap:10px}
+.dstats-a{color:var(--green)}.dstats-d{color:var(--red)}
+.dline{display:flex;min-height:20px;padding:0 14px;line-height:1.6}
+.dline .ln{width:48px;text-align:right;color:var(--t4);padding-right:10px;user-select:none;flex-shrink:0;font-size:11px}
+.dline .lc{flex:1;white-space:pre;overflow-x:auto}
+.dline.add{background:rgba(46,160,67,.12)}
+.dline.add .lc::before{content:'+';color:var(--green);margin-right:6px}
+.dline.del{background:rgba(248,81,73,.12)}
+.dline.del .lc::before{content:'-';color:var(--red);margin-right:6px}
+.dline.ctx{color:var(--t2)}
+.dline.hunk{background:rgba(88,166,255,.08);color:var(--blue);font-weight:500}
+
+::-webkit-scrollbar{width:7px}
+::-webkit-scrollbar-track{background:var(--bg0)}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--t3)}
+</style>
+</head>
+<body>
+
+<!-- TITLE BAR -->
+<div class="titlebar">
+  <div class="titlebar-dots">
+    <div class="titlebar-dot dot-close" onclick="livegit.close()">&#10005;</div>
+    <div class="titlebar-dot dot-min" onclick="livegit.minimize()">&#8211;</div>
+    <div class="titlebar-dot dot-max" onclick="livegit.maximize()">&#9723;</div>
+  </div>
+  <div class="titlebar-title">LiveGit</div>
+  <div class="titlebar-path" id="titlePath"></div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar" id="toolbar">
+  <button class="primary" onclick="browseFolder()">&#128193; Ordner offnen</button>
+  <button onclick="refreshRepo()">&#8635; Aktualisieren</button>
+  <div class="repo-name" id="repoName" style="display:none">
+    <span id="repoLabel"></span>
+    <span class="branch" id="branchBadge"></span>
+  </div>
+</div>
+
+<!-- INFO STRIP -->
+<div class="info-strip" id="infoStrip" style="display:none">
+  <div class="info-chip">Commits: <b id="iCommits">0</b></div>
+  <div class="info-chip">Geandert: <b id="iModified">0</b></div>
+  <div class="info-chip">Staged: <b id="iStaged">0</b></div>
+  <div class="info-chip">Ahead: <b id="iAhead">0</b></div>
+  <div class="info-chip">Behind: <b id="iBehind">0</b></div>
+  <div class="info-chip live"><span class="pulse"></span> LIVE</div>
+</div>
+
+<!-- TABS -->
+<div class="tabs" id="tabBar" style="display:none">
+  <button class="tab active" data-tab="commits" onclick="switchTab('commits')">&#128203; Commits</button>
+  <button class="tab" data-tab="push" onclick="switchTab('push')">&#128228; Push</button>
+  <button class="tab" data-tab="status" onclick="switchTab('status')">&#9888; Status</button>
+  <button class="tab" data-tab="live" onclick="switchTab('live')">&#128308; Live</button>
+  <button class="tab" data-tab="files" onclick="switchTab('files')">&#128194; Dateien</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- Welcome -->
+  <div class="panel active" id="p-welcome">
+    <div class="welcome">
+      <div class="welcome-inner">
+        <h1>LiveGit</h1>
+        <p>Git-Projekte in Echtzeit beobachten</p>
+        <button onclick="browseFolder()">&#128193; Git-Repository offnen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Commits -->
+  <div class="panel" id="p-commits"></div>
+
+  <!-- Push -->
+  <div class="panel" id="p-push"></div>
+
+  <!-- Status -->
+  <div class="panel" id="p-status"></div>
+
+  <!-- Live -->
+  <div class="panel" id="p-live">
+    <div class="live-header">
+      <h3>Echtzeit-Anderungen</h3>
+      <div class="live-badge"><span class="pulse"></span> Live</div>
+    </div>
+    <div id="liveFeed">
+      <div class="empty-msg">Warte auf Dateianderungen... Wenn ein Code-Assistant arbeitet, siehst du hier jede Anderung live.</div>
+    </div>
+  </div>
+
+  <!-- Files -->
+  <div class="panel" id="p-files"></div>
+</div>
+
+<!-- DIFF MODAL -->
+<div class="modal-bg" id="diffModal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="diffTitle">Diff</h3>
+      <button class="modal-close" onclick="closeModal()">&#10005;</button>
+    </div>
+    <div class="modal-body" id="diffBody"></div>
+  </div>
+</div>
+
+<script>
+const LG = window.livegit;
+let repo = '';
+let commits = [];
+let curTab = 'welcome';
+
+function switchTab(t) {
+  curTab = t;
+  document.querySelectorAll('.tab').forEach(e => e.classList.toggle('active', e.dataset.tab === t));
+  document.querySelectorAll('.panel').forEach(e => e.classList.remove('active'));
+  document.getElementById('p-' + t).classList.add('active');
+}
+
+async function browseFolder() {
+  const p = await LG.openFolder();
+  if (p) await loadRepo(p);
+}
+
+async function loadRepo(p) {
+  repo = p;
+  const data = await LG.openRepo(p);
+  if (data.error) { alert(data.error); return; }
+  renderRepo(data);
+}
+
+async function refreshRepo() {
+  if (!repo) return;
+  const data = await LG.openRepo(repo);
+  if (!data.error) renderRepo(data);
+}
+
+function renderRepo(d) {
+  document.getElementById('p-welcome').classList.remove('active');
+  document.getElementById('titlePath').textContent = d.path;
+  document.getElementById('repoName').style.display = 'flex';
+  const name = d.path.replace(/\\/g,'/').split('/').pop();
+  document.getElementById('repoLabel').textContent = name;
+  document.getElementById('branchBadge').textContent = d.currentBranch;
+  document.getElementById('infoStrip').style.display = 'flex';
+  document.getElementById('tabBar').style.display = 'flex';
+
+  document.getElementById('iCommits').textContent = d.log.length;
+  document.getElementById('iModified').textContent = d.status.modified.length + d.status.conflicted.length;
+  document.getElementById('iStaged').textContent = d.status.staged.length + d.status.created.length;
+  document.getElementById('iAhead').textContent = d.status.ahead;
+  document.getElementById('iBehind').textContent = d.status.behind;
+
+  commits = d.log;
+  renderCommits(d.log);
+  renderPushOverview(d.log, d.status);
+  renderStatus(d.status);
+  document.getElementById('liveFeed').innerHTML =
+    '<div class="empty-msg">Warte auf Dateianderungen...</div>';
+  loadFileTree();
+
+  if (curTab === 'welcome') switchTab('commits');
+}
+
+function renderCommits(log) {
+  const el = document.getElementById('p-commits');
+  if (!log.length) { el.innerHTML = '<div class="empty-msg">Keine Commits</div>'; return; }
+  el.innerHTML = log.map(c => {
+    const refs = parseRefs(c.refs);
+    const pushBadge = c.pushed
+      ? '<span class="push-badge pushed">PUSHED</span>'
+      : (c.localOnly ? '<span class="push-badge local">LOCAL</span>' : '');
+    return `<div class="commit" onclick="showDiff('${c.hash}')">
+      <span class="hash">${c.hashShort}</span>
+      ${pushBadge}
+      ${refs}
+      <span class="msg">${esc(c.message)}</span>
+      <span class="author">${esc(c.author)}</span>
+      <span class="date">${fmtDate(c.date)}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderPushOverview(log, status) {
+  const el = document.getElementById('p-push');
+  const pushed = log.filter(c => c.pushed).length;
+  const local = log.filter(c => c.localOnly).length;
+  const total = log.length;
+  const hasRemote = status.tracking && status.tracking.length > 0;
+
+  if (!hasRemote) {
+    el.innerHTML = `<div class="push-overview">
+      <h3>Push-Status</h3>
+      <div class="untracked-msg">
+        Dieser Branch verfolgt keinen Remote-Branch.<br>
+        Kein Push-Status verfuegbar. Remote mit <code>git push -u origin &lt;branch&gt;</code> setzen.
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <h4 style="font-size:12px;color:var(--t3);margin-bottom:8px">ALLE COMMITS (${total})</h4>
+      ${log.map(c => `<div class="commit" onclick="showDiff('${c.hash}')">
+        <span class="hash">${c.hashShort}</span>
+        <span class="push-badge local">NICHT GEPUSHT</span>
+        ${parseRefs(c.refs)}
+        <span class="msg">${esc(c.message)}</span>
+        <span class="author">${esc(c.author)}</span>
+        <span class="date">${fmtDate(c.date)}</span>
+      </div>`).join('')}
+    </div>`;
+    return;
+  }
+
+  const tracking = status.tracking;
+  const pushPct = total > 0 ? (pushed / total * 100) : 100;
+  const localPct = total > 0 ? (local / total * 100) : 0;
+
+  el.innerHTML = `
+    <div class="push-overview">
+      <h3>Push-Status &mdash; <span style="color:var(--blue)">${esc(tracking)}</span></h3>
+      <div class="push-summary">
+        <div class="push-stat s-local"><span class="num">${local}</span><span class="lbl">Nur lokal</span></div>
+        <div class="push-stat s-pushed"><span class="num">${pushed}</span><span class="lbl">Gepusht</span></div>
+        <div class="push-stat s-behind"><span class="num">${status.behind}</span><span class="lbl">Behind remote</span></div>
+      </div>
+      <div class="push-bar">
+        <div class="seg-pushed" style="width:${pushPct}%"></div>
+        <div class="seg-local" style="width:${localPct}%"></div>
+      </div>
+      <div class="push-legend">
+        <span><span class="dot-g"></span> Gepusht (${pushPct.toFixed(0)}%)</span>
+        <span><span class="dot-r"></span> Nur lokal (${local})</span>
+      </div>
+    </div>
+    ${local > 0 ? `
+    <div style="margin-top:20px">
+      <h4 style="font-size:12px;color:var(--red);margin-bottom:8px">NOCH NICHT GEPUSHT (${local})</h4>
+      ${log.filter(c => c.localOnly).map(c => `<div class="commit" onclick="showDiff('${c.hash}')">
+        <span class="hash">${c.hashShort}</span>
+        <span class="push-badge local">LOCAL</span>
+        ${parseRefs(c.refs)}
+        <span class="msg">${esc(c.message)}</span>
+        <span class="author">${esc(c.author)}</span>
+        <span class="date">${fmtDate(c.date)}</span>
+      </div>`).join('')}
+    </div>` : '<div class="empty-msg" style="color:var(--green);padding:20px">Alle Commits sind gepusht!</div>'}
+    ${pushed > 0 ? `
+    <div style="margin-top:20px">
+      <h4 style="font-size:12px;color:var(--t3);margin-bottom:8px">GEPUSHT (${pushed})</h4>
+      ${log.filter(c => c.pushed).map(c => `<div class="commit" onclick="showDiff('${c.hash}')">
+        <span class="hash">${c.hashShort}</span>
+        <span class="push-badge pushed">PUSHED</span>
+        ${parseRefs(c.refs)}
+        <span class="msg">${esc(c.message)}</span>
+        <span class="author">${esc(c.author)}</span>
+        <span class="date">${fmtDate(c.date)}</span>
+      </div>`).join('')}
+    </div>` : ''}
+  `;
+}
+
+function parseRefs(refs) {
+  if (!refs) return '';
+  return refs.split(',').map(r => r.trim()).filter(Boolean).map(r => {
+    let cls = '';
+    if (r.startsWith('tag:')) cls = 'tag';
+    else if (r.includes('/')) cls = 'remote';
+    const label = r.replace('tag: ','').replace('-> ','');
+    return `<span class="ref ${cls}">${esc(label)}</span>`;
+  }).join('');
+}
+
+function renderStatus(s) {
+  const el = document.getElementById('p-status');
+  let h = '';
+  const sections = [
+    { label:'Staged', items: s.staged, badge:'S', cls:'S' },
+    { label:'Neue Dateien', items: s.created, badge:'A', cls:'A' },
+    { label:'Geandert', items: s.modified, badge:'M', cls:'M' },
+    { label:'Geloscht', items: s.deleted, badge:'D', cls:'D' },
+    { label:'Umbenannt', items: s.renamed, badge:'R', cls:'R' },
+    { label:'Konflikte', items: s.conflicted, badge:'!', cls:'M' }
+  ];
+  for (const sec of sections) {
+    if (!sec.items.length) continue;
+    h += `<div class="status-section"><h4>${sec.label} (${sec.items.length})</h4>`;
+    for (const f of sec.items) {
+      h += `<div class="status-file" onclick="showFileDiff('${esc(f)}')" oncontextmenu="fileContextMenu(event,'${esc(f)}')">
+        <span class="sbadge ${sec.cls}">${sec.badge}</span>
+        <span class="spath">${esc(f)}</span>
+      </div>`;
+    }
+    h += '</div>';
+  }
+  if (!h) h = '<div class="empty-msg" style="color:var(--green);padding:40px">Arbeitsverzeichnis sauber</div>';
+  el.innerHTML = h;
+}
+
+function loadFileTree() {
+  LG.fileTree(repo).then(d => {
+    if (d.files) renderFileTree(d.files);
+  });
+}
+
+function renderFileTree(files) {
+  const el = document.getElementById('p-files');
+  if (!files.length) { el.innerHTML = '<div class="empty-msg">Keine Dateien</div>'; return; }
+  const tree = {};
+  for (const f of files) {
+    const parts = f.split('/');
+    let cur = tree;
+    for (let i = 0; i < parts.length; i++) {
+      const p = parts[i];
+      if (!cur[p]) cur[p] = i === parts.length - 1 ? null : {};
+      if (cur[p] !== null) cur = cur[p];
+    }
+  }
+  el.innerHTML = renderTreeNode(tree, '');
+}
+
+function renderTreeNode(node, prefix) {
+  let h = '';
+  const entries = Object.entries(node).sort((a,b) => {
+    const aDir = a[1] !== null, bDir = b[1] !== null;
+    if (aDir !== bDir) return aDir ? -1 : 1;
+    return a[0].localeCompare(b[0]);
+  });
+  for (const [name, val] of entries) {
+    const fp = prefix ? prefix + '/' + name : name;
+    if (val === null) {
+      const ico = fileIcon(name);
+      h += `<div class="fitem" onclick="showFile('${esc(fp)}')" oncontextmenu="fileContextMenu(event,'${esc(fp)}')">
+        <span class="fi">${ico}</span><span class="fn">${esc(name)}</span></div>`;
+    } else {
+      h += `<div class="fitem dir" oncontextmenu="fileContextMenu(event,'${esc(fp)}')"><span class="fi">&#128193;</span><span class="fn">${esc(name)}/</span></div>`;
+      h += renderTreeNode(val, fp);
+    }
+  }
+  return h;
+}
+
+function fileIcon(n) {
+  const ext = n.split('.').pop().toLowerCase();
+  const m = {js:'&#128220;',ts:'&#128220;',jsx:'&#128220;',tsx:'&#128220;',py:'&#128013;',
+    rs:'&#9881;',go:'&#128230;',html:'&#127760;',css:'&#127912;',json:'&#128203;',
+    md:'&#128196;',yml:'&#128203;',yaml:'&#128203;',sh:'&#128423;'};
+  return m[ext] || '&#128196;';
+}
+
+async function fileContextMenu(e, filePath) {
+  e.preventDefault();
+  e.stopPropagation();
+  const fullPath = repo + '/' + filePath.replace(/\//g, '\\');
+  const action = await LG.contextMenu([
+    { id: 'open-explorer', label: 'Im Ordner offnen' },
+    { id: 'open-file', label: 'Datei offnen' },
+    { id: 'copy-path', label: 'Pfad kopieren' },
+    { id: 'show-diff', label: 'Diff anzeigen' }
+  ]);
+  if (!action) return;
+  if (action === 'open-explorer') LG.showInFolder(fullPath);
+  else if (action === 'open-file') LG.openPath(fullPath);
+  else if (action === 'copy-path') navigator.clipboard.writeText(fullPath);
+  else if (action === 'show-diff') showFileDiff(filePath);
+}
+
+async function showDiff(hash) {
+  const c = commits.find(x => x.hash === hash);
+  document.getElementById('diffTitle').textContent = c
+    ? `${c.hashShort} - ${c.message.split('\n')[0]}`
+    : hash;
+  document.getElementById('diffBody').innerHTML = '<div class="empty-msg">Lade...</div>';
+  document.getElementById('diffModal').style.display = 'flex';
+  const d = await LG.commitDiff(repo, hash);
+  if (d.error) { document.getElementById('diffBody').innerHTML = `<div class="empty-msg">${esc(d.error)}</div>`; return; }
+  document.getElementById('diffBody').innerHTML = renderDiff(d.diff);
+}
+
+async function showFileDiff(fp) {
+  document.getElementById('diffTitle').textContent = 'Diff: ' + fp;
+  document.getElementById('diffBody').innerHTML = '<div class="empty-msg">Lade...</div>';
+  document.getElementById('diffModal').style.display = 'flex';
+  const d = await LG.fileDiff(repo, fp);
+  document.getElementById('diffBody').innerHTML = d.diff ? renderDiff(d.diff) : '<div class="empty-msg">Keine Aenderungen</div>';
+}
+
+async function showFile(fp) {
+  document.getElementById('diffTitle').textContent = fp;
+  document.getElementById('diffBody').innerHTML = '<div class="empty-msg">Lade...</div>';
+  document.getElementById('diffModal').style.display = 'flex';
+  const d = await LG.fileContent(repo, fp);
+  if (d.error) { document.getElementById('diffBody').innerHTML = `<div class="empty-msg">${esc(d.error)}</div>`; return; }
+  const lines = (d.content || '').split('\n');
+  document.getElementById('diffBody').innerHTML = lines.map((l,i) =>
+    `<div class="dline ctx"><span class="ln">${i+1}</span><span class="lc">${esc(l)}</span></div>`
+  ).join('');
+}
+
+function renderDiff(text, compact) {
+  if (!text) return '<div class="empty-msg">Keine Aenderungen</div>';
+  const lines = text.split('\n');
+  let html = '', inD = false, adds = 0, dels = 0;
+  for (const line of lines) {
+    if (line.startsWith('diff --git')) {
+      if (inD) html += '</div>';
+      const m = line.match(/b\/(.+)$/);
+      html += `<div class="dfile">${esc(m ? m[1] : line)} <span class="stats"><span class="dstats-a">+${adds}</span><span class="dstats-d">-${dels}</span></span></div><div>`;
+      inD = true; adds = 0; dels = 0; continue;
+    }
+    if (line.startsWith('@@')) { html += `<div class="dline hunk"><span class="ln"></span><span class="lc">${esc(line)}</span></div>`; continue; }
+    if (line.startsWith('+++') || line.startsWith('---') || line.startsWith('index ') || line.startsWith('Binary')) continue;
+    if (line.startsWith('+')) { adds++; html += `<div class="dline add"><span class="ln"></span><span class="lc">${esc(line.slice(1))}</span></div>`; }
+    else if (line.startsWith('-')) { dels++; html += `<div class="dline del"><span class="ln"></span><span class="lc">${esc(line.slice(1))}</span></div>`; }
+    else { html += `<div class="dline ctx"><span class="ln"></span><span class="lc">${esc(line.startsWith(' ')?line.slice(1):line)}</span></div>`; }
+  }
+  if (inD) html += '</div>';
+  return html;
+}
+
+function closeModal() { document.getElementById('diffModal').style.display = 'none'; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function esc(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function fmtDate(d) {
+  try {
+    const dt = new Date(d), now = new Date(), ms = now - dt;
+    const m = Math.floor(ms/60000), h = Math.floor(ms/3600000), dy = Math.floor(ms/86400000);
+    if (m < 1) return 'jetzt';
+    if (m < 60) return m + ' Min.';
+    if (h < 24) return h + ' Std.';
+    if (dy < 7) return dy + ' Tage';
+    return dt.toLocaleDateString('de-DE');
+  } catch { return d; }
+}
+
+const evtLabels = {
+  add:{icon:'+',label:'NEU',cls:'t-add',ecls:'evt-add'},
+  change:{icon:'~',label:'GEANDERT',cls:'t-change',ecls:'evt-change'},
+  unlink:{icon:'-',label:'GELOSCHT',cls:'t-unlink',ecls:'evt-unlink'},
+  addDir:{icon:'+',label:'NEUER ORDNER',cls:'t-add',ecls:'evt-add'},
+  unlinkDir:{icon:'-',label:'ORDNER GELOSCHT',cls:'t-unlink',ecls:'evt-unlink'}
+};
+
+function toggleLiveEvent(el) {
+  const wasExpanded = el.classList.contains('expanded');
+  el.classList.toggle('expanded');
+  if (!wasExpanded) {
+    const area = el.querySelector('.live-diff-area');
+    if (area && !area.dataset.loaded) {
+      loadInlineDiff(el, area);
+    }
+  }
+}
+
+async function loadInlineDiff(el, area) {
+  const fp = el.dataset.file;
+  area.dataset.loaded = '1';
+  area.innerHTML = '<div class="live-diff-loading">Lade Diff...</div>';
+  const d = await LG.fileDiff(repo, fp);
+  if (d.diff) {
+    area.innerHTML = renderDiff(d.diff);
+  } else {
+    area.innerHTML = '<div class="live-diff-loading">Keine Aenderungen gegenueber Git</div>';
+  }
+}
+
+async function liveContextMenu(e, fp) {
+  e.preventDefault();
+  e.stopPropagation();
+  const fullPath = repo + '/' + fp.replace(/\//g, '\\');
+  const action = await LG.contextMenu([
+    { id: 'open-explorer', label: 'Im Ordner offnen' },
+    { id: 'open-file', label: 'Datei offnen' },
+    { id: 'copy-path', label: 'Pfad kopieren' }
+  ]);
+  if (!action) return;
+  if (action === 'open-explorer') LG.showInFolder(fullPath);
+  else if (action === 'open-file') LG.openPath(fullPath);
+  else if (action === 'copy-path') navigator.clipboard.writeText(fullPath);
+}
+
+LG.onLiveChange(async (data) => {
+  if (!repo) return;
+  const info = evtLabels[data.event] || {icon:'?',label:data.event.toUpperCase(),cls:'t-change',ecls:'evt-change'};
+  const time = new Date(data.timestamp).toLocaleTimeString('de-DE');
+  const canDiff = data.event === 'change' || data.event === 'add';
+
+  const feed = document.getElementById('liveFeed');
+  const empty = feed.querySelector('.empty-msg');
+  if (empty) empty.remove();
+
+  const div = document.createElement('div');
+  div.className = `live-event ${info.ecls}`;
+  div.dataset.file = data.file;
+
+  let linesHtml = '';
+  if (canDiff) {
+    linesHtml = '<span class="live-lines" data-pending="1"><span class="ll-a">...</span></span>';
+  }
+
+  div.innerHTML = `
+    <div class="live-event-header">
+      ${canDiff ? '<span class="live-chevron">&#9654;</span>' : '<span style="width:16px"></span>'}
+      <span class="live-icon">${info.icon}</span>
+      <div class="live-body">
+        <div class="live-top">
+          <span class="live-type ${info.cls}">${info.label}</span>
+          <span class="live-file">${esc(data.file)}</span>
+        </div>
+        <div class="live-meta">
+          <span class="live-time">${time}</span>
+          ${linesHtml}
+        </div>
+      </div>
+    </div>
+    ${canDiff ? '<div class="live-diff-area"></div>' : ''}
+  `;
+
+  const header = div.querySelector('.live-event-header');
+  header.addEventListener('click', () => {
+    if (canDiff) toggleLiveEvent(div);
+  });
+  header.addEventListener('contextmenu', (e) => liveContextMenu(e, data.file));
+
+  feed.insertBefore(div, feed.firstChild);
+
+  if (canDiff) {
+    LG.diffStats(repo, data.file).then(stats => {
+      const linesEl = div.querySelector('.live-lines');
+      if (linesEl) {
+        linesEl.innerHTML = `<span class="ll-a">+${stats.adds}</span><span class="ll-d">-${stats.dels}</span>`;
+      }
+    });
+  }
+
+  while (feed.children.length > 80) feed.removeChild(feed.lastChild);
+
+  const mod = document.getElementById('iModified');
+  if (data.event === 'change' || data.event === 'unlink') {
+    mod.textContent = parseInt(mod.textContent || '0') + 1;
+  }
+});
+</script>
+</body>
+</html>

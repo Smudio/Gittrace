@@ -1,0 +1,48 @@
+{
+  "name": "livegit",
+  "version": "1.0.0",
+  "description": "LiveGit - Desktop Git Project Viewer",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable",
+    "build:nsis": "electron-builder --win nsis"
+  },
+  "build": {
+    "appId": "com.livegit.app",
+    "productName": "LiveGit",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "icon.ico"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "dir",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "icon.ico",
+      "sign": false,
+      "signingHashAlgorithms": []
+    },
+    "portable": {
+      "artifactName": "LiveGit.exe"
+    },
+    "nsis": {
+      "oneClick": true,
+      "artifactName": "LiveGit-Setup.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.0"
+  },
+  "dependencies": {
+    "simple-git": "^3.22.0",
+    "chokidar": "^3.5.3"
+  }
+}
