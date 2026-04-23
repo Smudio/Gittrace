@@ -16,6 +16,8 @@ contextBridge.exposeInMainWorld('livegit', {
     statusMap: (p) => ipcRenderer.invoke('git:statusMap', p),
     dirTree: (p) => ipcRenderer.invoke('git:dirTree', p),
     liveFileContent: (p, f) => ipcRenderer.invoke('git:liveFileContent', p, f),
+    compare: (p, from, to) => ipcRenderer.invoke('git:compare', p, from, to),
+    commitFileContent: (p, h, f) => ipcRenderer.invoke('git:commitFileContent', p, h, f),
     showInFolder: (p) => ipcRenderer.invoke('shell:showInFolder', p),
     openPath: (p) => ipcRenderer.invoke('shell:openPath', p),
     onLiveChange: (cb) => ipcRenderer.on('live:change', (_, d) => cb(d)),

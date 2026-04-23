@@ -400,3 +400,38 @@ ipcMain.handle('git:liveFileContent', async (_, repoPath, filePath) => {
         return { content: '', error: err.message };
     }
 });
+
+ipcMain.handle('git:compare', async (_, repoPath, hashFrom, hashTo) => {
+    try {
+        const git = simpleGit(repoPath);
+        const diff = await git.diff([hashFrom, hashTo]);
+        const statRaw = await git.diff(['--stat', hashFrom, hashTo]);
+        const files = statRaw.trim().split('\n').filter(l => l.includes('|')).map(l => {
+            const parts = l.split('|');
+            const name = parts[0].trim();
+            const changeInfo = parts[1] || '';
+            const addMatch = changeInfo.match(/(\d+) add/);
+            const delMatch = changeInfo.match(/(\d+) del/);
+            const binMatch = changeInfo.match(/Bin/);
+            return {
+                file: name,
+                adds: addMatch ? parseInt(addMatch[1]) : 0,
+                dels: delMatch ? parseInt(delMatch[1]) : 0,
+                binary: !!binMatch
+            };
+        });
+        return { diff, files };
+    } catch (err) {
+        return { error: err.message, diff: '', files: [] };
+    }
+});
+
+ipcMain.handle('git:commitFileContent', async (_, repoPath, hash, filePath) => {
+    try {
+        const git = simpleGit(repoPath);
+        const content = await git.show([hash + ':' + filePath]);
+        return { content };
+    } catch (err) {
+        return { content: '', error: err.message };
+    }
+});

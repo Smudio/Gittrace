@@ -194,6 +194,64 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .sbadge.D{background:rgba(248,81,73,.18);color:var(--red)}.sbadge.R{background:rgba(188,140,255,.18);color:var(--purple)}.sbadge.S{background:rgba(88,166,255,.18);color:var(--blue)}
 .spath{font-family:'Cascadia Code','Consolas',monospace;font-size:12px}
 
+/* === LIVE TAB === */
+.live-event{background:var(--bg2);border-radius:7px;margin-bottom:6px;border-left:3px solid var(--blue);animation:slideIn .25s ease;overflow:hidden}
+.live-event.evt-add{border-left-color:var(--green)}.live-event.evt-change{border-left-color:var(--orange)}.live-event.evt-unlink{border-left-color:var(--red)}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.live-event-header{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;transition:background .12s;user-select:none}
+.live-event-header:hover{background:rgba(255,255,255,.03)}
+.live-chevron{font-size:11px;color:var(--t3);flex-shrink:0;transition:transform .2s;width:16px;text-align:center}
+.live-event.expanded .live-chevron{transform:rotate(90deg)}
+.live-icon{font-size:15px;margin-top:1px;flex-shrink:0;font-weight:700}
+.live-body{flex:1;min-width:0}
+.live-top{display:flex;align-items:center;gap:8px;margin-bottom:1px}
+.live-type{font-size:10px;text-transform:uppercase;font-weight:700;letter-spacing:.4px}
+.live-type.t-add{color:var(--green)}.live-type.t-change{color:var(--orange)}.live-type.t-unlink{color:var(--red)}
+.live-file{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.live-meta{display:flex;align-items:center;gap:8px;margin-top:2px}
+.live-time{font-size:10px;color:var(--t4)}
+.live-lines{font-size:10px;font-weight:600;display:flex;gap:6px}
+.live-lines .ll-a{color:var(--green)}.live-lines .ll-d{color:var(--red)}
+.live-diff-area{max-height:0;overflow:hidden;transition:max-height .3s ease;border-top:0px solid transparent}
+.live-event.expanded .live-diff-area{max-height:500px;overflow-y:auto;border-top:1px solid var(--border)}
+.live-diff-loading{padding:12px 16px;font-size:11px;color:var(--t3)}
+.live-diff-area .dline{font-size:11px;line-height:1.5}
+.live-diff-area .dline .ln{width:40px;font-size:10px}
+
+/* === COMPARE === */
+.cmp-header{display:flex;align-items:center;justify-content:space-between;padding:12px 0;margin-bottom:8px;border-bottom:1px solid var(--border);flex-shrink:0}
+.cmp-selectors{display:flex;align-items:center;gap:10px}
+.cmp-selectors select{padding:6px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:12px;font-family:'Cascadia Code','Consolas',monospace;min-width:320px;outline:none;cursor:pointer}
+.cmp-selectors select:focus{border-color:var(--blue)}
+.cmp-selectors select option{background:var(--bg1);color:var(--t1)}
+.cmp-arrow{font-size:20px;color:var(--t3)}
+.cmp-stats{display:flex;gap:12px;font-size:11px}
+.cmp-stats span{display:flex;align-items:center;gap:4px}
+.cmp-stats .cs-a{color:var(--green)}.cmp-stats .cs-d{color:var(--red)}.cmp-stats .cs-f{color:var(--blue)}
+.cmp-files{display:flex;gap:4px;padding:8px 0;overflow-x:auto;border-bottom:1px solid var(--border);flex-shrink:0}
+.cmp-file-tab{padding:5px 12px;border-radius:6px;font-size:11px;font-family:'Cascadia Code','Consolas',monospace;cursor:pointer;background:var(--bg2);border:1px solid var(--border);color:var(--t2);transition:all .12s;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.cmp-file-tab:hover{background:var(--bg3);color:var(--t1)}
+.cmp-file-tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.cmp-file-tab .cf-badge{font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700}
+.cmp-file-tab .cf-a{background:rgba(63,185,80,.3);color:var(--green)}.cmp-file-tab .cf-d{background:rgba(248,81,73,.3);color:var(--red)}
+.cmp-split-wrap{flex:1;overflow:auto;margin-top:8px}
+.cmp-empty-msg{text-align:center;padding:40px;color:var(--t4);font-size:13px}
+.cmp-split{display:flex;width:100%;min-width:1200px}
+.cmp-side{flex:1;min-width:0;overflow:hidden}
+.cmp-side:first-child{border-right:2px solid var(--border)}
+.cmp-side-head{padding:6px 14px;background:var(--bg3);font-size:11px;font-weight:600;color:var(--t2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:1}
+.cmp-side-head .csh-file{font-family:'Cascadia Code','Consolas',monospace;color:var(--t1)}
+.cmp-line{display:flex;min-height:21px;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;line-height:1.6}
+.cmp-line .cln{width:48px;text-align:right;padding-right:12px;color:var(--t4);user-select:none;flex-shrink:0;font-size:11px;background:rgba(0,0,0,.15)}
+.cmp-line .ctext{flex:1;white-space:pre;overflow-x:auto;padding:0 8px}
+.cmp-line.ctx{color:var(--t2)}
+.cmp-line.add{background:rgba(46,160,67,.12)}.cmp-line.add .ctext{color:var(--t1)}
+.cmp-line.del{background:rgba(248,81,73,.08)}.cmp-line.del .ctext{color:var(--t2)}
+.cmp-line.hdr{background:rgba(88,166,255,.1);color:var(--blue);font-weight:500;font-size:11px}
+.cmp-line.empty{background:var(--bg0)}.cmp-line.empty .ctext{color:transparent}
+.cmp-minimap{position:fixed;right:12px;top:50%;transform:translateY(-50%);width:8px;height:200px;background:var(--bg3);border-radius:4px;overflow:hidden;z-index:50;cursor:pointer}
+.cmp-mm-add{background:var(--green);position:absolute;left:0;width:100%}.cmp-mm-del{background:var(--red);position:absolute;left:0;width:100%}
+
 ::-webkit-scrollbar{width:7px}
 ::-webkit-scrollbar-track{background:var(--bg0)}
 ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px}
@@ -236,8 +294,10 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 <div class="tabs" id="tabBar" style="display:none">
   <button class="tab active" data-tab="workspace" onclick="switchTab('workspace')">&#128187; Workspace</button>
   <button class="tab" data-tab="commits" onclick="switchTab('commits')">&#128203; Commits</button>
+  <button class="tab" data-tab="compare" onclick="switchTab('compare')">&#128200; Vergleichen</button>
   <button class="tab" data-tab="push" onclick="switchTab('push')">&#128228; Push</button>
   <button class="tab" data-tab="status" onclick="switchTab('status')">&#9888; Status</button>
+  <button class="tab" data-tab="live" onclick="switchTab('live')">&#128308; Live</button>
   <button class="tab" data-tab="insights" onclick="switchTab('insights')">&#128161; Insights</button>
 </div>
 
@@ -275,8 +335,35 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
   </div>
 
   <div class="panel" id="p-commits"></div>
+
+  <!-- COMPARE (side-by-side diff) -->
+  <div class="panel" id="p-compare">
+    <div class="cmp-header">
+      <div class="cmp-selectors">
+        <select id="cmpFrom" onchange="runCompare()"></select>
+        <div class="cmp-arrow">&#8594;</div>
+        <select id="cmpTo" onchange="runCompare()"></select>
+      </div>
+      <div class="cmp-stats" id="cmpStats"></div>
+    </div>
+    <div class="cmp-files" id="cmpFiles"></div>
+    <div class="cmp-split-wrap" id="cmpDiffWrap">
+      <div class="cmp-empty-msg">Zwei Commits zum Vergleichen auswaehlen</div>
+    </div>
+  </div>
+
   <div class="panel" id="p-push"></div>
   <div class="panel" id="p-status"></div>
+
+  <!-- LIVE (collapsible events with inline diffs) -->
+  <div class="panel" id="p-live">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <h3 style="font-size:14px;font-weight:600">Echtzeit-Anderungen</h3>
+      <div style="display:flex;align-items:center;gap:6px;color:var(--green);font-size:12px;font-weight:700"><span class="pulse"></span> Live</div>
+    </div>
+    <div id="liveFeed"><div class="empty-msg">Warte auf Dateianderungen... Jede Aenderung wird hier live angezeigt.</div></div>
+  </div>
+
   <div class="panel" id="p-insights"></div>
 </div>
 
@@ -326,10 +413,12 @@ function renderRepo(d) {
   document.getElementById('iBehind').textContent = d.status.behind;
   commits = d.log;
   renderCommits(d.log);
+  populateCompareSelects();
   renderPushOverview(d.log, d.status);
   renderStatus(d.status);
   loadWorkspace();
   loadInsights();
+  document.getElementById('liveFeed').innerHTML = '<div class="empty-msg">Warte auf Dateianderungen...</div>';
   if (curTab === 'welcome') switchTab('workspace');
 }
 
@@ -607,7 +696,7 @@ async function loadInsights() {
   <div class="section-title">Tastaturkurzel</div>
   <div class="shortcut-grid">
     <div class="shortcut-item"><span class="shortcut-key">Strg+F</span><span class="shortcut-desc">Suche</span></div>
-    <div class="shortcut-item"><span class="shortcut-key">1-5</span><span class="shortcut-desc">Tab wechseln</span></div>
+    <div class="shortcut-item"><span class="shortcut-key">1-7</span><span class="shortcut-desc">Tab wechseln</span></div>
     <div class="shortcut-item"><span class="shortcut-key">R</span><span class="shortcut-desc">Refresh</span></div>
     <div class="shortcut-item"><span class="shortcut-key">Esc</span><span class="shortcut-desc">Schliessen</span></div>
   </div>`;
@@ -697,13 +786,274 @@ LG.onLiveChange(async (data) => {
   strip.insertBefore(evDiv, strip.firstChild);
   while (strip.children.length > 30) strip.removeChild(strip.lastChild);
 
-  // auto-refresh code viewer if the active file changed
+  // LIVE TAB feed
+  const info = evtLabels[data.event] || {icon:'?',label:data.event.toUpperCase(),cls:'t-change',ecls:'evt-change'};
+  const feed = document.getElementById('liveFeed');
+  const empty = feed.querySelector('.empty-msg');
+  if (empty) empty.remove();
+  const canDiff = data.event === 'change' || data.event === 'add';
+
+  const div = document.createElement('div');
+  div.className = `live-event ${info.ecls}`;
+  div.dataset.file = data.file;
+
+  const linesHtml = canDiff ? '<span class="live-lines" data-pending="1"><span class="ll-a">...</span></span>' : '';
+
+  div.innerHTML = `
+    <div class="live-event-header">
+      ${canDiff ? '<span class="live-chevron">&#9654;</span>' : '<span style="width:16px"></span>'}
+      <span class="live-icon">${info.icon}</span>
+      <div class="live-body">
+        <div class="live-top"><span class="live-type ${info.cls}">${info.label}</span><span class="live-file">${esc(data.file)}</span></div>
+        <div class="live-meta"><span class="live-time">${time}</span>${linesHtml}</div>
+      </div>
+    </div>
+    ${canDiff ? '<div class="live-diff-area"></div>' : ''}`;
+
+  div.querySelector('.live-event-header').addEventListener('click', () => { if (canDiff) toggleLiveEvent(div); });
+  div.querySelector('.live-event-header').addEventListener('contextmenu', (e) => renderLiveContextMenu(e, data.file));
+  feed.insertBefore(div, feed.firstChild);
+
+  if (canDiff) {
+    LG.diffStats(repo, data.file).then(stats => {
+      const linesEl = div.querySelector('.live-lines');
+      if (linesEl) linesEl.innerHTML = `<span class="ll-a">+${stats.adds}</span><span class="ll-d">-${stats.dels}</span>`;
+    });
+  }
+
+  while (feed.children.length > 80) feed.removeChild(feed.lastChild);
+
+  // auto-refresh code viewer
   if (wsActiveFile === data.file && (data.event === 'change' || data.event === 'add')) {
     wsShowFile(wsActiveFile);
   }
+
+  const mod = document.getElementById('iModified');
+  if (data.event === 'change' || data.event === 'unlink') mod.textContent = parseInt(mod.textContent || '0') + 1;
 });
 
-// =================== UTILS ===================
+// =================== COMPARE (side-by-side diff) ===================
+function populateCompareSelects() {
+  const opts = '<option value="">-- Commit wahlen --</option>' +
+    '<option value="WORKING">Aktuell (Working Tree)</option>' +
+    commits.map(c => `<option value="${c.hash}">${c.hashShort} ${esc(c.message.split('\n')[0].substring(0,60))} (${esc(c.author)})</option>`).join('');
+  const sf = document.getElementById('cmpFrom');
+  const st = document.getElementById('cmpTo');
+  sf.innerHTML = opts;
+  st.innerHTML = opts;
+  if (commits.length >= 2) {
+    sf.value = commits[1].hash;
+    st.value = commits[0].hash;
+  } else if (commits.length === 1) {
+    sf.value = commits[0].hash;
+    st.value = 'WORKING';
+  }
+  runCompare();
+}
+
+async function runCompare() {
+  const from = document.getElementById('cmpFrom').value;
+  const to = document.getElementById('cmpTo').value;
+  const stats = document.getElementById('cmpStats');
+  const filesEl = document.getElementById('cmpFiles');
+  const wrap = document.getElementById('cmpDiffWrap');
+
+  if (!from || !to || from === to) {
+    stats.innerHTML = '';
+    filesEl.innerHTML = '';
+    wrap.innerHTML = '<div class="cmp-empty-msg">Zwei verschiedene Versionen auswaehlen</div>';
+    return;
+  }
+
+  stats.innerHTML = '<span style="color:var(--t3)">Lade...</span>';
+  const d = await LG.compare(repo, from, to);
+  if (d.error) { wrap.innerHTML = `<div class="cmp-empty-msg">${esc(d.error)}</div>`; return; }
+
+  const totalAdds = d.files.reduce((s, f) => s + f.adds, 0);
+  const totalDels = d.files.reduce((s, f) => s + f.dels, 0);
+  stats.innerHTML = `
+    <span class="cs-f">${d.files.length} Dateien</span>
+    <span class="cs-a">+${totalAdds}</span>
+    <span class="cs-d">-${totalDels}</span>`;
+
+  window._cmpDiffText = d.diff;
+  window._cmpFiles = d.files;
+
+  if (!d.files.length) {
+    filesEl.innerHTML = '';
+    wrap.innerHTML = '<div class="cmp-empty-msg" style="color:var(--green)">Keine Unterschiede</div>';
+    return;
+  }
+
+  filesEl.innerHTML = d.files.map((f, i) => {
+    const badge = (f.adds || f.dels) ? `<span class="cf-badge cf-a">+${f.adds}</span><span class="cf-badge cf-d">-${f.dels}</span>` : '';
+    return `<div class="cmp-file-tab ${i===0?'active':''}" onclick="showCmpFile(${i},this)">${esc(f.file)} ${badge}</div>`;
+  }).join('');
+
+  showCmpFile(0);
+}
+
+function showCmpFile(idx, tabEl) {
+  if (tabEl) {
+    document.querySelectorAll('.cmp-file-tab').forEach(e => e.classList.remove('active'));
+    tabEl.classList.add('active');
+  }
+  const files = window._cmpFiles || [];
+  const diffText = window._cmpDiffText || '';
+  if (!files[idx]) return;
+  const file = files[idx].file;
+  const fileDiff = extractFileDiff(diffText, file);
+  renderSideBySide(fileDiff, file);
+}
+
+function extractFileDiff(fullDiff, fileName) {
+  const lines = fullDiff.split('\n');
+  let capturing = false;
+  let result = [];
+  for (const line of lines) {
+    if (line.startsWith('diff --git')) {
+      if (capturing) break;
+      const m = line.match(/b\/(.+)$/);
+      if (m && (m[1] === fileName || line.includes(fileName))) capturing = true;
+    }
+    if (capturing) result.push(line);
+  }
+  return result.join('\n');
+}
+
+function renderSideBySide(diffText, fileName) {
+  const wrap = document.getElementById('cmpDiffWrap');
+  const lines = diffText.split('\n');
+
+  let leftLines = [];
+  let rightLines = [];
+  let leftNum = 0, rightNum = 0;
+  let leftContent = [], rightContent = [];
+
+  for (const line of lines) {
+    if (line.startsWith('diff --git') || line.startsWith('index ') || line.startsWith('Binary')) continue;
+    if (line.startsWith('--- ') || line.startsWith('+++ ')) continue;
+    if (line.startsWith('@@')) {
+      const m = line.match(/@@ -(\d+)/);
+      if (m) leftNum = parseInt(m[1]) - 1;
+      const m2 = line.match(/\+(\d+)/);
+      if (m2) rightNum = parseInt(m2[1]) - 1;
+      leftContent.push({ type: 'hdr', num: '', text: line });
+      rightContent.push({ type: 'hdr', num: '', text: line });
+      continue;
+    }
+    if (line.startsWith('+')) {
+      rightNum++;
+      rightContent.push({ type: 'add', num: rightNum, text: line.slice(1) });
+    } else if (line.startsWith('-')) {
+      leftNum++;
+      leftContent.push({ type: 'del', num: leftNum, text: line.slice(1) });
+    } else {
+      leftNum++;
+      rightNum++;
+      leftContent.push({ type: 'ctx', num: leftNum, text: line.startsWith(' ') ? line.slice(1) : line });
+      rightContent.push({ type: 'ctx', num: rightNum, text: line.startsWith(' ') ? line.slice(1) : line });
+    }
+  }
+
+  const maxLen = Math.max(leftContent.length, rightContent.length);
+  let leftHtml = '', rightHtml = '';
+  let li = 0, ri = 0;
+
+  for (let i = 0; i < maxLen; i++) {
+    const l = li < leftContent.length ? leftContent[li] : null;
+    const r = ri < rightContent.length ? rightContent[ri] : null;
+
+    if (l && r && l.type === 'hdr' && r.type === 'hdr') {
+      leftHtml += cmpLine('hdr', '', l.text);
+      rightHtml += cmpLine('hdr', '', r.text);
+      li++; ri++;
+    } else if (l && (l.type === 'del' || l.type === 'ctx') && r && (r.type === 'add' || r.type === 'ctx')) {
+      if (l.type === 'del' && r.type === 'add') {
+        leftHtml += cmpLine('del', l.num, l.text);
+        rightHtml += cmpLine('add', r.num, r.text);
+        li++; ri++;
+      } else if (l.type === 'ctx' && r.type === 'ctx') {
+        leftHtml += cmpLine('ctx', l.num, l.text);
+        rightHtml += cmpLine('ctx', r.num, r.text);
+        li++; ri++;
+      } else if (l.type === 'del') {
+        leftHtml += cmpLine('del', l.num, l.text);
+        rightHtml += cmpLine('empty', '', '');
+        li++;
+      } else {
+        leftHtml += cmpLine('empty', '', '');
+        rightHtml += cmpLine('add', r.num, r.text);
+        ri++;
+      }
+    } else if (l && l.type === 'del') {
+      leftHtml += cmpLine('del', l.num, l.text);
+      rightHtml += cmpLine('empty', '', '');
+      li++;
+    } else if (r && r.type === 'add') {
+      leftHtml += cmpLine('empty', '', '');
+      rightHtml += cmpLine('add', r.num, r.text);
+      ri++;
+    } else if (l) {
+      leftHtml += cmpLine(l.type, l.num, l.text);
+      rightHtml += cmpLine('empty', '', '');
+      li++;
+    } else if (r) {
+      leftHtml += cmpLine('empty', '', '');
+      rightHtml += cmpLine(r.type, r.num, r.text);
+      ri++;
+    }
+  }
+
+  const fromLabel = document.getElementById('cmpFrom').value === 'WORKING' ? 'Working Tree' : document.getElementById('cmpFrom').selectedOptions[0].text.substring(0, 40);
+  const toLabel = document.getElementById('cmpTo').value === 'WORKING' ? 'Working Tree' : document.getElementById('cmpTo').selectedOptions[0].text.substring(0, 40);
+
+  wrap.innerHTML = `<div class="cmp-split">
+    <div class="cmp-side">
+      <div class="cmp-side-head"><span style="color:var(--red)">&#8592;</span> <span class="csh-file">${esc(fromLabel)}</span></div>
+      ${leftHtml}
+    </div>
+    <div class="cmp-side">
+      <div class="cmp-side-head"><span style="color:var(--green)">&#8594;</span> <span class="csh-file">${esc(toLabel)}</span></div>
+      ${rightHtml}
+    </div>
+  </div>`;
+}
+
+function cmpLine(type, num, text) {
+  return `<div class="cmp-line ${type}"><span class="cln">${num || ''}</span><span class="ctext">${esc(text)}</span></div>`;
+}
+
+// =================== LIVE TAB ===================
+const evtLabels = {
+  add:{icon:'+',label:'NEU',cls:'t-add',ecls:'evt-add'},
+  change:{icon:'~',label:'GEANDERT',cls:'t-change',ecls:'evt-change'},
+  unlink:{icon:'-',label:'GELOSCHT',cls:'t-unlink',ecls:'evt-unlink'},
+  addDir:{icon:'+',label:'NEUER ORDNER',cls:'t-add',ecls:'evt-add'},
+  unlinkDir:{icon:'-',label:'ORDNER GELOSCHT',cls:'t-unlink',ecls:'evt-unlink'}
+};
+
+function toggleLiveEvent(el) {
+  const was = el.classList.contains('expanded');
+  el.classList.toggle('expanded');
+  if (!was) {
+    const area = el.querySelector('.live-diff-area');
+    if (area && !area.dataset.loaded) loadInlineDiff(el, area);
+  }
+}
+
+async function loadInlineDiff(el, area) {
+  const fp = el.dataset.file;
+  area.dataset.loaded = '1';
+  area.innerHTML = '<div class="live-diff-loading">Lade Diff...</div>';
+  const d = await LG.fileDiff(repo, fp);
+  area.innerHTML = d.diff ? renderDiff(d.diff) : '<div class="live-diff-loading">Keine Aenderungen gegenueber Git</div>';
+}
+
+function renderLiveContextMenu(e, fp) {
+  e.preventDefault(); e.stopPropagation();
+  fileContextMenu(e, fp);
+}
 function fileIcon(n) {
   const ext = n.split('.').pop().toLowerCase();
   const m = {js:'&#128220;',ts:'&#128220;',jsx:'&#128220;',tsx:'&#128220;',py:'&#128013;',rs:'&#9881;',go:'&#128230;',html:'&#127760;',css:'&#127912;',json:'&#128203;',md:'&#128196;',yml:'&#128203;',yaml:'&#128203;',sh:'&#128423;',bat:'&#128423;',sql:'&#128451;',png:'&#128247;',jpg:'&#128247;',svg:'&#127912;',gif:'&#128247;',exe:'&#9881;',dll:'&#9881;',toml:'&#128203;',lock:'&#128274;',env:'&#128274;'};
@@ -724,7 +1074,7 @@ function fmtDate(d) {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
   if (e.target.tagName === 'INPUT') return;
-  const tabs = ['workspace','commits','push','status','insights'];
+  const tabs = ['workspace','commits','compare','push','status','live','insights'];
   if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
   if (e.key === 'r' && !e.ctrlKey) refreshRepo();
   if (e.key === 'o' && !e.ctrlKey) browseFolder();
