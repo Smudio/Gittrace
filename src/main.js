@@ -243,3 +243,80 @@ ipcMain.handle('context:menu', (_, options) => {
         });
     });
 });
+
+ipcMain.handle('git:graph', async (_, repoPath) => {
+    try {
+        const git = simpleGit(repoPath);
+        const raw = await git.raw(['log', '--all', '--max-count=200', '--pretty=format:%H|%P|%s|%an|%aI|%D', '--topo-order']);
+        const lines = raw.trim().split('\n').filter(Boolean);
+        const commits = lines.map(line => {
+            const [hash, parents, subject, author, date, refs] = line.split('|');
+            return {
+                hash,
+                hashShort: hash.substring(0, 7),
+                parents: parents ? parents.split(' ') : [],
+                subject,
+                author,
+                date,
+                refs: refs || ''
+            };
+        });
+        return { commits };
+    } catch (err) {
+        return { error: err.message, commits: [] };
+    }
+});
+
+ipcMain.handle('git:authors', async (_, repoPath) => {
+    try {
+        const git = simpleGit(repoPath);
+        const raw = await git.raw(['shortlog', '-sn', '--all']);
+        const lines = raw.trim().split('\n').filter(Boolean);
+        const authors = lines.map(l => {
+            const match = l.trim().match(/^(\d+)\s+(.+)$/);
+            return match ? { commits: parseInt(match[1]), name: match[2] } : null;
+        }).filter(Boolean);
+        const total = authors.reduce((s, a) => s + a.commits, 0);
+        return { authors, total };
+    } catch (err) {
+        return { error: err.message, authors: [], total: 0 };
+    }
+});
+
+ipcMain.handle('git:hotFiles', async (_, repoPath) => {
+    try {
+        const git = simpleGit(repoPath);
+        const raw = await git.raw(['log', '--all', '--pretty=format:', '--name-only']);
+        const counts = {};
+        raw.split('\n').filter(Boolean).forEach(f => {
+            counts[f] = (counts[f] || 0) + 1;
+        });
+        const files = Object.entries(counts)
+            .map(([file, changes]) => ({ file, changes }))
+            .sort((a, b) => b.changes - a.changes)
+            .slice(0, 30);
+        return { files };
+    } catch (err) {
+        return { error: err.message, files: [] };
+    }
+});
+
+ipcMain.handle('git:recentActivity', async (_, repoPath) => {
+    try {
+        const git = simpleGit(repoPath);
+        const since = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0];
+        const raw = await git.raw(['log', '--all', '--since', since, '--pretty=format:%aI']);
+        const dates = raw.trim().split('\n').filter(Boolean);
+        const counts = {};
+        dates.forEach(d => {
+            const day = d.substring(0, 10);
+            counts[day] = (counts[day] || 0) + 1;
+        });
+        const days = Object.entries(counts)
+            .map(([date, count]) => ({ date, count }))
+            .sort((a, b) => a.date.localeCompare(b.date));
+        return { days };
+    } catch (err) {
+        return { error: err.message, days: [] };
+    }
+});
