@@ -320,3 +320,83 @@ ipcMain.handle('git:recentActivity', async (_, repoPath) => {
         return { error: err.message, days: [] };
     }
 });
+
+ipcMain.handle('git:statusMap', async (_, repoPath) => {
+    try {
+        const git = simpleGit(repoPath);
+        const status = await git.status();
+        const map = {};
+        (status.staged || []).forEach(f => { map[f] = 'S'; });
+        (status.modified || []).forEach(f => { map[f] = 'M'; });
+        (status.created || []).forEach(f => { map[f] = 'A'; });
+        (status.deleted || []).forEach(f => { map[f] = 'D'; });
+        (status.conflicted || []).forEach(f => { map[f] = 'C'; });
+        (status.renamed || []).forEach(f => { map[f] = 'R'; });
+        return { map, tracking: status.tracking, current: status.current };
+    } catch (err) {
+        return { error: err.message, map: {} };
+    }
+});
+
+function readDirTree(dir, base, depth, maxDepth, gitStatus) {
+    if (depth > maxDepth) return [];
+    let entries;
+    try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return []; }
+    const result = [];
+    const ignore = ['node_modules', '.git', 'dist', 'build', '.next', '__pycache__', '.cache', '.vs', 'obj', 'bin', 'Debug', 'Release'];
+    for (const entry of entries) {
+        const name = entry.name;
+        if (name.startsWith('.') && name !== '.env' && name !== '.gitignore' && name !== '.eslintrc' && name !== '.prettierrc') continue;
+        if (ignore.includes(name)) continue;
+        const fullPath = path.join(dir, name);
+        const rel = path.relative(base, fullPath).replace(/\\/g, '/');
+        if (entry.isDirectory()) {
+            const children = readDirTree(fullPath, base, depth + 1, maxDepth, gitStatus);
+            const hasStatus = children.some(c => c.status || (c.children && c.children.some(cc => cc.status)));
+            result.push({ name, path: rel, type: 'dir', children, hasStatus });
+        } else {
+            const stat = gitStatus[rel];
+            let size = 0;
+            try { size = fs.statSync(fullPath).size; } catch {}
+            result.push({ name, path: rel, type: 'file', status: stat || null, size });
+        }
+    }
+    result.sort((a, b) => {
+        if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
+        if ((a.status || '') !== (b.status || '')) {
+            const order = { M: 0, A: 1, D: 2, S: 3, C: 4, R: 5 };
+            const ao = order[a.status] ?? 99, bo = order[b.status] ?? 99;
+            return ao - bo;
+        }
+        return a.name.localeCompare(b.name);
+    });
+    return result;
+}
+
+ipcMain.handle('git:dirTree', async (_, repoPath) => {
+    try {
+        const git = simpleGit(repoPath);
+        const status = await git.status();
+        const statusMap = {};
+        [...(status.staged||[]),...(status.modified||[]),...(status.created||[]),
+         ...(status.deleted||[]),...(status.conflicted||[]),...(status.renamed||[])
+        ].forEach(f => { if (!statusMap[f]) statusMap[f] = status.staged.includes(f) ? 'S' : status.created.includes(f) ? 'A' : status.deleted.includes(f) ? 'D' : status.conflicted.includes(f) ? 'C' : status.renamed.includes(f) ? 'R' : 'M'; });
+        const tree = readDirTree(repoPath, repoPath, 0, 8, statusMap);
+        return { tree };
+    } catch (err) {
+        return { error: err.message, tree: [] };
+    }
+});
+
+ipcMain.handle('git:liveFileContent', async (_, repoPath, filePath) => {
+    try {
+        const full = path.join(repoPath, filePath);
+        if (!fs.existsSync(full)) return { content: '', deleted: true };
+        const stat = fs.statSync(full);
+        if (stat.isDirectory()) return { content: '', isDir: true };
+        if (stat.size > 1000000) return { content: '__LARGE_FILE__', tooLarge: true };
+        return { content: fs.readFileSync(full, 'utf8'), size: stat.size };
+    } catch (err) {
+        return { content: '', error: err.message };
+    }
+});

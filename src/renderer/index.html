@@ -44,8 +44,8 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(63,185,80,.6)}70%{box-shadow:0 0 0 7px rgba(63,185,80,0)}100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}}
 
-.tabs{display:flex;gap:0;padding:0 16px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
-.tab{padding:9px 18px;background:none;border:none;color:var(--t3);font-size:12px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.tabs{display:flex;gap:0;padding:0 16px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
+.tab{padding:9px 14px;background:none;border:none;color:var(--t3);font-size:12px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
 .tab:hover{color:var(--t1)}
 .tab.active{color:var(--t1);border-bottom-color:var(--blue)}
 
@@ -55,7 +55,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 
 .welcome{display:flex;align-items:center;justify-content:center;height:100%;text-align:center}
 .welcome-inner{opacity:.6}
-.welcome-inner h1{font-size:42px;font-weight:200;color:var(--t1);margin-bottom:8px;letter-spacing:-1px}
+.welcome-inner h1{font-size:42px;font-weight:200;margin-bottom:8px;letter-spacing:-1px}
 .welcome-inner p{font-size:14px;color:var(--t3);margin-bottom:28px}
 .welcome-inner button{padding:12px 28px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--t1);font-size:14px;cursor:pointer;transition:all .2s}
 .welcome-inner button:hover{background:var(--blue);border-color:var(--blue)}
@@ -73,68 +73,67 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .push-badge{font-size:9px;padding:2px 6px;border-radius:8px;font-weight:700;flex-shrink:0;letter-spacing:.3px}
 .push-badge.pushed{background:rgba(63,185,80,.14);color:var(--green)}
 .push-badge.local{background:rgba(248,81,73,.14);color:var(--red)}
-
-.push-overview{margin-bottom:20px}
-.push-overview h3{font-size:13px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.push-bar{display:flex;height:28px;border-radius:6px;overflow:hidden;margin-bottom:8px;background:var(--bg3)}
-.push-bar .seg-pushed{background:var(--green);transition:width .3s}
-.push-bar .seg-local{background:var(--red);transition:width .3s}
-.push-legend{display:flex;gap:16px;font-size:11px;color:var(--t2)}
-.push-legend span{display:flex;align-items:center;gap:5px}
-.push-legend .dot-g{width:8px;height:8px;border-radius:50%;background:var(--green)}
-.push-legend .dot-r{width:8px;height:8px;border-radius:50%;background:var(--red)}
-.push-summary{display:flex;gap:16px;margin-bottom:12px}
-.push-stat{padding:10px 16px;background:var(--bg2);border-radius:8px;border:1px solid var(--border);flex:1;text-align:center}
-.push-stat .num{font-size:22px;font-weight:700;display:block}
-.push-stat .lbl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px}
-.push-stat.s-local .num{color:var(--red)}.push-stat.s-pushed .num{color:var(--green)}.push-stat.s-behind .num{color:var(--orange)}
-.untracked-msg{text-align:center;padding:20px;color:var(--t3);font-size:12px}
-
-.status-section{margin-bottom:16px}
-.status-section h4{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-left:4px}
-.status-file{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:5px;cursor:pointer;transition:background .12s;font-size:13px}
-.status-file:hover{background:var(--bg2)}
-.sbadge{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:700;min-width:20px;text-align:center}
-.sbadge.M{background:rgba(210,153,34,.18);color:var(--orange)}.sbadge.A{background:rgba(63,185,80,.18);color:var(--green)}
-.sbadge.D{background:rgba(248,81,73,.18);color:var(--red)}.sbadge.R{background:rgba(188,140,255,.18);color:var(--purple)}
-.sbadge.S{background:rgba(88,166,255,.18);color:var(--blue)}
-.spath{font-family:'Cascadia Code','Consolas',monospace;font-size:12px}
-
-.live-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.live-header h3{font-size:14px;font-weight:600}
-.live-badge{display:flex;align-items:center;gap:6px;color:var(--green);font-size:12px;font-weight:700}
-.live-event{background:var(--bg2);border-radius:7px;margin-bottom:6px;border-left:3px solid var(--blue);animation:slideIn .25s ease;overflow:hidden}
-.live-event.evt-add{border-left-color:var(--green)}.live-event.evt-change{border-left-color:var(--orange)}.live-event.evt-unlink{border-left-color:var(--red)}
-@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-.live-event-header{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;transition:background .12s;user-select:none}
-.live-event-header:hover{background:rgba(255,255,255,.03)}
-.live-chevron{font-size:11px;color:var(--t3);flex-shrink:0;transition:transform .2s;width:16px;text-align:center}
-.live-event.expanded .live-chevron{transform:rotate(90deg)}
-.live-icon{font-size:15px;margin-top:1px;flex-shrink:0;font-weight:700}
-.live-body{flex:1;min-width:0}
-.live-top{display:flex;align-items:center;gap:8px;margin-bottom:1px}
-.live-type{font-size:10px;text-transform:uppercase;font-weight:700;letter-spacing:.4px}
-.live-type.t-add{color:var(--green)}.live-type.t-change{color:var(--orange)}.live-type.t-unlink{color:var(--red)}
-.live-file{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.live-meta{display:flex;align-items:center;gap:8px;margin-top:2px}
-.live-time{font-size:10px;color:var(--t4)}
-.live-lines{font-size:10px;font-weight:600;display:flex;gap:6px}
-.live-lines .ll-a{color:var(--green)}.live-lines .ll-d{color:var(--red)}
-.live-diff-area{max-height:0;overflow:hidden;transition:max-height .3s ease;border-top:0px solid transparent}
-.live-event.expanded .live-diff-area{max-height:600px;overflow-y:auto;border-top:1px solid var(--border)}
-.live-diff-area .dline{font-size:11px;line-height:1.5}
-.live-diff-area .dline .ln{width:40px;font-size:10px}
-.live-diff-loading{padding:12px 16px;font-size:11px;color:var(--t3)}
 .empty-msg{text-align:center;padding:40px;color:var(--t4);font-size:13px}
 
-.fitem{display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:4px;cursor:pointer;transition:background .12s;font-size:13px}
-.fitem:hover{background:var(--bg2)}
-.fitem .fi{font-size:13px;flex-shrink:0}
-.fitem .fn{font-family:'Cascadia Code','Consolas',monospace;font-size:12px;flex:1}
-.fitem.dir{color:var(--t2);font-weight:600}
-.fitem .heat-bar{width:60px;height:6px;border-radius:3px;background:var(--bg3);overflow:hidden;flex-shrink:0}
-.fitem .heat-fill{height:100%;border-radius:3px;transition:width .3s}
-.fitem .heat-count{font-size:10px;color:var(--t4);min-width:30px;text-align:right;flex-shrink:0}
+/* === WORKSPACE === */
+.ws-panel{display:none;height:100%;overflow:hidden;padding:0}
+.ws-panel.active{display:flex}
+.ws-split{display:flex;flex:1;overflow:hidden}
+.ws-sidebar{width:280px;min-width:200px;background:var(--bg1);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.ws-sidebar-head{padding:8px 12px;font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ws-sidebar-head span{color:var(--t2)}
+.ws-tree{flex:1;overflow-y:auto;padding:4px 0}
+.ws-right{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.ws-editor-area{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.ws-editor-tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto}
+.ws-editor-tab{padding:7px 14px;font-size:11px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;border-right:1px solid var(--border);white-space:nowrap;display:flex;align-items:center;gap:6px;transition:all .12s;font-family:'Cascadia Code','Consolas',monospace}
+.ws-editor-tab:hover{background:var(--bg3);color:var(--t1)}
+.ws-editor-tab.active{background:var(--bg1);color:var(--t1);border-bottom-color:var(--blue)}
+.ws-editor-tab .tab-status{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ws-editor-tab .tab-close{font-size:14px;color:var(--t4);margin-left:4px}
+.ws-editor-tab .tab-close:hover{color:var(--red)}
+.ws-code-wrap{flex:1;overflow:auto;background:var(--bg1);position:relative}
+.ws-code{font-family:'Cascadia Code','Consolas','Fira Code',monospace;font-size:13px;line-height:1.65;padding:12px 0;counter-reset:line;min-height:100%}
+.ws-line{display:flex;min-height:22px;padding:0 16px 0 0}
+.ws-line:hover{background:rgba(255,255,255,.02)}
+.ws-lnum{width:55px;text-align:right;padding-right:16px;color:var(--t4);user-select:none;flex-shrink:0;font-size:12px}
+.ws-lcode{flex:1;white-space:pre;overflow-x:auto}
+.ws-line.added{background:rgba(46,160,67,.1)}.ws-line.added .ws-lcode::before{content:'+';color:var(--green);margin-right:6px;position:absolute;left:4px}
+.ws-line.removed{background:rgba(248,81,73,.08);text-decoration:line-through;color:var(--t4)}.ws-line.removed .ws-lcode::before{content:'-';color:var(--red);margin-right:6px;position:absolute;left:4px}
+.ws-empty{display:flex;align-items:center;justify-content:center;height:100%;color:var(--t4);font-size:13px;text-align:center;padding:40px}
+.ws-empty-icon{font-size:48px;opacity:.3;margin-bottom:12px}
+.ws-diff-toggle{padding:4px 12px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.ws-diff-toggle button{padding:4px 10px;border-radius:4px;border:1px solid var(--border);background:var(--bg3);color:var(--t2);font-size:10px;cursor:pointer;transition:all .12s}
+.ws-diff-toggle button:hover{background:var(--bg4);color:var(--t1)}
+.ws-diff-toggle button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.ws-diff-toggle .ws-file-label{font-family:'Cascadia Code','Consolas',monospace;font-size:11px;color:var(--t2);margin-left:auto}
+
+.ws-live-strip{height:120px;min-height:80px;background:var(--bg2);border-top:1px solid var(--border);overflow-y:auto;flex-shrink:0;padding:6px 10px;display:flex;flex-direction:column-reverse;gap:3px}
+
+.wt-item{display:flex;align-items:center;gap:6px;padding:3px 8px;border-radius:4px;cursor:pointer;font-size:12px;transition:background .1s;white-space:nowrap;overflow:hidden}
+.wt-item:hover{background:var(--bg3)}
+.wt-item.selected{background:var(--bg4)}
+.wt-item .wt-icon{font-size:12px;flex-shrink:0;width:16px;text-align:center}
+.wt-item .wt-name{overflow:hidden;text-overflow:ellipsis;font-size:12px}
+.wt-item .wt-status{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-left:auto}
+.wt-item .wt-status.st-M{background:var(--orange)}.wt-item .wt-status.st-A{background:var(--green)}
+.wt-item .wt-status.st-D{background:var(--red)}.wt-item .wt-status.st-S{background:var(--blue)}
+.wt-item .wt-status.st-C{background:var(--red);animation:pulse 1s infinite}.wt-item .wt-status.st-R{background:var(--purple)}
+.wt-dir{font-weight:600;color:var(--t2)}
+.wt-dir .wt-chevron{font-size:9px;transition:transform .15s;display:inline-block;width:12px}
+.wt-dir .wt-chevron.collapsed{transform:rotate(-90deg)}
+.wt-dir-children{overflow:hidden}
+.wt-dir-children.collapsed{display:none}
+.wt-depth{display:flex;flex-direction:column}
+
+.ws-live-event{display:flex;align-items:center;gap:6px;font-size:10px;padding:2px 6px;border-radius:3px;flex-shrink:0}
+.ws-live-event .le-icon{font-weight:700;font-size:11px}
+.ws-live-event .le-icon.add{color:var(--green)}.ws-live-event .le-icon.change{color:var(--orange)}.ws-live-event .le-icon.unlink{color:var(--red)}
+.ws-live-event .le-file{font-family:'Cascadia Code','Consolas',monospace;font-size:10px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.ws-live-event .le-file:hover{color:var(--t1);text-decoration:underline}
+.ws-live-event .le-time{color:var(--t4);font-size:9px;flex-shrink:0}
+
+.kw{color:#ff7b72}.str{color:#a5d6ff}.num{color:#79c0ff}.cm{color:#6e7681;font-style:italic}.fn{color:#d2a8ff}.typ{color:#ffa657}.op{color:#79c0ff}.dec{color:#ffa657}
 
 .modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
 .modal{background:var(--bg2);border-radius:10px;width:92%;max-width:1050px;max-height:82vh;display:flex;flex-direction:column;border:1px solid var(--border);box-shadow:0 16px 48px rgba(0,0,0,.5)}
@@ -159,39 +158,41 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 @keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
 @keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
 
-.graph-container{position:relative}
-.graph-svg{display:block}
-.graph-row{display:flex;align-items:center;gap:10px;padding:5px 12px;border-radius:4px;cursor:pointer;transition:background .12s}
-.graph-row:hover{background:var(--bg2)}
-.graph-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.graph-msg{flex:1;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.graph-meta{font-size:11px;color:var(--t3);flex-shrink:0}
-
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
 .stat-card{padding:16px;background:var(--bg2);border-radius:8px;border:1px solid var(--border)}
 .stat-card h4{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
 .stat-card .big{font-size:28px;font-weight:700}
 .stat-card .sub{font-size:11px;color:var(--t4);margin-top:4px}
-
 .author-list{display:flex;flex-direction:column;gap:4px;margin-bottom:20px}
 .author-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg2);border-radius:6px}
 .author-bar{height:8px;border-radius:4px;transition:width .5s ease}
-.author-name{font-size:12px;min-width:120px;color:var(--t1);font-weight:500}
+.author-name{font-size:12px;min-width:120px;font-weight:500}
 .author-count{font-size:11px;color:var(--t3);min-width:40px;text-align:right}
-.author-pct{font-size:11px;color:var(--t4);min-width:40px;text-align:right}
-
 .activity-chart{display:flex;align-items:flex-end;gap:3px;height:80px;padding:8px 0;margin-bottom:8px}
-.activity-bar{flex:1;border-radius:3px 3px 0 0;transition:height .3s ease;min-width:8px;position:relative}
-.activity-bar:hover{opacity:.8}
-.activity-label{font-size:9px;color:var(--t4);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
+.activity-bar{flex:1;border-radius:3px 3px 0 0;transition:height .3s ease;min-width:8px}
+.section-title{font-size:12px;font-weight:600;color:var(--t2);margin:20px 0 8px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.push-summary{display:flex;gap:16px;margin-bottom:12px}
+.push-stat{padding:10px 16px;background:var(--bg2);border-radius:8px;border:1px solid var(--border);flex:1;text-align:center}
+.push-stat .num{font-size:22px;font-weight:700;display:block}
+.push-stat .lbl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px}
+.push-stat.s-local .num{color:var(--red)}.push-stat.s-pushed .num{color:var(--green)}.push-stat.s-behind .num{color:var(--orange)}
+.push-bar{display:flex;height:28px;border-radius:6px;overflow:hidden;margin-bottom:8px;background:var(--bg3)}
+.push-bar .seg-pushed{background:var(--green)}.push-bar .seg-local{background:var(--red)}
+.push-legend{display:flex;gap:16px;font-size:11px;color:var(--t2)}.push-legend span{display:flex;align-items:center;gap:5px}
+.push-legend .dot-g,.push-legend .dot-r{width:8px;height:8px;border-radius:50%}.push-legend .dot-g{background:var(--green)}.push-legend .dot-r{background:var(--red)}
 .shortcut-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .shortcut-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg2);border-radius:5px;font-size:12px}
 .shortcut-key{font-family:'Cascadia Code','Consolas',monospace;font-size:11px;padding:2px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--blue);white-space:nowrap}
 .shortcut-desc{color:var(--t2)}
-
-.section-title{font-size:12px;font-weight:600;color:var(--t2);margin:20px 0 8px;display:flex;align-items:center;gap:8px}
-.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.status-section{margin-bottom:16px}
+.status-section h4{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-left:4px}
+.status-file{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:5px;cursor:pointer;transition:background .12s;font-size:13px}
+.status-file:hover{background:var(--bg2)}
+.sbadge{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:700;min-width:20px;text-align:center}
+.sbadge.M{background:rgba(210,153,34,.18);color:var(--orange)}.sbadge.A{background:rgba(63,185,80,.18);color:var(--green)}
+.sbadge.D{background:rgba(248,81,73,.18);color:var(--red)}.sbadge.R{background:rgba(188,140,255,.18);color:var(--purple)}.sbadge.S{background:rgba(88,166,255,.18);color:var(--blue)}
+.spath{font-family:'Cascadia Code','Consolas',monospace;font-size:12px}
 
 ::-webkit-scrollbar{width:7px}
 ::-webkit-scrollbar-track{background:var(--bg0)}
@@ -212,7 +213,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 </div>
 
 <div class="toolbar" id="toolbar">
-  <button class="primary" onclick="browseFolder()">&#128193; Ordner offnen</button>
+  <button class="primary" onclick="browseFolder()">&#128193; Offnen</button>
   <button onclick="refreshRepo()">&#8635; Refresh</button>
   <div class="repo-name" id="repoName" style="display:none">
     <span id="repoLabel"></span>
@@ -233,12 +234,10 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 </div>
 
 <div class="tabs" id="tabBar" style="display:none">
-  <button class="tab active" data-tab="commits" onclick="switchTab('commits')">&#128203; Commits</button>
-  <button class="tab" data-tab="graph" onclick="switchTab('graph')">&#128202; Graph</button>
+  <button class="tab active" data-tab="workspace" onclick="switchTab('workspace')">&#128187; Workspace</button>
+  <button class="tab" data-tab="commits" onclick="switchTab('commits')">&#128203; Commits</button>
   <button class="tab" data-tab="push" onclick="switchTab('push')">&#128228; Push</button>
   <button class="tab" data-tab="status" onclick="switchTab('status')">&#9888; Status</button>
-  <button class="tab" data-tab="live" onclick="switchTab('live')">&#128308; Live</button>
-  <button class="tab" data-tab="files" onclick="switchTab('files')">&#128194; Dateien</button>
   <button class="tab" data-tab="insights" onclick="switchTab('insights')">&#128161; Insights</button>
 </div>
 
@@ -250,15 +249,34 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <button onclick="browseFolder()">&#128193; Git-Repository offnen</button>
     </div></div>
   </div>
+
+  <!-- WORKSPACE (split view) -->
+  <div class="ws-panel" id="p-workspace">
+    <div class="ws-split">
+      <div class="ws-sidebar">
+        <div class="ws-sidebar-head"><span>Dateien</span><span id="wsFileCount"></span></div>
+        <div class="ws-tree" id="wsTree"></div>
+      </div>
+      <div class="ws-right">
+        <div class="ws-editor-area">
+          <div class="ws-editor-tabs" id="wsEditorTabs"></div>
+          <div class="ws-diff-toggle" id="wsDiffBar" style="display:none">
+            <button class="active" onclick="wsViewMode('content')" id="wsBtnContent">Inhalt</button>
+            <button onclick="wsViewMode('diff')" id="wsBtnDiff">Diff</button>
+            <span class="ws-file-label" id="wsFileLabel"></span>
+          </div>
+          <div class="ws-code-wrap" id="wsCodeWrap">
+            <div class="ws-empty"><div><div class="ws-empty-icon">&#128196;</div>Datei auswaehlen zum Anzeigen<br><small style="color:var(--t4)">Rechtsklick fur Optionen</small></div></div>
+          </div>
+        </div>
+        <div class="ws-live-strip" id="wsLiveStrip"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="panel" id="p-commits"></div>
-  <div class="panel" id="p-graph"></div>
   <div class="panel" id="p-push"></div>
   <div class="panel" id="p-status"></div>
-  <div class="panel" id="p-live">
-    <div class="live-header"><h3>Echtzeit-Anderungen</h3><div class="live-badge"><span class="pulse"></span> Live</div></div>
-    <div id="liveFeed"><div class="empty-msg">Warte auf Dateianderungen...</div></div>
-  </div>
-  <div class="panel" id="p-files"></div>
   <div class="panel" id="p-insights"></div>
 </div>
 
@@ -275,12 +293,17 @@ let repo = '';
 let commits = [];
 let hotFilesMap = {};
 let curTab = 'welcome';
+let wsOpenTabs = [];
+let wsActiveFile = null;
+let wsViewModeCurrent = 'content';
+let wsLiveEvents = [];
 
 function switchTab(t) {
   curTab = t;
   document.querySelectorAll('.tab').forEach(e => e.classList.toggle('active', e.dataset.tab === t));
-  document.querySelectorAll('.panel').forEach(e => e.classList.remove('active'));
-  document.getElementById('p-' + t).classList.add('active');
+  document.querySelectorAll('.panel, .ws-panel').forEach(e => e.classList.remove('active'));
+  const p = document.getElementById('p-' + t);
+  if (p) p.classList.add('active');
 }
 
 async function browseFolder() { const p = await LG.openFolder(); if (p) await loadRepo(p); }
@@ -305,34 +328,200 @@ function renderRepo(d) {
   renderCommits(d.log);
   renderPushOverview(d.log, d.status);
   renderStatus(d.status);
-  document.getElementById('liveFeed').innerHTML = '<div class="empty-msg">Warte auf Dateianderungen...</div>';
-  loadFileTree();
-  loadGraph();
+  loadWorkspace();
   loadInsights();
-  if (curTab === 'welcome') switchTab('commits');
+  if (curTab === 'welcome') switchTab('workspace');
 }
 
-function renderCommits(log, filter) {
-  const el = document.getElementById('p-commits');
-  let list = log;
-  if (filter) {
-    const q = filter.toLowerCase();
-    list = log.filter(c => c.message.toLowerCase().includes(q) || c.hash.includes(q) || c.author.toLowerCase().includes(q));
+// =================== WORKSPACE ===================
+async function loadWorkspace() {
+  const [treeData, hotData] = await Promise.all([LG.dirTree(repo), LG.hotFiles(repo)]);
+  hotFilesMap = {};
+  (hotData.files||[]).forEach(f => hotFilesMap[f.file] = f.changes);
+  renderWsTree(treeData.tree || []);
+  document.getElementById('wsLiveStrip').innerHTML = '';
+  wsLiveEvents = [];
+}
+
+function renderWsTree(tree) {
+  const el = document.getElementById('wsTree');
+  const fileCount = countFiles(tree);
+  document.getElementById('wsFileCount').textContent = fileCount + ' Dateien';
+  el.innerHTML = tree.map(n => renderWsNode(n, 0)).join('');
+}
+
+function countFiles(nodes) {
+  let c = 0;
+  for (const n of nodes) { if (n.type === 'file') c++; else c += countFiles(n.children || []); }
+  return c;
+}
+
+function renderWsNode(node, depth) {
+  const pad = depth * 16;
+  if (node.type === 'dir') {
+    const id = 'wsdir-' + node.path.replace(/[^a-zA-Z0-9]/g, '_');
+    const hasSt = node.hasStatus;
+    return `<div class="wt-item wt-dir" style="padding-left:${pad+8}px" onclick="toggleWsDir('${id}',this)">
+      <span class="wt-chevron">&#9660;</span>
+      <span class="wt-icon">&#128193;</span>
+      <span class="wt-name">${esc(node.name)}</span>
+      ${hasSt ? '<span class="wt-status" style="background:var(--orange);width:6px;height:6px;border-radius:50%;margin-left:auto"></span>' : ''}
+    </div>
+    <div class="wt-dir-children" id="${id}">
+      ${(node.children||[]).map(c => renderWsNode(c, depth+1)).join('')}
+    </div>`;
   }
-  if (!list.length) { el.innerHTML = '<div class="empty-msg">' + (filter ? 'Keine Treffer' : 'Keine Commits') + '</div>'; return; }
-  el.innerHTML = list.map(c => {
-    const refs = parseRefs(c.refs);
-    const pb = c.pushed ? '<span class="push-badge pushed">PUSHED</span>' : (c.localOnly ? '<span class="push-badge local">LOCAL</span>' : '');
-    return `<div class="commit" onclick="showDiff('${c.hash}')">
-      <span class="hash">${c.hashShort}</span>${pb}${refs}
-      <span class="msg">${esc(c.message)}</span>
-      <span class="author">${esc(c.author)}</span>
-      <span class="date">${fmtDate(c.date)}</span>
+  const stDot = node.status ? `<span class="wt-status st-${node.status}"></span>` : '';
+  return `<div class="wt-item" style="padding-left:${pad+24}px" onclick="wsOpenFile('${esc(node.path)}')" oncontextmenu="fileContextMenu(event,'${esc(node.path)}')" data-path="${esc(node.path)}">
+    <span class="wt-icon">${fileIcon(node.name)}</span>
+    <span class="wt-name">${esc(node.name)}</span>
+    ${stDot}
+  </div>`;
+}
+
+function toggleWsDir(id, el) {
+  const d = document.getElementById(id);
+  const ch = el.querySelector('.wt-chevron');
+  if (d.classList.contains('collapsed')) { d.classList.remove('collapsed'); ch.classList.remove('collapsed'); }
+  else { d.classList.add('collapsed'); ch.classList.add('collapsed'); }
+}
+
+async function wsOpenFile(fp) {
+  if (!wsOpenTabs.includes(fp)) wsOpenTabs.push(fp);
+  wsActiveFile = fp;
+  renderWsTabs();
+  await wsShowFile(fp);
+}
+
+function renderWsTabs() {
+  const el = document.getElementById('wsEditorTabs');
+  el.innerHTML = wsOpenTabs.map(fp => {
+    const name = fp.split('/').pop();
+    const active = fp === wsActiveFile;
+    return `<div class="ws-editor-tab ${active?'active':''}" onclick="wsOpenFile('${esc(fp)}')">
+      <span class="tab-status" style="background:var(--t4)"></span>
+      ${esc(name)}
+      <span class="tab-close" onclick="event.stopPropagation();wsCloseTab('${esc(fp)}')">&times;</span>
     </div>`;
   }).join('');
 }
 
-function filterCommits(q) { renderCommits(commits, q); }
+function wsCloseTab(fp) {
+  wsOpenTabs = wsOpenTabs.filter(t => t !== fp);
+  if (wsActiveFile === fp) {
+    wsActiveFile = wsOpenTabs.length ? wsOpenTabs[wsOpenTabs.length - 1] : null;
+    if (wsActiveFile) wsShowFile(wsActiveFile);
+    else {
+      document.getElementById('wsCodeWrap').innerHTML = '<div class="ws-empty"><div><div class="ws-empty-icon">&#128196;</div>Datei auswaehlen</div></div>';
+      document.getElementById('wsDiffBar').style.display = 'none';
+    }
+  }
+  renderWsTabs();
+}
+
+async function wsShowFile(fp) {
+  wsActiveFile = fp;
+  document.getElementById('wsDiffBar').style.display = 'flex';
+  document.getElementById('wsFileLabel').textContent = fp;
+  if (wsViewModeCurrent === 'diff') wsShowDiff(fp);
+  else wsShowContent(fp);
+  document.querySelectorAll('.wt-item').forEach(el => el.classList.toggle('selected', el.dataset.path === fp));
+}
+
+async function wsShowContent(fp) {
+  const wrap = document.getElementById('wsCodeWrap');
+  wrap.innerHTML = '<div class="ws-empty">Lade...</div>';
+  const d = await LG.liveFileContent(repo, fp);
+  if (d.deleted) { wrap.innerHTML = '<div class="ws-empty"><div style="color:var(--red)">Datei wurde geloscht</div></div>'; return; }
+  if (d.tooLarge) { wrap.innerHTML = '<div class="ws-empty">Datei zu gross</div>'; return; }
+  if (d.isDir) { wrap.innerHTML = '<div class="ws-empty">Verzeichnis</div>'; return; }
+  const ext = fp.split('.').pop().toLowerCase();
+  wrap.innerHTML = `<div class="ws-code">${highlight(d.content || '', ext)}</div>`;
+}
+
+async function wsShowDiff(fp) {
+  const wrap = document.getElementById('wsCodeWrap');
+  wrap.innerHTML = '<div class="ws-empty">Lade Diff...</div>';
+  const d = await LG.fileDiff(repo, fp);
+  if (!d.diff) { wrap.innerHTML = '<div class="ws-empty" style="color:var(--green)">Keine Aenderungen gegenueber Git</div>'; return; }
+  wrap.innerHTML = `<div class="ws-code">${renderInlineDiff(d.diff)}</div>`;
+}
+
+function wsViewMode(mode) {
+  wsViewModeCurrent = mode;
+  document.getElementById('wsBtnContent').classList.toggle('active', mode === 'content');
+  document.getElementById('wsBtnDiff').classList.toggle('active', mode === 'diff');
+  if (wsActiveFile) wsShowFile(wsActiveFile);
+}
+
+function highlight(code, ext) {
+  const lines = code.split('\n');
+  return lines.map((l, i) => {
+    const hl = syntaxHL(l, ext);
+    return `<div class="ws-line"><span class="ws-lnum">${i+1}</span><span class="ws-lcode">${hl}</span></div>`;
+  }).join('');
+}
+
+function syntaxHL(line, ext) {
+  let s = esc(line);
+  const kwSets = {
+    js: ['const','let','var','function','return','if','else','for','while','class','import','export','from','default','new','this','async','await','try','catch','throw','typeof','instanceof','switch','case','break','continue','yield','of','in','true','false','null','undefined'],
+    ts: ['const','let','var','function','return','if','else','for','while','class','import','export','from','default','new','this','async','await','interface','type','enum','extends','implements','readonly','as','is','keyof','infer','never','unknown','any','void','string','number','boolean','true','false','null','undefined'],
+    py: ['def','class','return','if','elif','else','for','while','import','from','as','try','except','finally','with','raise','pass','break','continue','yield','lambda','True','False','None','and','or','not','in','is','global','nonlocal','assert','del'],
+    rs: ['fn','let','mut','const','if','else','for','while','loop','match','return','struct','enum','impl','trait','pub','use','mod','crate','self','super','where','type','as','in','ref','move','async','await','true','false','None','Some','Ok','Err'],
+    go: ['func','var','const','if','else','for','range','return','switch','case','default','type','struct','interface','map','chan','go','defer','select','package','import','true','false','nil','make','append','len','cap'],
+    html: ['DOCTYPE','html','head','body','div','span','class','style','script','link','meta','src','href','type','id'],
+    css: ['color','background','margin','padding','border','display','flex','grid','position','width','height','font','transition','animation','opacity','overflow','none','auto','solid','relative','absolute','fixed'],
+    json: [],
+    sh: ['function','if','then','else','fi','for','do','done','while','case','esac','echo','exit','return','export','source','local','readonly','true','false']
+  };
+  const kws = kwSets[ext] || kwSets['js'];
+  if (kws.length) {
+    const re = new RegExp('\\b(' + kws.join('|') + ')\\b', 'g');
+    s = s.replace(re, '<span class="kw">$1</span>');
+  }
+  s = s.replace(/("(?:[^"\\]|\\.)*")/g, '<span class="str">$1</span>');
+  s = s.replace(/('(?:[^'\\]|\\.)*')/g, '<span class="str">$1</span>');
+  s = s.replace(/(`(?:[^`\\]|\\.)*`)/g, '<span class="str">$1</span>');
+  s = s.replace(/\b(\d+\.?\d*)\b/g, '<span class="num">$1</span>');
+  s = s.replace(/(\/\/.*$)/gm, '<span class="cm">$1</span>');
+  s = s.replace(/(#.*$)/gm, '<span class="cm">$1</span>');
+  s = s.replace(/(\b\w+)\s*\(/g, '<span class="fn">$1</span>(');
+  return s;
+}
+
+function renderInlineDiff(text) {
+  if (!text) return '<div class="ws-empty">Keine Aenderungen</div>';
+  const lines = text.split('\n');
+  let html = '';
+  for (const line of lines) {
+    if (line.startsWith('diff --git') || line.startsWith('+++') || line.startsWith('---') || line.startsWith('index ') || line.startsWith('Binary')) {
+      if (line.startsWith('diff --git')) html += `<div class="ws-line" style="background:var(--bg3);font-weight:600"><span class="ws-lnum"></span><span class="ws-lcode" style="color:var(--t1)">${esc(line)}</span></div>`;
+      continue;
+    }
+    if (line.startsWith('@@')) { html += `<div class="ws-line" style="background:rgba(88,166,255,.08)"><span class="ws-lnum"></span><span class="ws-lcode" style="color:var(--blue)">${esc(line)}</span></div>`; continue; }
+    if (line.startsWith('+')) html += `<div class="ws-line added"><span class="ws-lnum"></span><span class="ws-lcode">${esc(line.slice(1))}</span></div>`;
+    else if (line.startsWith('-')) html += `<div class="ws-line removed"><span class="ws-lnum"></span><span class="ws-lcode">${esc(line.slice(1))}</span></div>`;
+    else html += `<div class="ws-line"><span class="ws-lnum"></span><span class="ws-lcode" style="color:var(--t2)">${esc(line.startsWith(' ')?line.slice(1):line)}</span></div>`;
+  }
+  return html;
+}
+
+// =================== COMMITS ===================
+function renderCommits(log) {
+  const el = document.getElementById('p-commits');
+  if (!log.length) { el.innerHTML = '<div class="empty-msg">Keine Commits</div>'; return; }
+  el.innerHTML = log.map(c => {
+    const refs = parseRefs(c.refs);
+    const pb = c.pushed ? '<span class="push-badge pushed">PUSHED</span>' : (c.localOnly ? '<span class="push-badge local">LOCAL</span>' : '');
+    return `<div class="commit" onclick="showDiff('${c.hash}')"><span class="hash">${c.hashShort}</span>${pb}${refs}<span class="msg">${esc(c.message)}</span><span class="author">${esc(c.author)}</span><span class="date">${fmtDate(c.date)}</span></div>`;
+  }).join('');
+}
+
+function filterCommits(q) {
+  const ql = q.toLowerCase();
+  renderCommits(commits.filter(c => c.message.toLowerCase().includes(ql) || c.hash.includes(ql) || c.author.toLowerCase().includes(ql)));
+}
 
 function parseRefs(refs) {
   if (!refs) return '';
@@ -344,6 +533,7 @@ function parseRefs(refs) {
   }).join('');
 }
 
+// =================== PUSH ===================
 function renderPushOverview(log, status) {
   const el = document.getElementById('p-push');
   const pushed = log.filter(c => c.pushed).length;
@@ -351,33 +541,28 @@ function renderPushOverview(log, status) {
   const total = log.length;
   const hasRemote = status.tracking && status.tracking.length > 0;
   if (!hasRemote) {
-    el.innerHTML = `<div class="push-overview"><h3>Push-Status</h3><div class="untracked-msg">Dieser Branch verfolgt keinen Remote-Branch.<br>Kein Push-Status verfuegbar.</div></div>
-    <div style="margin-top:16px"><h4 style="font-size:12px;color:var(--t3);margin-bottom:8px">ALLE COMMITS (${total})</h4>
-    ${log.map(c => `<div class="commit" onclick="showDiff('${c.hash}')"><span class="hash">${c.hashShort}</span><span class="push-badge local">NICHT GEPUSHT</span>${parseRefs(c.refs)}<span class="msg">${esc(c.message)}</span><span class="author">${esc(c.author)}</span><span class="date">${fmtDate(c.date)}</span></div>`).join('')}</div>`;
+    el.innerHTML = `<div class="push-summary"><div class="push-stat"><span class="num">${total}</span><span class="lbl">Commits (kein Remote)</span></div></div>
+    ${log.map(c => `<div class="commit" onclick="showDiff('${c.hash}')"><span class="hash">${c.hashShort}</span><span class="push-badge local">LOCAL</span>${parseRefs(c.refs)}<span class="msg">${esc(c.message)}</span><span class="author">${esc(c.author)}</span><span class="date">${fmtDate(c.date)}</span></div>`).join('')}`;
     return;
   }
   const pushPct = total > 0 ? (pushed / total * 100) : 100;
-  const localPct = total > 0 ? (local / total * 100) : 0;
-  el.innerHTML = `<div class="push-overview">
-    <h3>Push-Status &mdash; <span style="color:var(--blue)">${esc(status.tracking)}</span></h3>
-    <div class="push-summary">
-      <div class="push-stat s-local"><span class="num">${local}</span><span class="lbl">Nur lokal</span></div>
-      <div class="push-stat s-pushed"><span class="num">${pushed}</span><span class="lbl">Gepusht</span></div>
-      <div class="push-stat s-behind"><span class="num">${status.behind}</span><span class="lbl">Behind remote</span></div>
-    </div>
-    <div class="push-bar"><div class="seg-pushed" style="width:${pushPct}%"></div><div class="seg-local" style="width:${localPct}%"></div></div>
-    <div class="push-legend"><span><span class="dot-g"></span> Gepusht (${pushPct.toFixed(0)}%)</span><span><span class="dot-r"></span> Nur lokal (${local})</span></div>
+  el.innerHTML = `<div class="push-summary">
+    <div class="push-stat s-local"><span class="num">${local}</span><span class="lbl">Nur lokal</span></div>
+    <div class="push-stat s-pushed"><span class="num">${pushed}</span><span class="lbl">Gepusht</span></div>
+    <div class="push-stat s-behind"><span class="num">${status.behind}</span><span class="lbl">Behind</span></div>
   </div>
-  ${local > 0 ? `<div style="margin-top:20px"><h4 style="font-size:12px;color:var(--red);margin-bottom:8px">NOCH NICHT GEPUSHT (${local})</h4>${log.filter(c => c.localOnly).map(c => `<div class="commit" onclick="showDiff('${c.hash}')"><span class="hash">${c.hashShort}</span><span class="push-badge local">LOCAL</span>${parseRefs(c.refs)}<span class="msg">${esc(c.message)}</span><span class="author">${esc(c.author)}</span><span class="date">${fmtDate(c.date)}</span></div>`).join('')}</div>` : '<div class="empty-msg" style="color:var(--green);padding:20px">Alle Commits sind gepusht!</div>'}
-  ${pushed > 0 ? `<div style="margin-top:20px"><h4 style="font-size:12px;color:var(--t3);margin-bottom:8px">GEPUSHT (${pushed})</h4>${log.filter(c => c.pushed).map(c => `<div class="commit" onclick="showDiff('${c.hash}')"><span class="hash">${c.hashShort}</span><span class="push-badge pushed">PUSHED</span>${parseRefs(c.refs)}<span class="msg">${esc(c.message)}</span><span class="author">${esc(c.author)}</span><span class="date">${fmtDate(c.date)}</span></div>`).join('')}</div>` : ''}`;
+  <div class="push-bar"><div class="seg-pushed" style="width:${pushPct}%"></div><div class="seg-local" style="width:${100-pushPct}%"></div></div>
+  <div class="push-legend"><span><span class="dot-g"></span> ${pushPct.toFixed(0)}% gepusht</span><span><span class="dot-r"></span> ${local} nur lokal</span></div>
+  ${local > 0 ? `<div class="section-title" style="margin-top:16px">Nicht gepusht (${local})</div>${log.filter(c=>c.localOnly).map(c=>`<div class="commit" onclick="showDiff('${c.hash}')"><span class="hash">${c.hashShort}</span><span class="push-badge local">LOCAL</span>${parseRefs(c.refs)}<span class="msg">${esc(c.message)}</span><span class="author">${esc(c.author)}</span><span class="date">${fmtDate(c.date)}</span></div>`).join('')}` : '<div class="empty-msg" style="color:var(--green);padding:20px">Alles gepusht!</div>'}`;
 }
 
+// =================== STATUS ===================
 function renderStatus(s) {
   const el = document.getElementById('p-status');
   let h = '';
   const sections = [
     { label:'Staged', items: s.staged, badge:'S', cls:'S' },
-    { label:'Neue Dateien', items: s.created, badge:'A', cls:'A' },
+    { label:'Neu', items: s.created, badge:'A', cls:'A' },
     { label:'Geandert', items: s.modified, badge:'M', cls:'M' },
     { label:'Geloscht', items: s.deleted, badge:'D', cls:'D' },
     { label:'Umbenannt', items: s.renamed, badge:'R', cls:'R' },
@@ -386,258 +571,59 @@ function renderStatus(s) {
   for (const sec of sections) {
     if (!sec.items.length) continue;
     h += `<div class="status-section"><h4>${sec.label} (${sec.items.length})</h4>`;
-    for (const f of sec.items) h += `<div class="status-file" onclick="showFileDiff('${esc(f)}')" oncontextmenu="fileContextMenu(event,'${esc(f)}')"><span class="sbadge ${sec.cls}">${sec.badge}</span><span class="spath">${esc(f)}</span></div>`;
+    for (const f of sec.items) h += `<div class="status-file" onclick="wsOpenFile('${esc(f)}');switchTab('workspace')" oncontextmenu="fileContextMenu(event,'${esc(f)}')"><span class="sbadge ${sec.cls}">${sec.badge}</span><span class="spath">${esc(f)}</span></div>`;
     h += '</div>';
   }
   if (!h) h = '<div class="empty-msg" style="color:var(--green);padding:40px">Arbeitsverzeichnis sauber</div>';
   el.innerHTML = h;
 }
 
-function loadFileTree() {
-  LG.fileTree(repo).then(d => { if (d.files) { LG.hotFiles(repo).then(h => { hotFilesMap = {}; (h.files||[]).forEach(f => hotFilesMap[f.file] = f.changes); renderFileTree(d.files); }); }});
-}
-
-function renderFileTree(files) {
-  const el = document.getElementById('p-files');
-  if (!files.length) { el.innerHTML = '<div class="empty-msg">Keine Dateien</div>'; return; }
-  const tree = {};
-  for (const f of files) { const parts = f.split('/'); let cur = tree; for (let i = 0; i < parts.length; i++) { const p = parts[i]; if (!cur[p]) cur[p] = i === parts.length - 1 ? null : {}; if (cur[p] !== null) cur = cur[p]; } }
-  const maxHeat = Math.max(...Object.values(hotFilesMap), 1);
-  el.innerHTML = renderTreeNode(tree, '', maxHeat);
-}
-
-function renderTreeNode(node, prefix, maxHeat) {
-  let h = '';
-  const entries = Object.entries(node).sort((a,b) => { const aD = a[1] !== null, bD = b[1] !== null; if (aD !== bD) return aD ? -1 : 1; return a[0].localeCompare(b[0]); });
-  for (const [name, val] of entries) {
-    const fp = prefix ? prefix + '/' + name : name;
-    if (val === null) {
-      const heat = hotFilesMap[fp] || 0;
-      const pct = (heat / maxHeat * 100);
-      const color = heat > 0 ? `hsl(${Math.max(0, 40 - heat/maxHeat*40)}, 90%, 55%)` : 'var(--bg3)';
-      h += `<div class="fitem" onclick="showFile('${esc(fp)}')" oncontextmenu="fileContextMenu(event,'${esc(fp)}')">
-        <span class="fi">${fileIcon(name)}</span><span class="fn">${esc(name)}</span>
-        ${heat > 0 ? `<span class="heat-bar"><span class="heat-fill" style="width:${pct}%;background:${color}"></span></span><span class="heat-count">${heat}x</span>` : ''}
-      </div>`;
-    } else {
-      h += `<div class="fitem dir" oncontextmenu="fileContextMenu(event,'${esc(fp)}')"><span class="fi">&#128193;</span><span class="fn">${esc(name)}/</span></div>`;
-      h += renderTreeNode(val, fp, maxHeat);
-    }
-  }
-  return h;
-}
-
-function fileIcon(n) {
-  const ext = n.split('.').pop().toLowerCase();
-  const m = {js:'&#128220;',ts:'&#128220;',jsx:'&#128220;',tsx:'&#128220;',py:'&#128013;',rs:'&#9881;',go:'&#128230;',html:'&#127760;',css:'&#127912;',json:'&#128203;',md:'&#128196;',yml:'&#128203;',yaml:'&#128203;',sh:'&#128423;'};
-  return m[ext] || '&#128196;';
-}
-
-async function loadGraph() {
-  const data = await LG.graphData(repo);
-  if (data.error || !data.commits.length) { document.getElementById('p-graph').innerHTML = '<div class="empty-msg">Kein Graph</div>'; return; }
-  renderGraph(data.commits);
-}
-
-function renderGraph(gCommits) {
-  const el = document.getElementById('p-graph');
-  const colors = ['#58a6ff','#bc8cff','#3fb950','#d29922','#f85149','#39d2c0','#f778ba','#79c0ff'];
-  const branchMap = {};
-  let branchIdx = 0;
-  const colWidth = 20;
-  const maxCols = Math.min(10, Math.max(4, new Set(gCommits.flatMap(c => c.parents).filter(Boolean)).size));
-
-  let rows = '';
-  gCommits.forEach((c, i) => {
-    let col = 0;
-    if (c.refs) {
-      const refParts = c.refs.split(',').map(r => r.trim()).filter(Boolean);
-      for (const r of refParts) {
-        if (!r.includes('/') && !r.startsWith('tag:') && !r.startsWith('HEAD')) {
-          if (!(r in branchMap)) branchMap[r] = branchIdx++ % colors.length;
-          col = branchMap[r];
-        }
-      }
-    }
-    if (c.parents.length === 0 && !(c.hashShort in branchMap)) {
-      branchMap[c.hashShort] = branchIdx++ % colors.length;
-      col = branchMap[c.hashShort];
-    }
-
-    const cx = col * colWidth + 10;
-    const parentLines = c.parents.map(ph => {
-      const pi = gCommits.findIndex(gc => gc.hash === ph);
-      if (pi < 0) return '';
-      const pcx = 10;
-      return `<line x1="${cx}" y1="${i*28+14}" x2="${pcx}" y2="${pi*28+14}" stroke="${colors[col % colors.length]}" stroke-width="2" opacity=".4"/>`;
-    }).join('');
-
-    const dot = `<circle cx="${cx}" cy="${i*28+14}" r="4" fill="${colors[col % colors.length]}"/>`;
-    const refs = parseRefs(c.refs);
-    return;
-  });
-
-  const svgH = gCommits.length * 28;
-  const svgW = maxCols * colWidth + 10;
-
-  let svg = `<svg class="graph-svg" width="${svgW}" height="${svgH}" style="position:absolute;left:0;top:0">`;
-  gCommits.forEach((c, i) => {
-    let col = 0;
-    if (c.refs) {
-      const refParts = c.refs.split(',').map(r => r.trim()).filter(Boolean);
-      for (const r of refParts) {
-        if (!r.includes('/') && !r.startsWith('tag:') && !r.startsWith('HEAD')) {
-          if (!(r in branchMap)) branchMap[r] = branchIdx++ % colors.length;
-          col = branchMap[r];
-        }
-      }
-    }
-    const cx = col * colWidth + 10;
-    const cy = i * 28 + 14;
-    svg += `<circle cx="${cx}" cy="${cy}" r="4" fill="${colors[col % colors.length]}"/>`;
-    c.parents.forEach(ph => {
-      const pi = gCommits.findIndex(gc => gc.hash === ph);
-      if (pi >= 0) {
-        let pcol = col;
-        svg += `<line x1="${cx}" y1="${cy}" x2="${cx}" y2="${pi*28+14}" stroke="${colors[pcol % colors.length]}" stroke-width="1.5" opacity=".35"/>`;
-      }
-    });
-  });
-  svg += '</svg>';
-
-  el.innerHTML = `<div class="graph-container" style="padding-left:${svgW+12}px;position:relative">
-    ${svg}
-    ${gCommits.map((c, i) => {
-      const refs = parseRefs(c.refs);
-      return `<div class="graph-row" style="height:28px" onclick="showDiff('${c.hash}')">
-        ${refs}<span class="graph-msg" style="font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--t1)">${esc(c.subject)}</span>
-        <span class="graph-meta">${esc(c.author)} &middot; ${fmtDate(c.date)}</span>
-      </div>`;
-    }).join('')}
-  </div>`;
-}
-
+// =================== INSIGHTS ===================
 async function loadInsights() {
   const [authorsData, activityData] = await Promise.all([LG.authors(repo), LG.recentActivity(repo)]);
   const el = document.getElementById('p-insights');
-  const colors = ['#58a6ff','#bc8cff','#3fb950','#d29922','#f85149','#39d2c0','#f778ba','#79c0ff'];
+  const colors = ['#58a6ff','#bc8cff','#3fb950','#d29922','#f85149','#39d2c0','#f778ba'];
   const total = authorsData.total || 1;
   const maxCommits = (authorsData.authors[0] || {}).commits || 1;
-
-  let authorHtml = '';
-  (authorsData.authors || []).forEach((a, i) => {
-    const pct = (a.commits / total * 100).toFixed(1);
-    const barW = (a.commits / maxCommits * 100);
-    authorHtml += `<div class="author-row">
-      <span class="author-name">${esc(a.name)}</span>
-      <div style="flex:1;background:var(--bg3);border-radius:4px;height:8px;overflow:hidden"><div class="author-bar" style="width:${barW}%;background:${colors[i%colors.length]}"></div></div>
-      <span class="author-count">${a.commits}</span>
-      <span class="author-pct">${pct}%</span>
-    </div>`;
-  });
-
-  const days = activityData.days || [];
-  const maxDay = Math.max(...days.map(d => d.count), 1);
-  let activityHtml = '';
-  days.forEach(d => {
-    const h = (d.count / maxDay * 100);
-    const intensity = Math.min(1, d.count / maxDay);
-    const color = `hsl(140, ${40+intensity*50}%, ${25+intensity*30}%)`;
-    const label = d.date.substring(5);
-    activityHtml += `<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center">
-      <div class="activity-bar" style="height:${Math.max(4,h)}%;background:${color};width:100%" title="${d.date}: ${d.count} Commits"></div>
-      <div class="activity-label">${label}</div>
-    </div>`;
-  });
-
-  el.innerHTML = `
-    <div class="section-title">Statistik</div>
-    <div class="stat-grid">
-      <div class="stat-card"><h4>Commits</h4><div class="big" style="color:var(--blue)">${commits.length}</div><div class="sub">Gesamt</div></div>
-      <div class="stat-card"><h4>Autoren</h4><div class="big" style="color:var(--purple)">${authorsData.authors.length}</div><div class="sub">Beitragende</div></div>
-      <div class="stat-card"><h4>Aktive Tage</h4><div class="big" style="color:var(--green)">${days.length}</div><div class="sub">Letzte 30 Tage</div></div>
-      <div class="stat-card"><h4>Dateien</h4><div class="big" style="color:var(--orange)">${Object.keys(hotFilesMap).length}</div><div class="sub">Getrackt</div></div>
-    </div>
-    <div class="section-title">Aktivitat (letzte 30 Tage)</div>
-    <div class="activity-chart">${activityHtml || '<div class="empty-msg" style="width:100%">Keine Aktivitat</div>'}</div>
-    <div class="section-title">Top Autoren</div>
-    <div class="author-list">${authorHtml || '<div class="empty-msg">Keine Daten</div>'}</div>
-    <div class="section-title">Heisse Dateien (meiste Anderungen)</div>
-    <div class="author-list">${Object.entries(hotFilesMap).sort((a,b) => b[1]-a[1]).slice(0,15).map(([f,c], i) => {
-      const pct = (c / maxDay * 100);
-      return `<div class="author-row" onclick="showFile('${esc(f)}')" style="cursor:pointer">
-        <span class="author-name" style="font-family:'Cascadia Code','Consolas',monospace;font-size:11px">${esc(f)}</span>
-        <div style="flex:1;background:var(--bg3);border-radius:4px;height:8px;overflow:hidden"><div class="author-bar" style="width:${Math.min(100, pct*3)}%;background:${colors[i%colors.length]}"></div></div>
-        <span class="author-count">${c}x</span>
-      </div>`;
-    }).join('')}</div>
-    <div class="section-title">Tastaturkurzel</div>
-    <div class="shortcut-grid">
-      <div class="shortcut-item"><span class="shortcut-key">Strg+F</span><span class="shortcut-desc">Suche</span></div>
-      <div class="shortcut-item"><span class="shortcut-key">1-7</span><span class="shortcut-desc">Tab wechseln</span></div>
-      <div class="shortcut-item"><span class="shortcut-key">R</span><span class="shortcut-desc">Refresh</span></div>
-      <div class="shortcut-item"><span class="shortcut-key">Esc</span><span class="shortcut-desc">Modal schliessen</span></div>
-      <div class="shortcut-item"><span class="shortcut-key">O</span><span class="shortcut-desc">Ordner offnen</span></div>
-      <div class="shortcut-item"><span class="shortcut-key">Rechtsklick</span><span class="shortcut-desc">Kontextmenue</span></div>
-    </div>`;
+  let authorHtml = (authorsData.authors||[]).map((a,i) => {
+    const pct = (a.commits/total*100).toFixed(1);
+    return `<div class="author-row"><span class="author-name">${esc(a.name)}</span><div style="flex:1;background:var(--bg3);border-radius:4px;height:8px;overflow:hidden"><div class="author-bar" style="width:${a.commits/maxCommits*100}%;background:${colors[i%colors.length]}"></div></div><span class="author-count">${a.commits}</span><span class="author-count">${pct}%</span></div>`;
+  }).join('');
+  const days = activityData.days||[];
+  const maxDay = Math.max(...days.map(d=>d.count),1);
+  let actHtml = days.map(d => {
+    const h = Math.max(4, d.count/maxDay*100);
+    const int = Math.min(1, d.count/maxDay);
+    return `<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center"><div class="activity-bar" style="height:${h}%;background:hsl(140,${40+int*50}%,${25+int*30}%);width:100%" title="${d.date}: ${d.count}"></div><div style="font-size:9px;color:var(--t4)">${d.date.substring(8)}</div></div>`;
+  }).join('');
+  el.innerHTML = `<div class="section-title">Statistik</div>
+  <div class="stat-grid">
+    <div class="stat-card"><h4>Commits</h4><div class="big" style="color:var(--blue)">${commits.length}</div><div class="sub">Gesamt</div></div>
+    <div class="stat-card"><h4>Autoren</h4><div class="big" style="color:var(--purple)">${authorsData.authors.length}</div><div class="sub">Beitragende</div></div>
+    <div class="stat-card"><h4>Aktive Tage</h4><div class="big" style="color:var(--green)">${days.length}</div><div class="sub">Letzte 30 Tage</div></div>
+  </div>
+  <div class="section-title">Aktivitat</div><div class="activity-chart">${actHtml||'<div class="empty-msg" style="width:100%">Keine</div>'}</div>
+  <div class="section-title">Autoren</div><div class="author-list">${authorHtml}</div>
+  <div class="section-title">Tastaturkurzel</div>
+  <div class="shortcut-grid">
+    <div class="shortcut-item"><span class="shortcut-key">Strg+F</span><span class="shortcut-desc">Suche</span></div>
+    <div class="shortcut-item"><span class="shortcut-key">1-5</span><span class="shortcut-desc">Tab wechseln</span></div>
+    <div class="shortcut-item"><span class="shortcut-key">R</span><span class="shortcut-desc">Refresh</span></div>
+    <div class="shortcut-item"><span class="shortcut-key">Esc</span><span class="shortcut-desc">Schliessen</span></div>
+  </div>`;
 }
 
-async function fileContextMenu(e, filePath) {
-  e.preventDefault(); e.stopPropagation();
-  const fullPath = repo + '/' + filePath.replace(/\//g, '\\');
-  const action = await LG.contextMenu([
-    { id: 'open-explorer', label: 'Im Ordner offnen' },
-    { id: 'open-file', label: 'Datei offnen' },
-    { id: 'copy-path', label: 'Pfad kopieren' },
-    { id: 'show-diff', label: 'Diff anzeigen' }
-  ]);
-  if (!action) return;
-  if (action === 'open-explorer') LG.showInFolder(fullPath);
-  else if (action === 'open-file') LG.openPath(fullPath);
-  else if (action === 'copy-path') navigator.clipboard.writeText(fullPath);
-  else if (action === 'show-diff') showFileDiff(filePath);
-}
-
-async function liveContextMenu(e, fp) {
-  e.preventDefault(); e.stopPropagation();
-  const fullPath = repo + '/' + fp.replace(/\//g, '\\');
-  const action = await LG.contextMenu([
-    { id: 'open-explorer', label: 'Im Ordner offnen' },
-    { id: 'open-file', label: 'Datei offnen' },
-    { id: 'copy-path', label: 'Pfad kopieren' }
-  ]);
-  if (!action) return;
-  if (action === 'open-explorer') LG.showInFolder(fullPath);
-  else if (action === 'open-file') LG.openPath(fullPath);
-  else if (action === 'copy-path') navigator.clipboard.writeText(fullPath);
-}
-
+// =================== DIFF MODAL ===================
 async function showDiff(hash) {
   const c = commits.find(x => x.hash === hash);
   document.getElementById('diffTitle').textContent = c ? `${c.hashShort} - ${c.message.split('\n')[0]}` : hash;
   document.getElementById('diffBody').innerHTML = '<div class="empty-msg">Lade...</div>';
   document.getElementById('diffModal').style.display = 'flex';
   const d = await LG.commitDiff(repo, hash);
-  if (d.error) { document.getElementById('diffBody').innerHTML = `<div class="empty-msg">${esc(d.error)}</div>`; return; }
-  document.getElementById('diffBody').innerHTML = renderDiff(d.diff);
+  document.getElementById('diffBody').innerHTML = d.error ? `<div class="empty-msg">${esc(d.error)}</div>` : renderDiff(d.diff);
 }
 
-async function showFileDiff(fp) {
-  document.getElementById('diffTitle').textContent = 'Diff: ' + fp;
-  document.getElementById('diffBody').innerHTML = '<div class="empty-msg">Lade...</div>';
-  document.getElementById('diffModal').style.display = 'flex';
-  const d = await LG.fileDiff(repo, fp);
-  document.getElementById('diffBody').innerHTML = d.diff ? renderDiff(d.diff) : '<div class="empty-msg">Keine Aenderungen</div>';
-}
-
-async function showFile(fp) {
-  document.getElementById('diffTitle').textContent = fp;
-  document.getElementById('diffBody').innerHTML = '<div class="empty-msg">Lade...</div>';
-  document.getElementById('diffModal').style.display = 'flex';
-  const d = await LG.fileContent(repo, fp);
-  if (d.error) { document.getElementById('diffBody').innerHTML = `<div class="empty-msg">${esc(d.error)}</div>`; return; }
-  document.getElementById('diffBody').innerHTML = (d.content || '').split('\n').map((l,i) => `<div class="dline ctx"><span class="ln">${i+1}</span><span class="lc">${esc(l)}</span></div>`).join('');
-}
+async function showFileDiff(fp) { wsOpenFile(fp); switchTab('workspace'); wsViewModeCurrent = 'diff'; document.getElementById('wsBtnContent').classList.remove('active'); document.getElementById('wsBtnDiff').classList.add('active'); wsShowDiff(fp); }
 
 function renderDiff(text) {
   if (!text) return '<div class="empty-msg">Keine Aenderungen</div>';
@@ -647,123 +633,103 @@ function renderDiff(text) {
     if (line.startsWith('diff --git')) {
       if (inD) html += '</div>';
       const m = line.match(/b\/(.+)$/);
-      html += `<div class="dfile">${esc(m ? m[1] : line)} <span class="stats"><span class="dstats-a">+${adds}</span><span class="dstats-d">-${dels}</span></span></div><div>`;
-      inD = true; adds = 0; dels = 0; continue;
+      html += `<div class="dfile">${esc(m?m[1]:line)} <span class="stats"><span class="dstats-a">+${adds}</span><span class="dstats-d">-${dels}</span></span></div><div>`;
+      inD=true;adds=0;dels=0;continue;
     }
-    if (line.startsWith('@@')) { html += `<div class="dline hunk"><span class="ln"></span><span class="lc">${esc(line)}</span></div>`; continue; }
-    if (line.startsWith('+++') || line.startsWith('---') || line.startsWith('index ') || line.startsWith('Binary')) continue;
-    if (line.startsWith('+')) { adds++; html += `<div class="dline add"><span class="ln"></span><span class="lc">${esc(line.slice(1))}</span></div>`; }
-    else if (line.startsWith('-')) { dels++; html += `<div class="dline del"><span class="ln"></span><span class="lc">${esc(line.slice(1))}</span></div>`; }
-    else { html += `<div class="dline ctx"><span class="ln"></span><span class="lc">${esc(line.startsWith(' ')?line.slice(1):line)}</span></div>`; }
+    if (line.startsWith('@@')){html+=`<div class="dline hunk"><span class="ln"></span><span class="lc">${esc(line)}</span></div>`;continue;}
+    if (line.startsWith('+++')||line.startsWith('---')||line.startsWith('index ')||line.startsWith('Binary'))continue;
+    if(line.startsWith('+')){adds++;html+=`<div class="dline add"><span class="ln"></span><span class="lc">${esc(line.slice(1))}</span></div>`;}
+    else if(line.startsWith('-')){dels++;html+=`<div class="dline del"><span class="ln"></span><span class="lc">${esc(line.slice(1))}</span></div>`;}
+    else{html+=`<div class="dline ctx"><span class="ln"></span><span class="lc">${esc(line.startsWith(' ')?line.slice(1):line)}</span></div>`;}
   }
-  if (inD) html += '</div>';
+  if(inD)html+='</div>';
   return html;
 }
 
-function closeModal() { document.getElementById('diffModal').style.display = 'none'; }
+function closeModal(){document.getElementById('diffModal').style.display='none';}
 
+// =================== CONTEXT MENU ===================
+async function fileContextMenu(e, filePath) {
+  e.preventDefault();e.stopPropagation();
+  const fullPath = repo+'/'+filePath.replace(/\//g,'\\');
+  const action = await LG.contextMenu([
+    {id:'open-explorer',label:'Im Ordner offnen'},
+    {id:'open-file',label:'Datei offnen'},
+    {id:'copy-path',label:'Pfad kopieren'},
+    {id:'show-diff',label:'Diff anzeigen'}
+  ]);
+  if(!action)return;
+  if(action==='open-explorer')LG.showInFolder(fullPath);
+  else if(action==='open-file')LG.openPath(fullPath);
+  else if(action==='copy-path')navigator.clipboard.writeText(fullPath);
+  else if(action==='show-diff')showFileDiff(filePath);
+}
+
+// =================== TOASTS ===================
 function showToast(type, file) {
-  const container = document.getElementById('toasts');
-  const labels = { add: '+ Neu', change: '~ Geandert', unlink: '- Geloscht' };
-  const toast = document.createElement('div');
-  toast.className = `toast t-${type === 'unlink' ? 'del' : type}`;
-  toast.innerHTML = `<span>${labels[type] || type}</span><span style="font-family:'Cascadia Code','Consolas',monospace;font-size:11px;opacity:.7">${esc(file)}</span>`;
-  toast.onclick = () => { toast.remove(); };
-  container.appendChild(toast);
-  setTimeout(() => { if (toast.parentNode) toast.remove(); }, 4000);
-  while (container.children.length > 5) container.removeChild(container.firstChild);
+  const c = document.getElementById('toasts');
+  const labels={add:'+ Neu',change:'~ Geandert',unlink:'- Geloscht'};
+  const t = document.createElement('div');
+  t.className=`toast t-${type==='unlink'?'del':type}`;
+  t.innerHTML=`<span>${labels[type]||type}</span><span style="font-family:'Cascadia Code','Consolas',monospace;font-size:11px;opacity:.7">${esc(file)}</span>`;
+  t.onclick=()=>t.remove();
+  c.appendChild(t);
+  setTimeout(()=>{if(t.parentNode)t.remove();},4000);
+  while(c.children.length>5)c.removeChild(c.firstChild);
 }
 
-function toggleLiveEvent(el) {
-  const wasExpanded = el.classList.contains('expanded');
-  el.classList.toggle('expanded');
-  if (!wasExpanded) {
-    const area = el.querySelector('.live-diff-area');
-    if (area && !area.dataset.loaded) loadInlineDiff(el, area);
+// =================== LIVE CHANGES ===================
+LG.onLiveChange(async (data) => {
+  if (!repo) return;
+  const evtMap = {add:'add',change:'change',unlink:'unlink',addDir:'add',unlinkDir:'unlink'};
+  const evtType = evtMap[data.event] || 'change';
+
+  if (data.event !== 'addDir' && data.event !== 'unlinkDir') showToast(evtType, data.file);
+
+  // workspace live strip
+  const strip = document.getElementById('wsLiveStrip');
+  const icon = data.event === 'add' ? '+' : data.event === 'unlink' ? '-' : '~';
+  const cls = data.event === 'add' ? 'add' : data.event === 'unlink' ? 'unlink' : 'change';
+  const time = new Date(data.timestamp).toLocaleTimeString('de-DE');
+  const evDiv = document.createElement('div');
+  evDiv.className = 'ws-live-event';
+  evDiv.innerHTML = `<span class="le-icon ${cls}">${icon}</span><span class="le-file" onclick="wsOpenFile('${esc(data.file)}')">${esc(data.file)}</span><span class="le-time">${time}</span>`;
+  strip.insertBefore(evDiv, strip.firstChild);
+  while (strip.children.length > 30) strip.removeChild(strip.lastChild);
+
+  // auto-refresh code viewer if the active file changed
+  if (wsActiveFile === data.file && (data.event === 'change' || data.event === 'add')) {
+    wsShowFile(wsActiveFile);
   }
-}
+});
 
-async function loadInlineDiff(el, area) {
-  const fp = el.dataset.file;
-  area.dataset.loaded = '1';
-  area.innerHTML = '<div class="live-diff-loading">Lade Diff...</div>';
-  const d = await LG.fileDiff(repo, fp);
-  area.innerHTML = d.diff ? renderDiff(d.diff) : '<div class="live-diff-loading">Keine Aenderungen gegenueber Git</div>';
+// =================== UTILS ===================
+function fileIcon(n) {
+  const ext = n.split('.').pop().toLowerCase();
+  const m = {js:'&#128220;',ts:'&#128220;',jsx:'&#128220;',tsx:'&#128220;',py:'&#128013;',rs:'&#9881;',go:'&#128230;',html:'&#127760;',css:'&#127912;',json:'&#128203;',md:'&#128196;',yml:'&#128203;',yaml:'&#128203;',sh:'&#128423;',bat:'&#128423;',sql:'&#128451;',png:'&#128247;',jpg:'&#128247;',svg:'&#127912;',gif:'&#128247;',exe:'&#9881;',dll:'&#9881;',toml:'&#128203;',lock:'&#128274;',env:'&#128274;'};
+  return m[ext] || '&#128196;';
 }
 
 function esc(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function fmtDate(d) {
   try {
-    const dt = new Date(d), now = new Date(), ms = now - dt;
-    const m = Math.floor(ms/60000), h = Math.floor(ms/3600000), dy = Math.floor(ms/86400000);
-    if (m < 1) return 'jetzt'; if (m < 60) return m + ' Min.'; if (h < 24) return h + ' Std.'; if (dy < 7) return dy + ' Tage';
+    const dt=new Date(d),now=new Date(),ms=now-dt;
+    const m=Math.floor(ms/60000),h=Math.floor(ms/3600000),dy=Math.floor(ms/86400000);
+    if(m<1)return 'jetzt';if(m<60)return m+' Min.';if(h<24)return h+' Std.';if(dy<7)return dy+' Tage';
     return dt.toLocaleDateString('de-DE');
-  } catch { return d; }
+  } catch{return d;}
 }
-
-const evtLabels = {
-  add:{icon:'+',label:'NEU',cls:'t-add',ecls:'evt-add'},
-  change:{icon:'~',label:'GEANDERT',cls:'t-change',ecls:'evt-change'},
-  unlink:{icon:'-',label:'GELOSCHT',cls:'t-unlink',ecls:'evt-unlink'},
-  addDir:{icon:'+',label:'NEUER ORDNER',cls:'t-add',ecls:'evt-add'},
-  unlinkDir:{icon:'-',label:'ORDNER GELOSCHT',cls:'t-unlink',ecls:'evt-unlink'}
-};
-
-LG.onLiveChange(async (data) => {
-  if (!repo) return;
-  const info = evtLabels[data.event] || {icon:'?',label:data.event.toUpperCase(),cls:'t-change',ecls:'evt-change'};
-  const time = new Date(data.timestamp).toLocaleTimeString('de-DE');
-  const canDiff = data.event === 'change' || data.event === 'add';
-
-  if (data.event !== 'addDir' && data.event !== 'unlinkDir') showToast(data.event, data.file);
-
-  const feed = document.getElementById('liveFeed');
-  const empty = feed.querySelector('.empty-msg');
-  if (empty) empty.remove();
-
-  const div = document.createElement('div');
-  div.className = `live-event ${info.ecls}`;
-  div.dataset.file = data.file;
-
-  let linesHtml = '';
-  if (canDiff) linesHtml = '<span class="live-lines" data-pending="1"><span class="ll-a">...</span></span>';
-
-  div.innerHTML = `
-    <div class="live-event-header">
-      ${canDiff ? '<span class="live-chevron">&#9654;</span>' : '<span style="width:16px"></span>'}
-      <span class="live-icon">${info.icon}</span>
-      <div class="live-body">
-        <div class="live-top"><span class="live-type ${info.cls}">${info.label}</span><span class="live-file">${esc(data.file)}</span></div>
-        <div class="live-meta"><span class="live-time">${time}</span>${linesHtml}</div>
-      </div>
-    </div>
-    ${canDiff ? '<div class="live-diff-area"></div>' : ''}`;
-
-  div.querySelector('.live-event-header').addEventListener('click', () => { if (canDiff) toggleLiveEvent(div); });
-  div.querySelector('.live-event-header').addEventListener('contextmenu', (e) => liveContextMenu(e, data.file));
-  feed.insertBefore(div, feed.firstChild);
-
-  if (canDiff) {
-    LG.diffStats(repo, data.file).then(stats => {
-      const linesEl = div.querySelector('.live-lines');
-      if (linesEl) linesEl.innerHTML = `<span class="ll-a">+${stats.adds}</span><span class="ll-d">-${stats.dels}</span>`;
-    });
-  }
-
-  while (feed.children.length > 80) feed.removeChild(feed.lastChild);
-  const mod = document.getElementById('iModified');
-  if (data.event === 'change' || data.event === 'unlink') mod.textContent = parseInt(mod.textContent || '0') + 1;
-});
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
   if (e.target.tagName === 'INPUT') return;
-  const tabs = ['commits','graph','push','status','live','files','insights'];
+  const tabs = ['workspace','commits','push','status','insights'];
   if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
   if (e.key === 'r' && !e.ctrlKey) refreshRepo();
   if (e.key === 'o' && !e.ctrlKey) browseFolder();
-  if (tabs[parseInt(e.key)-1]) switchTab(tabs[parseInt(e.key)-1]);
+  const idx = parseInt(e.key);
+  if (idx >= 1 && idx <= tabs.length) switchTab(tabs[idx-1]);
 });
 </script>
 </body>
