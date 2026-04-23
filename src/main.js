@@ -404,22 +404,26 @@ ipcMain.handle('git:liveFileContent', async (_, repoPath, filePath) => {
 ipcMain.handle('git:compare', async (_, repoPath, hashFrom, hashTo) => {
     try {
         const git = simpleGit(repoPath);
-        const diff = await git.diff([hashFrom, hashTo]);
-        const statRaw = await git.diff(['--stat', hashFrom, hashTo]);
-        const files = statRaw.trim().split('\n').filter(l => l.includes('|')).map(l => {
-            const parts = l.split('|');
-            const name = parts[0].trim();
-            const changeInfo = parts[1] || '';
-            const addMatch = changeInfo.match(/(\d+) add/);
-            const delMatch = changeInfo.match(/(\d+) del/);
-            const binMatch = changeInfo.match(/Bin/);
-            return {
-                file: name,
-                adds: addMatch ? parseInt(addMatch[1]) : 0,
-                dels: delMatch ? parseInt(delMatch[1]) : 0,
-                binary: !!binMatch
-            };
-        });
+        const args = (hashTo === 'WORKING')
+            ? [hashFrom]
+            : (hashFrom === 'WORKING')
+                ? [hashTo]
+                : [hashFrom, hashTo];
+        const [diff, statRaw] = await Promise.all([
+            git.diff([...args]),
+            git.diff(['--stat=300', ...args])
+        ]);
+        const files = [];
+        for (const line of statRaw.trim().split('\n')) {
+            if (!line.includes('|')) continue;
+            const pipeIdx = line.indexOf('|');
+            const name = line.substring(0, pipeIdx).trim();
+            const rest = line.substring(pipeIdx + 1);
+            if (!name) continue;
+            const inserts = (rest.match(/\+/g) || []).length;
+            const deletes = (rest.match(/-/g) || []).length;
+            files.push({ file: name, adds: inserts, dels: deletes, binary: rest.includes('Bin') });
+        }
         return { diff, files };
     } catch (err) {
         return { error: err.message, diff: '', files: [] };

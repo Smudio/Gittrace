@@ -219,24 +219,28 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .live-diff-area .dline .ln{width:40px;font-size:10px}
 
 /* === COMPARE === */
-.cmp-header{display:flex;align-items:center;justify-content:space-between;padding:12px 0;margin-bottom:8px;border-bottom:1px solid var(--border);flex-shrink:0}
+.cmp-header{display:flex;align-items:center;justify-content:space-between;padding:10px 0;margin-bottom:0;border-bottom:1px solid var(--border);flex-shrink:0}
 .cmp-selectors{display:flex;align-items:center;gap:10px}
-.cmp-selectors select{padding:6px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:12px;font-family:'Cascadia Code','Consolas',monospace;min-width:320px;outline:none;cursor:pointer}
+.cmp-selectors select{padding:6px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:12px;font-family:'Cascadia Code','Consolas',monospace;min-width:300px;max-width:420px;outline:none;cursor:pointer}
 .cmp-selectors select:focus{border-color:var(--blue)}
 .cmp-selectors select option{background:var(--bg1);color:var(--t1)}
 .cmp-arrow{font-size:20px;color:var(--t3)}
 .cmp-stats{display:flex;gap:12px;font-size:11px}
 .cmp-stats span{display:flex;align-items:center;gap:4px}
 .cmp-stats .cs-a{color:var(--green)}.cmp-stats .cs-d{color:var(--red)}.cmp-stats .cs-f{color:var(--blue)}
-.cmp-files{display:flex;gap:4px;padding:8px 0;overflow-x:auto;border-bottom:1px solid var(--border);flex-shrink:0}
-.cmp-file-tab{padding:5px 12px;border-radius:6px;font-size:11px;font-family:'Cascadia Code','Consolas',monospace;cursor:pointer;background:var(--bg2);border:1px solid var(--border);color:var(--t2);transition:all .12s;white-space:nowrap;display:flex;align-items:center;gap:6px}
-.cmp-file-tab:hover{background:var(--bg3);color:var(--t1)}
-.cmp-file-tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
-.cmp-file-tab .cf-badge{font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700}
-.cmp-file-tab .cf-a{background:rgba(63,185,80,.3);color:var(--green)}.cmp-file-tab .cf-d{background:rgba(248,81,73,.3);color:var(--red)}
-.cmp-split-wrap{flex:1;overflow:auto;margin-top:8px}
-.cmp-empty-msg{text-align:center;padding:40px;color:var(--t4);font-size:13px}
-.cmp-split{display:flex;width:100%;min-width:1200px}
+.cmp-layout{display:flex;flex:1;overflow:hidden}
+.cmp-file-list{width:260px;min-width:180px;background:var(--bg1);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0}
+.cmp-fl-head{padding:8px 12px;font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg1);z-index:1}
+.cmp-fi{display:flex;align-items:center;gap:8px;padding:6px 12px;cursor:pointer;transition:background .1s;font-size:12px;border-left:3px solid transparent}
+.cmp-fi:hover{background:var(--bg3)}
+.cmp-fi.active{background:var(--bg2);border-left-color:var(--blue)}
+.cmp-fi .cfi-icon{font-size:12px;flex-shrink:0}
+.cmp-fi .cfi-name{font-family:'Cascadia Code','Consolas',monospace;font-size:11px;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.cmp-fi .cfi-stats{display:flex;gap:4px;font-size:10px;font-weight:600;flex-shrink:0}
+.cmp-fi .cfi-a{color:var(--green)}.cmp-fi .cfi-d{color:var(--red)}
+.cmp-diff-area{flex:1;overflow:auto}
+.cmp-empty-msg{text-align:center;padding:60px;color:var(--t4);font-size:13px}
+.cmp-split{display:flex;width:100%}
 .cmp-side{flex:1;min-width:0;overflow:hidden}
 .cmp-side:first-child{border-right:2px solid var(--border)}
 .cmp-side-head{padding:6px 14px;background:var(--bg3);font-size:11px;font-weight:600;color:var(--t2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:1}
@@ -249,8 +253,6 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .cmp-line.del{background:rgba(248,81,73,.08)}.cmp-line.del .ctext{color:var(--t2)}
 .cmp-line.hdr{background:rgba(88,166,255,.1);color:var(--blue);font-weight:500;font-size:11px}
 .cmp-line.empty{background:var(--bg0)}.cmp-line.empty .ctext{color:transparent}
-.cmp-minimap{position:fixed;right:12px;top:50%;transform:translateY(-50%);width:8px;height:200px;background:var(--bg3);border-radius:4px;overflow:hidden;z-index:50;cursor:pointer}
-.cmp-mm-add{background:var(--green);position:absolute;left:0;width:100%}.cmp-mm-del{background:var(--red);position:absolute;left:0;width:100%}
 
 ::-webkit-scrollbar{width:7px}
 ::-webkit-scrollbar-track{background:var(--bg0)}
@@ -337,8 +339,8 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
   <div class="panel" id="p-commits"></div>
 
   <!-- COMPARE (side-by-side diff) -->
-  <div class="panel" id="p-compare">
-    <div class="cmp-header">
+  <div class="panel" id="p-compare" style="display:none;flex-direction:column;padding:0">
+    <div class="cmp-header" style="padding:10px 16px">
       <div class="cmp-selectors">
         <select id="cmpFrom" onchange="runCompare()"></select>
         <div class="cmp-arrow">&#8594;</div>
@@ -346,9 +348,13 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       </div>
       <div class="cmp-stats" id="cmpStats"></div>
     </div>
-    <div class="cmp-files" id="cmpFiles"></div>
-    <div class="cmp-split-wrap" id="cmpDiffWrap">
-      <div class="cmp-empty-msg">Zwei Commits zum Vergleichen auswaehlen</div>
+    <div class="cmp-layout" id="cmpLayout">
+      <div class="cmp-file-list" id="cmpFileList">
+        <div class="cmp-fl-head">Geanderte Dateien</div>
+      </div>
+      <div class="cmp-diff-area" id="cmpDiffWrap">
+        <div class="cmp-empty-msg">Zwei Commits zum Vergleichen auswaehlen</div>
+      </div>
     </div>
   </div>
 
@@ -388,9 +394,15 @@ let wsLiveEvents = [];
 function switchTab(t) {
   curTab = t;
   document.querySelectorAll('.tab').forEach(e => e.classList.toggle('active', e.dataset.tab === t));
-  document.querySelectorAll('.panel, .ws-panel').forEach(e => e.classList.remove('active'));
+  document.querySelectorAll('.panel, .ws-panel').forEach(e => {
+    e.classList.remove('active');
+    if (e.id === 'p-compare') e.style.display = 'none';
+  });
   const p = document.getElementById('p-' + t);
-  if (p) p.classList.add('active');
+  if (p) {
+    p.classList.add('active');
+    if (t === 'compare') p.style.display = 'flex';
+  }
 }
 
 async function browseFolder() { const p = await LG.openFolder(); if (p) await loadRepo(p); }
@@ -835,18 +847,16 @@ LG.onLiveChange(async (data) => {
 // =================== COMPARE (side-by-side diff) ===================
 function populateCompareSelects() {
   const opts = '<option value="">-- Commit wahlen --</option>' +
-    '<option value="WORKING">Aktuell (Working Tree)</option>' +
-    commits.map(c => `<option value="${c.hash}">${c.hashShort} ${esc(c.message.split('\n')[0].substring(0,60))} (${esc(c.author)})</option>`).join('');
-  const sf = document.getElementById('cmpFrom');
-  const st = document.getElementById('cmpTo');
-  sf.innerHTML = opts;
-  st.innerHTML = opts;
+    '<option value="WORKING">AKTUELL (Working Tree)</option>' +
+    commits.map(c => `<option value="${c.hash}">${c.hashShort} ${esc(c.message.split('\n')[0].substring(0,50))}</option>`).join('');
+  document.getElementById('cmpFrom').innerHTML = opts;
+  document.getElementById('cmpTo').innerHTML = opts;
   if (commits.length >= 2) {
-    sf.value = commits[1].hash;
-    st.value = commits[0].hash;
+    document.getElementById('cmpFrom').value = commits[1].hash;
+    document.getElementById('cmpTo').value = commits[0].hash;
   } else if (commits.length === 1) {
-    sf.value = commits[0].hash;
-    st.value = 'WORKING';
+    document.getElementById('cmpFrom').value = commits[0].hash;
+    document.getElementById('cmpTo').value = 'WORKING';
   }
   runCompare();
 }
@@ -855,48 +865,59 @@ async function runCompare() {
   const from = document.getElementById('cmpFrom').value;
   const to = document.getElementById('cmpTo').value;
   const stats = document.getElementById('cmpStats');
-  const filesEl = document.getElementById('cmpFiles');
+  const fileList = document.getElementById('cmpFileList');
   const wrap = document.getElementById('cmpDiffWrap');
 
   if (!from || !to || from === to) {
     stats.innerHTML = '';
-    filesEl.innerHTML = '';
+    fileList.innerHTML = '<div class="cmp-fl-head">Geanderte Dateien</div>';
     wrap.innerHTML = '<div class="cmp-empty-msg">Zwei verschiedene Versionen auswaehlen</div>';
     return;
   }
 
+  const fromLabel = from === 'WORKING' ? 'Working Tree' : document.getElementById('cmpFrom').selectedOptions[0].text.substring(0, 30);
+  const toLabel = to === 'WORKING' ? 'Working Tree' : document.getElementById('cmpTo').selectedOptions[0].text.substring(0, 30);
   stats.innerHTML = '<span style="color:var(--t3)">Lade...</span>';
-  const d = await LG.compare(repo, from, to);
-  if (d.error) { wrap.innerHTML = `<div class="cmp-empty-msg">${esc(d.error)}</div>`; return; }
 
-  const totalAdds = d.files.reduce((s, f) => s + f.adds, 0);
-  const totalDels = d.files.reduce((s, f) => s + f.dels, 0);
-  stats.innerHTML = `
-    <span class="cs-f">${d.files.length} Dateien</span>
-    <span class="cs-a">+${totalAdds}</span>
-    <span class="cs-d">-${totalDels}</span>`;
+  try {
+    const d = await LG.compare(repo, from, to);
+    if (d.error) { wrap.innerHTML = `<div class="cmp-empty-msg">${esc(d.error)}</div>`; stats.innerHTML = ''; return; }
 
-  window._cmpDiffText = d.diff;
-  window._cmpFiles = d.files;
+    const totalA = d.files.reduce((s, f) => s + f.adds, 0);
+    const totalD = d.files.reduce((s, f) => s + f.dels, 0);
+    stats.innerHTML = `<span class="cs-f">${d.files.length} Dateien</span><span class="cs-a">+${totalA}</span><span class="cs-d">-${totalD}</span>`;
 
-  if (!d.files.length) {
-    filesEl.innerHTML = '';
-    wrap.innerHTML = '<div class="cmp-empty-msg" style="color:var(--green)">Keine Unterschiede</div>';
-    return;
+    window._cmpDiffText = d.diff;
+    window._cmpFiles = d.files;
+    window._cmpFrom = from;
+    window._cmpTo = to;
+    window._cmpFromLabel = fromLabel;
+    window._cmpToLabel = toLabel;
+
+    if (!d.files.length) {
+      fileList.innerHTML = '<div class="cmp-fl-head">Geanderte Dateien</div><div class="cmp-empty-msg" style="padding:20px;color:var(--green)">Keine Unterschiede</div>';
+      wrap.innerHTML = '<div class="cmp-empty-msg" style="color:var(--green)">Identisch - keine Unterschiede</div>';
+      return;
+    }
+
+    fileList.innerHTML = '<div class="cmp-fl-head">Geanderte Dateien (' + d.files.length + ')</div>' +
+      d.files.map((f, i) => `<div class="cmp-fi ${i===0?'active':''}" onclick="showCmpFile(${i},this)" oncontextmenu="fileContextMenu(event,'${esc(f.file)}')">
+        <span class="cfi-icon">${fileIcon(f.file)}</span>
+        <span class="cfi-name">${esc(f.file.split('/').pop())}</span>
+        <span class="cfi-stats">${f.adds?`<span class="cfi-a">+${f.adds}</span>`:''}${f.dels?`<span class="cfi-d">-${f.dels}</span>`:''}</span>
+      </div>`).join('');
+
+    showCmpFile(0);
+  } catch (err) {
+    stats.innerHTML = '';
+    wrap.innerHTML = `<div class="cmp-empty-msg">Fehler: ${esc(err.message)}</div>`;
   }
-
-  filesEl.innerHTML = d.files.map((f, i) => {
-    const badge = (f.adds || f.dels) ? `<span class="cf-badge cf-a">+${f.adds}</span><span class="cf-badge cf-d">-${f.dels}</span>` : '';
-    return `<div class="cmp-file-tab ${i===0?'active':''}" onclick="showCmpFile(${i},this)">${esc(f.file)} ${badge}</div>`;
-  }).join('');
-
-  showCmpFile(0);
 }
 
-function showCmpFile(idx, tabEl) {
-  if (tabEl) {
-    document.querySelectorAll('.cmp-file-tab').forEach(e => e.classList.remove('active'));
-    tabEl.classList.add('active');
+function showCmpFile(idx, el) {
+  if (el) {
+    document.querySelectorAll('.cmp-fi').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
   }
   const files = window._cmpFiles || [];
   const diffText = window._cmpDiffText || '';
@@ -910,11 +931,12 @@ function extractFileDiff(fullDiff, fileName) {
   const lines = fullDiff.split('\n');
   let capturing = false;
   let result = [];
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     if (line.startsWith('diff --git')) {
       if (capturing) break;
       const m = line.match(/b\/(.+)$/);
-      if (m && (m[1] === fileName || line.includes(fileName))) capturing = true;
+      if (m && m[1] === fileName) capturing = true;
     }
     if (capturing) result.push(line);
   }
@@ -923,98 +945,66 @@ function extractFileDiff(fullDiff, fileName) {
 
 function renderSideBySide(diffText, fileName) {
   const wrap = document.getElementById('cmpDiffWrap');
-  const lines = diffText.split('\n');
+  if (!diffText) {
+    wrap.innerHTML = `<div class="cmp-empty-msg">Kein Diff fuer ${esc(fileName)}</div>`;
+    return;
+  }
 
-  let leftLines = [];
-  let rightLines = [];
+  const lines = diffText.split('\n');
   let leftNum = 0, rightNum = 0;
-  let leftContent = [], rightContent = [];
+  const left = [], right = [];
 
   for (const line of lines) {
-    if (line.startsWith('diff --git') || line.startsWith('index ') || line.startsWith('Binary')) continue;
-    if (line.startsWith('--- ') || line.startsWith('+++ ')) continue;
+    if (line.startsWith('diff --git') || line.startsWith('index ') || line.startsWith('Binary') || line.startsWith('--- ') || line.startsWith('+++ ')) continue;
     if (line.startsWith('@@')) {
-      const m = line.match(/@@ -(\d+)/);
-      if (m) leftNum = parseInt(m[1]) - 1;
-      const m2 = line.match(/\+(\d+)/);
-      if (m2) rightNum = parseInt(m2[1]) - 1;
-      leftContent.push({ type: 'hdr', num: '', text: line });
-      rightContent.push({ type: 'hdr', num: '', text: line });
+      const lm = line.match(/@@ -(\d+)/); if (lm) leftNum = parseInt(lm[1]) - 1;
+      const rm = line.match(/\+(\d+)/); if (rm) rightNum = parseInt(rm[1]) - 1;
+      left.push({ t: 'hdr', n: '', s: line });
+      right.push({ t: 'hdr', n: '', s: line });
       continue;
     }
     if (line.startsWith('+')) {
       rightNum++;
-      rightContent.push({ type: 'add', num: rightNum, text: line.slice(1) });
+      right.push({ t: 'add', n: rightNum, s: line.slice(1) });
     } else if (line.startsWith('-')) {
       leftNum++;
-      leftContent.push({ type: 'del', num: leftNum, text: line.slice(1) });
+      left.push({ t: 'del', n: leftNum, s: line.slice(1) });
     } else {
-      leftNum++;
-      rightNum++;
-      leftContent.push({ type: 'ctx', num: leftNum, text: line.startsWith(' ') ? line.slice(1) : line });
-      rightContent.push({ type: 'ctx', num: rightNum, text: line.startsWith(' ') ? line.slice(1) : line });
+      leftNum++; rightNum++;
+      const c = line.startsWith(' ') ? line.slice(1) : line;
+      left.push({ t: 'ctx', n: leftNum, s: c });
+      right.push({ t: 'ctx', n: rightNum, s: c });
     }
   }
 
-  const maxLen = Math.max(leftContent.length, rightContent.length);
-  let leftHtml = '', rightHtml = '';
+  // align: pair del/add blocks, pad shorter side
+  const alignedL = [], alignedR = [];
   let li = 0, ri = 0;
-
-  for (let i = 0; i < maxLen; i++) {
-    const l = li < leftContent.length ? leftContent[li] : null;
-    const r = ri < rightContent.length ? rightContent[ri] : null;
-
-    if (l && r && l.type === 'hdr' && r.type === 'hdr') {
-      leftHtml += cmpLine('hdr', '', l.text);
-      rightHtml += cmpLine('hdr', '', r.text);
-      li++; ri++;
-    } else if (l && (l.type === 'del' || l.type === 'ctx') && r && (r.type === 'add' || r.type === 'ctx')) {
-      if (l.type === 'del' && r.type === 'add') {
-        leftHtml += cmpLine('del', l.num, l.text);
-        rightHtml += cmpLine('add', r.num, r.text);
-        li++; ri++;
-      } else if (l.type === 'ctx' && r.type === 'ctx') {
-        leftHtml += cmpLine('ctx', l.num, l.text);
-        rightHtml += cmpLine('ctx', r.num, r.text);
-        li++; ri++;
-      } else if (l.type === 'del') {
-        leftHtml += cmpLine('del', l.num, l.text);
-        rightHtml += cmpLine('empty', '', '');
-        li++;
-      } else {
-        leftHtml += cmpLine('empty', '', '');
-        rightHtml += cmpLine('add', r.num, r.text);
-        ri++;
-      }
-    } else if (l && l.type === 'del') {
-      leftHtml += cmpLine('del', l.num, l.text);
-      rightHtml += cmpLine('empty', '', '');
-      li++;
-    } else if (r && r.type === 'add') {
-      leftHtml += cmpLine('empty', '', '');
-      rightHtml += cmpLine('add', r.num, r.text);
-      ri++;
-    } else if (l) {
-      leftHtml += cmpLine(l.type, l.num, l.text);
-      rightHtml += cmpLine('empty', '', '');
-      li++;
-    } else if (r) {
-      leftHtml += cmpLine('empty', '', '');
-      rightHtml += cmpLine(r.type, r.num, r.text);
-      ri++;
-    }
+  while (li < left.length || ri < right.length) {
+    const lv = left[li], rv = right[ri];
+    if (!lv) { alignedL.push(null); alignedR.push(rv); ri++; continue; }
+    if (!rv) { alignedL.push(lv); alignedR.push(null); ri++; continue; }
+    if (lv.t === 'hdr' && rv.t === 'hdr') { alignedL.push(lv); alignedR.push(rv); li++; ri++; continue; }
+    if (lv.t === 'ctx' && rv.t === 'ctx') { alignedL.push(lv); alignedR.push(rv); li++; ri++; continue; }
+    if (lv.t === 'del') { alignedL.push(lv); alignedR.push(rv && rv.t === 'add' ? rv : null); li++; if (rv && rv.t === 'add') ri++; continue; }
+    if (rv.t === 'add') { alignedL.push(lv && lv.t === 'del' ? lv : null); alignedR.push(rv); if (lv && lv.t !== 'del') li++; ri++; continue; }
+    alignedL.push(lv); alignedR.push(rv); li++; ri++;
   }
 
-  const fromLabel = document.getElementById('cmpFrom').value === 'WORKING' ? 'Working Tree' : document.getElementById('cmpFrom').selectedOptions[0].text.substring(0, 40);
-  const toLabel = document.getElementById('cmpTo').value === 'WORKING' ? 'Working Tree' : document.getElementById('cmpTo').selectedOptions[0].text.substring(0, 40);
+  let leftHtml = '', rightHtml = '';
+  for (let i = 0; i < alignedL.length; i++) {
+    const lv = alignedL[i], rv = alignedR[i];
+    leftHtml += cmpLine(lv ? lv.t : 'empty', lv ? lv.n : '', lv ? lv.s : '');
+    rightHtml += cmpLine(rv ? rv.t : 'empty', rv ? rv.n : '', rv ? rv.s : '');
+  }
 
   wrap.innerHTML = `<div class="cmp-split">
     <div class="cmp-side">
-      <div class="cmp-side-head"><span style="color:var(--red)">&#8592;</span> <span class="csh-file">${esc(fromLabel)}</span></div>
+      <div class="cmp-side-head"><span style="color:var(--red)">&#8592;</span> <span class="csh-file">${esc(window._cmpFromLabel || 'Von')}</span></div>
       ${leftHtml}
     </div>
     <div class="cmp-side">
-      <div class="cmp-side-head"><span style="color:var(--green)">&#8594;</span> <span class="csh-file">${esc(toLabel)}</span></div>
+      <div class="cmp-side-head"><span style="color:var(--green)">&#8594;</span> <span class="csh-file">${esc(window._cmpToLabel || 'Nach')}</span></div>
       ${rightHtml}
     </div>
   </div>`;
