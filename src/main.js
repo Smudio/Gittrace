@@ -13,7 +13,7 @@ function createWindow() {
         height: 850,
         minWidth: 900,
         minHeight: 600,
-        title: 'LiveGit',
+        title: 'Meshtrace',
         backgroundColor: '#0d1117',
         frame: false,
         titleBarStyle: 'hidden',

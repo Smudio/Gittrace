@@ -1,7 +1,7 @@
 {
-  "name": "livegit",
+  "name": "meshtrace",
   "version": "1.2.0",
-  "description": "LiveGit - Desktop Git Project Viewer",
+  "description": "Meshtrace - Desktop Git Project Viewer",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
@@ -9,8 +9,8 @@
     "build:nsis": "electron-builder --win nsis"
   },
   "build": {
-    "appId": "com.livegit.app",
-    "productName": "LiveGit",
+    "appId": "com.meshtrace.app",
+    "productName": "Meshtrace",
     "directories": {
       "output": "dist"
     },
@@ -30,11 +30,11 @@
       "signingHashAlgorithms": []
     },
     "portable": {
-      "artifactName": "LiveGit.exe"
+      "artifactName": "Meshtrace.exe"
     },
     "nsis": {
       "oneClick": true,
-      "artifactName": "LiveGit-Setup.exe"
+      "artifactName": "Meshtrace-Setup.exe"
     }
   },
   "devDependencies": {
