@@ -113,7 +113,12 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .ws-editor-tab{padding:7px 14px;font-size:11px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;border-right:1px solid var(--border);white-space:nowrap;display:flex;align-items:center;gap:6px;transition:all .12s;font-family:'Cascadia Code','Consolas',monospace}
 .ws-editor-tab:hover{background:var(--bg3);color:var(--t1)}
 .ws-editor-tab.active{background:var(--bg1);color:var(--t1);border-bottom-color:var(--blue)}
-.ws-editor-tab .tab-status{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ws-editor-tab .tab-status{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:var(--t4)}
+.ws-editor-tab .tab-status.ts-M{background:var(--orange)}.ws-editor-tab .tab-status.ts-A{background:var(--green)}
+.ws-editor-tab .tab-status.ts-D{background:var(--red)}.ws-editor-tab .tab-status.ts-S{background:var(--blue)}
+.ws-editor-tab .tab-status.ts-C{background:var(--red)}.ws-editor-tab .tab-status.ts-R{background:var(--purple)}
+.ws-editor-tab .tab-status.ts-del{background:var(--red);animation:pulse 1s infinite}
+.ws-editor-tab.tab-file-deleted .tab-name{text-decoration:line-through;color:var(--t4)}
 .ws-editor-tab .tab-close{font-size:14px;color:var(--t4);margin-left:4px;cursor:pointer;padding:2px 4px;border-radius:3px;line-height:1;min-width:18px;text-align:center}
 .ws-editor-tab .tab-close:hover{color:var(--red);background:rgba(248,81,73,.15)}
 .ws-editor-tab.tab-selected{background:rgba(88,166,255,.12);outline:1px solid rgba(88,166,255,.4);outline-offset:-1px}
@@ -481,6 +486,8 @@ let wsOpenTabs = [];
 let wsDragInfo = null;
 let wsSelectedTabs = new Set();
 let wsLastSelectedTab = null;
+let wsGitStatusMap = {};
+let wsDeletedFiles = new Set();
 
 function wsGetGroup(id) { return wsGroups.find(g => g.id === id); }
 function wsActiveGroup() { return wsGetGroup(wsActiveGroupId); }
@@ -662,6 +669,39 @@ async function loadWorkspace() {
   wsLiveEvents = [];
   loadChangesOverview();
   wsBottomTab('changes', document.querySelector('.ws-bottom-tabs button.active'));
+  refreshTabStatuses();
+}
+
+async function refreshTabStatuses() {
+  try {
+    const data = await LG.statusMap(repo);
+    if (data && data.map) {
+      wsGitStatusMap = data.map;
+      wsDeletedFiles.clear();
+      const allTabs = [];
+      wsGroups.forEach(g => g.tabs.forEach(fp => allTabs.push(fp)));
+      await Promise.all(allTabs.map(async fp => {
+        if (!wsGitStatusMap[fp]) {
+          const d = await LG.liveFileContent(repo, fp);
+          if (d.deleted) wsDeletedFiles.add(fp);
+        }
+      }));
+      document.querySelectorAll('.ws-editor-tab').forEach(el => {
+        const fp = el.dataset.file;
+        const st = wsGitStatusMap[fp];
+        const deleted = wsDeletedFiles.has(fp);
+        const dot = el.querySelector('.tab-status');
+        const nameEl = el.querySelector('.tab-name');
+        if (dot) {
+          dot.className = 'tab-status' + (deleted ? ' ts-del' : st ? ' ts-' + st : '');
+        }
+        if (nameEl) {
+          if (deleted) { el.classList.add('tab-file-deleted'); nameEl.style.textDecoration = 'line-through'; nameEl.style.color = 'var(--t4)'; }
+          else { el.classList.remove('tab-file-deleted'); nameEl.style.textDecoration = ''; nameEl.style.color = ''; }
+        }
+      });
+    }
+  } catch {}
 }
 
 function renderWsTree(tree) {
@@ -758,12 +798,16 @@ function renderGroupTabsHTML(g) {
     const name = fp.split('/').pop();
     const active = fp === g.active;
     const sel = wsSelectedTabs.has(g.id + ':' + fp) ? ' tab-selected' : '';
-    return `<div class="ws-editor-tab${active ? ' active' : ''}${sel}" draggable="true" data-group="${g.id}" data-file="${esc(fp)}" data-idx="${i}"
+    const st = wsGitStatusMap[fp];
+    const deleted = wsDeletedFiles.has(fp);
+    const stCls = deleted ? 'ts-del' : st ? 'ts-' + st : '';
+    const delCls = deleted ? ' tab-file-deleted' : '';
+    return `<div class="ws-editor-tab${active ? ' active' : ''}${sel}${delCls}" draggable="true" data-group="${g.id}" data-file="${esc(fp)}" data-idx="${i}"
       ondragstart="wsTabDragStart(event,${g.id},'${esc(fp)}')"
       ondragend="wsTabDragEnd(event)"
       onclick="wsTabClick(event,${g.id},'${esc(fp)}',${i})">
-      <span class="tab-status" style="background:var(--t4)"></span>
-      ${esc(name)}
+      <span class="tab-status ${stCls}"></span>
+      <span class="tab-name">${esc(name)}</span>
       <span class="tab-close" onclick="event.stopPropagation();wsCloseTabs(${g.id},'${esc(fp)}')">&times;</span>
     </div>`;
   }).join('');
@@ -1647,10 +1691,24 @@ LG.onLiveChange(async (data) => {
     }
   });
 
+  if (data.event === 'unlink') {
+    wsDeletedFiles.add(data.file);
+    wsGitStatusMap[data.file] = 'D';
+  }
+  if (data.event === 'add') {
+    wsDeletedFiles.delete(data.file);
+    wsGitStatusMap[data.file] = 'A';
+  }
+  if (data.event === 'change') {
+    wsDeletedFiles.delete(data.file);
+    if (!wsGitStatusMap[data.file]) wsGitStatusMap[data.file] = 'M';
+  }
+
   const mod = document.getElementById('iModified');
   if (data.event === 'change' || data.event === 'unlink') mod.textContent = parseInt(mod.textContent || '0') + 1;
 
   loadChangesOverview();
+  refreshTabStatuses();
 });
 
 // =================== COMPARE (side-by-side diff) ===================
