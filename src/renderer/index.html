@@ -18,8 +18,8 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 
 .titlebar{display:flex;align-items:center;height:32px;background:var(--bg1);border-bottom:1px solid var(--border);flex-shrink:0;-webkit-app-region:drag;padding:0 0 0 12px}
 .titlebar-title{flex:1;text-align:center;font-size:12px;font-weight:600;color:var(--t2);letter-spacing:.3px}
-.titlebar-path{font-size:11px;color:var(--t3);margin-left:auto;font-family:'Cascadia Code','Consolas',monospace;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:4px}
-.titlebar-winctl{display:flex;flex-shrink:0;-webkit-app-region:no-drag;margin-left:auto}
+.titlebar-path{font-size:11px;color:var(--t3);font-family:'Cascadia Code','Consolas',monospace;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:8px}
+.titlebar-winctl{display:flex;flex-shrink:0;-webkit-app-region:no-drag}
 .winctl-btn{width:46px;height:32px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--t2);font-size:12px;cursor:pointer;transition:all .1s}
 .winctl-btn:hover{background:var(--bg3);color:var(--t1)}
 .winctl-btn.wc-close:hover{background:#e81123;color:#fff}
@@ -352,8 +352,8 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 <body>
 
 <div class="titlebar">
-  <div class="titlebar-title">LiveGit <span style="font-size:10px;color:var(--t4);font-weight:400">v1.2.0</span></div>
   <div class="titlebar-path" id="titlePath"></div>
+  <div class="titlebar-title">LiveGit <span style="font-size:10px;color:var(--t4);font-weight:400">v1.2.0</span></div>
   <div class="titlebar-winctl">
     <button class="winctl-btn" onclick="livegit.minimize()" title="Minimieren"><svg viewBox="0 0 10 10"><line x1="0" y1="5" x2="10" y2="5"/></svg></button>
     <button class="winctl-btn" onclick="livegit.maximize()" title="Maximieren"><svg viewBox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9"/></svg></button>
