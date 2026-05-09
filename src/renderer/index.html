@@ -14,6 +14,7 @@
 }
 html,body{height:100%;overflow:hidden}
 body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg0);color:var(--t1);display:flex;flex-direction:column;user-select:none}
+*::selection{background:rgba(88,166,255,.3)}
 
 .titlebar{display:flex;align-items:center;height:38px;background:var(--bg1);border-bottom:1px solid var(--border);flex-shrink:0;-webkit-app-region:drag;padding:0 12px}
 .titlebar-dots{display:flex;gap:8px;margin-right:16px;-webkit-app-region:no-drag}
@@ -78,13 +79,37 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 /* === WORKSPACE === */
 .ws-panel{display:none;height:100%;overflow:hidden;padding:0}
 .ws-panel.active{display:flex}
-.ws-split{display:flex;flex:1;overflow:hidden}
-.ws-sidebar{width:280px;min-width:200px;background:var(--bg1);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.ws-split{display:flex;flex:1;overflow:hidden;position:relative}
+.ws-sidebar{width:280px;min-width:160px;max-width:600px;background:var(--bg1);border-right:none;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.ws-resizer-v{width:5px;cursor:col-resize;background:var(--border);flex-shrink:0;transition:background .15s;z-index:2}
+.ws-resizer-v:hover,.ws-resizer-v.active{background:var(--blue)}
+.ws-right{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:200px}
+.ws-editors{flex:1;display:flex;overflow:hidden;min-height:80px}
+.ws-editors.horizontal{flex-direction:row}
+.ws-editors.vertical{flex-direction:column}
+.ws-group{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:120px;min-height:80px;position:relative;background:var(--bg1)}
+.ws-group.focused .ws-editor-tabs{border-bottom-color:var(--border)}
+.ws-group-resizer{background:var(--border);flex-shrink:0;transition:background .15s}
+.ws-editors.horizontal .ws-group-resizer{width:4px;cursor:col-resize}
+.ws-editors.vertical .ws-group-resizer{height:4px;cursor:row-resize}
+.ws-group-resizer:hover,.ws-group-resizer.active{background:var(--blue)}
+.ws-editor-tab[draggable="true"]{cursor:grab}
+.ws-editor-tab.dragging{opacity:.3}
+.ws-drop-zone{position:absolute;z-index:20;pointer-events:none;transition:background .12s}
+.ws-group.drag-over .ws-drop-zone{pointer-events:auto}
+.ws-drop-zone.top{top:0;left:0;right:0;height:35%}
+.ws-drop-zone.bottom{bottom:0;left:0;right:0;height:35%}
+.ws-drop-zone.left{top:0;left:0;bottom:0;width:35%}
+.ws-drop-zone.right{top:0;right:0;bottom:0;width:35%}
+.ws-drop-zone.center{top:35%;left:35%;right:35%;bottom:35%}
+.ws-drop-zone.highlight{background:rgba(88,166,255,.18);outline:2px dashed var(--blue)}
+.ws-editor-tab.tab-drop-left{border-left:2px solid var(--blue)!important}
+.ws-editor-tab.tab-drop-right{border-right:2px solid var(--blue)!important}
+.ws-md-split{display:flex;flex:1;overflow:hidden}
+.ws-md-split-preview{flex:1;overflow:auto}
 .ws-sidebar-head{padding:8px 12px;font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .ws-sidebar-head span{color:var(--t2)}
 .ws-tree{flex:1;overflow-y:auto;padding:4px 0}
-.ws-right{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-.ws-editor-area{flex:1;overflow:hidden;display:flex;flex-direction:column}
 .ws-editor-tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto}
 .ws-editor-tab{padding:7px 14px;font-size:11px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;border-right:1px solid var(--border);white-space:nowrap;display:flex;align-items:center;gap:6px;transition:all .12s;font-family:'Cascadia Code','Consolas',monospace}
 .ws-editor-tab:hover{background:var(--bg3);color:var(--t1)}
@@ -92,14 +117,26 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .ws-editor-tab .tab-status{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .ws-editor-tab .tab-close{font-size:14px;color:var(--t4);margin-left:4px}
 .ws-editor-tab .tab-close:hover{color:var(--red)}
-.ws-code-wrap{flex:1;overflow:auto;background:var(--bg1);position:relative}
-.ws-code{font-family:'Cascadia Code','Consolas','Fira Code',monospace;font-size:13px;line-height:1.65;padding:12px 0;counter-reset:line;min-height:100%}
-.ws-line{display:flex;min-height:22px;padding:0 16px 0 0}
-.ws-line:hover{background:rgba(255,255,255,.02)}
-.ws-lnum{width:55px;text-align:right;padding-right:16px;color:var(--t4);user-select:none;flex-shrink:0;font-size:12px}
-.ws-lcode{flex:1;white-space:pre;overflow-x:auto}
-.ws-line.added{background:rgba(46,160,67,.1)}.ws-line.added .ws-lcode::before{content:'+';color:var(--green);margin-right:6px;position:absolute;left:4px}
-.ws-line.removed{background:rgba(248,81,73,.08);text-decoration:line-through;color:var(--t4)}.ws-line.removed .ws-lcode::before{content:'-';color:var(--red);margin-right:6px;position:absolute;left:4px}
+.ws-code-wrap{flex:1;overflow:auto;background:var(--bg1);position:relative;display:flex;flex-direction:column}
+.ws-editor{flex:1;width:100%;background:none;color:var(--t1);border:none;outline:none;resize:none;font-family:'Cascadia Code','Consolas','Fira Code',monospace;font-size:13px;line-height:1.7;padding:0 16px 0 62px;tab-size:4;white-space:pre;overflow:auto}
+.ws-editor-gutter{position:absolute;left:0;top:0;bottom:0;width:54px;overflow:hidden;pointer-events:none;background:var(--bg1);z-index:1}
+.ws-editor-gutter span{display:block;height:calc(13px * 1.7);line-height:calc(13px * 1.7);text-align:right;padding-right:14px;color:var(--t4);font-size:12px;font-family:'Cascadia Code','Consolas',monospace}
+.ws-editor-wrap{position:relative;flex:1;overflow:hidden}
+.ws-editor-wrap .ws-editor{padding-left:62px}
+.ws-code{font-family:'Cascadia Code','Consolas','Fira Code',monospace;font-size:13px;line-height:1.7;min-height:100%;user-select:text}
+.ws-line{display:block;position:relative;padding:0 16px 0 62px;min-height:23px;white-space:pre;user-select:text}
+.ws-line:hover{background:rgba(255,255,255,.015)}
+.ws-lnum{position:absolute;left:0;width:54px;text-align:right;padding-right:14px;color:var(--t4);user-select:none;font-size:12px}
+.ws-line.git-add{background:rgba(46,160, 67, .10)}
+.ws-line.git-add .ws-lnum{color:var(--green)}
+.ws-line.git-mod{background:rgba(210, 153, 34, .08)}
+.ws-line.git-mod .ws-lnum{color:var(--orange)}
+.ws-line.git-del{background:rgba(248, 81, 73, .10);text-decoration:line-through;color:var(--t3)}
+.ws-line.git-del .ws-lnum{color:var(--red)}
+.ws-line .ws-gutter{position:absolute;left:54px;top:0;bottom:0;width:8px}
+.ws-line.git-add .ws-gutter{background:var(--green)}
+.ws-line.git-mod .ws-gutter{background:var(--orange)}
+.ws-line.git-del .ws-gutter{background:var(--red)}
 .ws-empty{display:flex;align-items:center;justify-content:center;height:100%;color:var(--t4);font-size:13px;text-align:center;padding:40px}
 .ws-empty-icon{font-size:48px;opacity:.3;margin-bottom:12px}
 .ws-diff-toggle{padding:4px 12px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0}
@@ -107,8 +144,30 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .ws-diff-toggle button:hover{background:var(--bg4);color:var(--t1)}
 .ws-diff-toggle button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
 .ws-diff-toggle .ws-file-label{font-family:'Cascadia Code','Consolas',monospace;font-size:11px;color:var(--t2);margin-left:auto}
+.ws-md-preview{padding:24px 32px;color:var(--t1);font-size:14px;line-height:1.75;max-width:800px;user-select:text}
+.ws-md-preview h1{font-size:28px;font-weight:700;margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border);color:var(--t1)}
+.ws-md-preview h2{font-size:22px;font-weight:600;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);color:var(--t1)}
+.ws-md-preview h3{font-size:18px;font-weight:600;margin:16px 0 8px;color:var(--t1)}
+.ws-md-preview h4{font-size:15px;font-weight:600;margin:12px 0 6px;color:var(--t2)}
+.ws-md-preview p{margin:8px 0}
+.ws-md-preview a{color:var(--blue);text-decoration:none}
+.ws-md-preview a:hover{text-decoration:underline}
+.ws-md-preview code{background:var(--bg3);padding:2px 6px;border-radius:4px;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;color:var(--orange)}
+.ws-md-preview pre{background:var(--bg1);border:1px solid var(--border);border-radius:8px;padding:14px 18px;overflow-x:auto;margin:12px 0}
+.ws-md-preview pre code{background:none;padding:0;font-size:12px;color:var(--t1)}
+.ws-md-preview blockquote{border-left:4px solid var(--blue);padding:4px 16px;margin:12px 0;color:var(--t3);background:rgba(88,166,255,.04);border-radius:0 6px 6px 0}
+.ws-md-preview ul,.ws-md-preview ol{margin:8px 0;padding-left:24px}
+.ws-md-preview li{margin:4px 0}
+.ws-md-preview hr{border:none;border-top:1px solid var(--border);margin:20px 0}
+.ws-md-preview img{max-width:100%;border-radius:6px;margin:8px 0}
+.ws-md-preview table{border-collapse:collapse;margin:12px 0;width:100%}
+.ws-md-preview th,.ws-md-preview td{border:1px solid var(--border);padding:8px 12px;text-align:left}
+.ws-md-preview th{background:var(--bg3);font-weight:600}
+.ws-md-preview input[type="checkbox"]{margin-right:6px}
 
-.ws-live-strip{height:120px;min-height:80px;background:var(--bg2);border-top:1px solid var(--border);overflow-y:auto;flex-shrink:0;padding:6px 10px;display:flex;flex-direction:column-reverse;gap:3px}
+.ws-live-strip{height:120px;min-height:60px;max-height:500px;background:var(--bg2);border-top:none;overflow-y:auto;flex-shrink:0;padding:6px 10px;display:flex;flex-direction:column-reverse;gap:3px}
+.ws-resizer-h{height:5px;cursor:row-resize;background:var(--border);flex-shrink:0;transition:background .15s}
+.ws-resizer-h:hover,.ws-resizer-h.active{background:var(--blue)}
 
 .wt-item{display:flex;align-items:center;gap:6px;padding:3px 8px;border-radius:4px;cursor:pointer;font-size:12px;transition:background .1s;white-space:nowrap;overflow:hidden}
 .wt-item:hover{background:var(--bg3)}
@@ -151,6 +210,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .dline.add{background:rgba(46,160,67,.12)}.dline.add .lc::before{content:'+';color:var(--green);margin-right:6px}
 .dline.del{background:rgba(248,81,73,.12)}.dline.del .lc::before{content:'-';color:var(--red);margin-right:6px}
 .dline.ctx{color:var(--t2)}.dline.hunk{background:rgba(88,166,255,.08);color:var(--blue);font-weight:500}
+.ch-add{background:rgba(46,160,67,.4);border-radius:2px;padding:0 1px}.ch-del{background:rgba(248,81,73,.4);border-radius:2px;padding:0 1px;text-decoration:line-through}
 
 .toast-container{position:fixed;top:48px;right:16px;z-index:200;display:flex;flex-direction:column;gap:6px;pointer-events:none}
 .toast{padding:10px 16px;border-radius:8px;font-size:12px;color:var(--t1);background:var(--bg2);border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,.4);animation:toastIn .3s ease,toastOut .3s ease 3.7s forwards;display:flex;align-items:center;gap:8px;max-width:360px;pointer-events:auto;cursor:pointer}
@@ -275,6 +335,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 <div class="toolbar" id="toolbar">
   <button class="primary" onclick="browseFolder()">&#128193; Offnen</button>
   <button onclick="refreshRepo()">&#8635; Refresh</button>
+  <button onclick="toggleCharDiff()" id="charDiffBtn" class="primary" title="Zeichen-Level-Diff umschalten">&#128270; Char-Diff</button>
   <div class="repo-name" id="repoName" style="display:none">
     <span id="repoLabel"></span>
     <span class="branch" id="branchBadge"></span>
@@ -319,18 +380,10 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
         <div class="ws-sidebar-head"><span>Dateien</span><span id="wsFileCount"></span></div>
         <div class="ws-tree" id="wsTree"></div>
       </div>
+      <div class="ws-resizer-v" id="resizerV"></div>
       <div class="ws-right">
-        <div class="ws-editor-area">
-          <div class="ws-editor-tabs" id="wsEditorTabs"></div>
-          <div class="ws-diff-toggle" id="wsDiffBar" style="display:none">
-            <button class="active" onclick="wsViewMode('content')" id="wsBtnContent">Inhalt</button>
-            <button onclick="wsViewMode('diff')" id="wsBtnDiff">Diff</button>
-            <span class="ws-file-label" id="wsFileLabel"></span>
-          </div>
-          <div class="ws-code-wrap" id="wsCodeWrap">
-            <div class="ws-empty"><div><div class="ws-empty-icon">&#128196;</div>Datei auswaehlen zum Anzeigen<br><small style="color:var(--t4)">Rechtsklick fur Optionen</small></div></div>
-          </div>
-        </div>
+        <div class="ws-editors horizontal" id="wsEditors"></div>
+        <div class="ws-resizer-h" id="resizerH"></div>
         <div class="ws-live-strip" id="wsLiveStrip"></div>
       </div>
     </div>
@@ -386,10 +439,81 @@ let repo = '';
 let commits = [];
 let hotFilesMap = {};
 let curTab = 'welcome';
-let wsOpenTabs = [];
+let wsGroups = [{ id: 0, tabs: [], active: null, viewMode: 'content' }];
+let wsActiveGroupId = 0;
+let wsNextGroupId = 1;
+let wsSplitDir = 'horizontal';
 let wsActiveFile = null;
 let wsViewModeCurrent = 'content';
+let wsOpenTabs = [];
+let wsDragInfo = null;
+
+function wsGetGroup(id) { return wsGroups.find(g => g.id === id); }
+function wsActiveGroup() { return wsGetGroup(wsActiveGroupId); }
+function wsFindFileGroup(fp) { return wsGroups.find(g => g.tabs.includes(fp)); }
+function wsSyncVars() {
+  const g = wsActiveGroup();
+  wsActiveFile = g ? g.active : null;
+  wsViewModeCurrent = g ? g.viewMode : 'content';
+  wsOpenTabs = g ? g.tabs.slice() : [];
+}
 let wsLiveEvents = [];
+let charDiffEnabled = true;
+
+function toggleCharDiff() {
+  charDiffEnabled = !charDiffEnabled;
+  const btn = document.getElementById('charDiffBtn');
+  if (btn) btn.classList.toggle('primary', charDiffEnabled);
+  wsGroups.forEach(g => { if (g.active) wsLoadContent(g.id); });
+}
+
+function charDiff(a, b) {
+  if (!charDiffEnabled) return null;
+  const m = a.length, n = b.length;
+  if (m > 800 || n > 800 || m === 0 || n === 0) return null;
+  const dp = new Array(m + 1);
+  for (let i = 0; i <= m; i++) { dp[i] = new Uint16Array(n + 1); }
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (a[i-1] === b[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+      else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+    }
+  }
+  const parts = [];
+  let i = m, j = n;
+  while (i > 0 || j > 0) {
+    if (i > 0 && j > 0 && a[i-1] === b[j-1]) {
+      parts.push({ text: a[i-1], type: 'same' }); i--; j--;
+    } else if (j > 0 && (i === 0 || dp[i][j-1] >= dp[i-1][j])) {
+      parts.push({ text: b[j-1], type: 'add' }); j--;
+    } else {
+      parts.push({ text: a[i-1], type: 'del' }); i--;
+    }
+  }
+  parts.reverse();
+  const merged = [];
+  for (const p of parts) {
+    if (merged.length && merged[merged.length-1].type === p.type) merged[merged.length-1].text += p.text;
+    else merged.push({ text: p.text, type: p.type });
+  }
+  return merged;
+}
+
+function renderCharDiffDel(parts) {
+  return parts.map(p => {
+    if (p.type === 'same') return esc(p.text);
+    if (p.type === 'del') return '<span class="ch-del">' + esc(p.text) + '</span>';
+    return '';
+  }).join('');
+}
+
+function renderCharDiffAdd(parts) {
+  return parts.map(p => {
+    if (p.type === 'same') return esc(p.text);
+    if (p.type === 'add') return '<span class="ch-add">' + esc(p.text) + '</span>';
+    return '';
+  }).join('');
+}
 
 function switchTab(t) {
   curTab = t;
@@ -488,79 +612,481 @@ function toggleWsDir(id, el) {
 }
 
 async function wsOpenFile(fp) {
-  if (!wsOpenTabs.includes(fp)) wsOpenTabs.push(fp);
-  wsActiveFile = fp;
-  renderWsTabs();
-  await wsShowFile(fp);
+  let g = wsFindFileGroup(fp);
+  if (!g) {
+    g = wsActiveGroup();
+    g.tabs.push(fp);
+  }
+  g.active = fp;
+  wsActiveGroupId = g.id;
+  wsSyncVars();
+  renderEditorLayout();
+  document.querySelectorAll('.wt-item').forEach(el => el.classList.toggle('selected', el.dataset.path === fp));
 }
 
-function renderWsTabs() {
-  const el = document.getElementById('wsEditorTabs');
-  el.innerHTML = wsOpenTabs.map(fp => {
+function renderEditorLayout() {
+  const el = document.getElementById('wsEditors');
+  if (!el) return;
+  el.className = 'ws-editors ' + wsSplitDir;
+  let html = '';
+  wsGroups.forEach((g, i) => {
+    if (i > 0) html += `<div class="ws-group-resizer" data-group-resizer="${g.id}"></div>`;
+    const isMd = g.active && g.active.toLowerCase().endsWith('.md');
+    const vm = g.viewMode;
+    html += `<div class="ws-group${g.id === wsActiveGroupId ? ' focused' : ''}" data-group="${g.id}" onmousedown="wsFocusGroup(${g.id})">`;
+    html += `<div class="ws-editor-tabs" id="wsTabs-${g.id}">${renderGroupTabsHTML(g)}</div>`;
+    html += `<div class="ws-diff-toggle" id="wsToolbar-${g.id}" style="display:${g.active ? 'flex' : 'none'}">`;
+    html += `<button class="${vm==='content'?'active':''}" onclick="wsSetViewMode(${g.id},'content')">Inhalt</button>`;
+    html += `<button class="${vm==='diff'?'active':''}" onclick="wsSetViewMode(${g.id},'diff')">Diff</button>`;
+    if (isMd) {
+      html += `<button class="${vm==='md'?'active':''}" onclick="wsSetViewMode(${g.id},'md')">Vorschau</button>`;
+      html += `<button class="${vm==='md-split'?'active':''}" onclick="wsSetViewMode(${g.id},'md-split')">Split</button>`;
+    }
+    html += `<span class="ws-file-label" id="wsLabel-${g.id}">${esc(g.active || '')}</span>`;
+    html += `</div>`;
+    html += `<div class="ws-code-wrap" id="wsCode-${g.id}"></div>`;
+    html += `<div class="ws-drop-zone top" data-drop="top"></div>`;
+    html += `<div class="ws-drop-zone bottom" data-drop="bottom"></div>`;
+    html += `<div class="ws-drop-zone left" data-drop="left"></div>`;
+    html += `<div class="ws-drop-zone right" data-drop="right"></div>`;
+    html += `<div class="ws-drop-zone center" data-drop="center"></div>`;
+    html += `</div>`;
+  });
+  el.innerHTML = html;
+  wsGroups.forEach(g => { if (g.active) wsLoadContent(g.id); });
+  initGroupResizers();
+}
+
+function renderGroupTabsHTML(g) {
+  return g.tabs.map((fp, i) => {
     const name = fp.split('/').pop();
-    const active = fp === wsActiveFile;
-    return `<div class="ws-editor-tab ${active?'active':''}" onclick="wsOpenFile('${esc(fp)}')">
+    const active = fp === g.active;
+    return `<div class="ws-editor-tab${active ? ' active' : ''}" draggable="true" data-group="${g.id}" data-file="${esc(fp)}" data-idx="${i}"
+      ondragstart="wsTabDragStart(event,${g.id},'${esc(fp)}')"
+      ondragend="wsTabDragEnd(event)"
+      onclick="wsActivateTab(${g.id},'${esc(fp)}')">
       <span class="tab-status" style="background:var(--t4)"></span>
       ${esc(name)}
-      <span class="tab-close" onclick="event.stopPropagation();wsCloseTab('${esc(fp)}')">&times;</span>
+      <span class="tab-close" onclick="event.stopPropagation();wsCloseTab(${g.id},'${esc(fp)}')">&times;</span>
     </div>`;
   }).join('');
 }
 
-function wsCloseTab(fp) {
-  wsOpenTabs = wsOpenTabs.filter(t => t !== fp);
-  if (wsActiveFile === fp) {
-    wsActiveFile = wsOpenTabs.length ? wsOpenTabs[wsOpenTabs.length - 1] : null;
-    if (wsActiveFile) wsShowFile(wsActiveFile);
-    else {
-      document.getElementById('wsCodeWrap').innerHTML = '<div class="ws-empty"><div><div class="ws-empty-icon">&#128196;</div>Datei auswaehlen</div></div>';
-      document.getElementById('wsDiffBar').style.display = 'none';
-    }
-  }
-  renderWsTabs();
+function renderWsTabs() { renderEditorLayout(); }
+
+function wsFocusGroup(gid) {
+  wsActiveGroupId = gid;
+  wsSyncVars();
+  document.querySelectorAll('.ws-group').forEach(el => el.classList.toggle('focused', parseInt(el.dataset.group) === gid));
 }
 
-async function wsShowFile(fp) {
-  wsActiveFile = fp;
-  document.getElementById('wsDiffBar').style.display = 'flex';
-  document.getElementById('wsFileLabel').textContent = fp;
-  if (wsViewModeCurrent === 'diff') wsShowDiff(fp);
-  else wsShowContent(fp);
+async function wsActivateTab(gid, fp) {
+  const g = wsGetGroup(gid);
+  if (!g) return;
+  g.active = fp;
+  wsActiveGroupId = gid;
+  wsSyncVars();
+  renderEditorLayout();
   document.querySelectorAll('.wt-item').forEach(el => el.classList.toggle('selected', el.dataset.path === fp));
 }
 
-async function wsShowContent(fp) {
-  const wrap = document.getElementById('wsCodeWrap');
-  wrap.innerHTML = '<div class="ws-empty">Lade...</div>';
-  const d = await LG.liveFileContent(repo, fp);
-  if (d.deleted) { wrap.innerHTML = '<div class="ws-empty"><div style="color:var(--red)">Datei wurde geloscht</div></div>'; return; }
-  if (d.tooLarge) { wrap.innerHTML = '<div class="ws-empty">Datei zu gross</div>'; return; }
-  if (d.isDir) { wrap.innerHTML = '<div class="ws-empty">Verzeichnis</div>'; return; }
-  const ext = fp.split('.').pop().toLowerCase();
-  wrap.innerHTML = `<div class="ws-code">${highlight(d.content || '', ext)}</div>`;
+function wsCloseTab(gid, fp) {
+  const g = wsGetGroup(gid);
+  if (!g) return;
+  g.tabs = g.tabs.filter(t => t !== fp);
+  if (g.active === fp) {
+    g.active = g.tabs.length ? g.tabs[g.tabs.length - 1] : null;
+    if (!g.active) g.viewMode = 'content';
+  }
+  if (g.tabs.length === 0 && wsGroups.length > 1) {
+    wsGroups = wsGroups.filter(gr => gr.id !== gid);
+    if (wsActiveGroupId === gid) wsActiveGroupId = wsGroups[0].id;
+  }
+  wsSyncVars();
+  renderEditorLayout();
 }
 
-async function wsShowDiff(fp) {
-  const wrap = document.getElementById('wsCodeWrap');
-  wrap.innerHTML = '<div class="ws-empty">Lade Diff...</div>';
-  const d = await LG.fileDiff(repo, fp);
-  if (!d.diff) { wrap.innerHTML = '<div class="ws-empty" style="color:var(--green)">Keine Aenderungen gegenueber Git</div>'; return; }
-  wrap.innerHTML = `<div class="ws-code">${renderInlineDiff(d.diff)}</div>`;
+async function wsLoadContent(gid) {
+  const g = wsGetGroup(gid);
+  if (!g || !g.active) return;
+  const fp = g.active;
+  const isMd = fp.toLowerCase().endsWith('.md');
+  if (g.viewMode === 'md-split' && isMd) wsShowMdSplit(gid, fp);
+  else if (g.viewMode === 'md' && isMd) wsShowMarkdown(gid, fp);
+  else if (g.viewMode === 'diff') wsShowDiff(gid, fp);
+  else wsShowContent(gid, fp);
+}
+
+async function wsLoadContentSilent(gid) {
+  const g = wsGetGroup(gid);
+  if (!g || !g.active) return;
+  const fp = g.active;
+  const isMd = fp.toLowerCase().endsWith('.md');
+  if (g.viewMode === 'md-split' && isMd) wsShowMdSplit(gid, fp);
+  else if (g.viewMode === 'md' && isMd) wsShowMarkdown(gid, fp, true);
+  else if (g.viewMode === 'diff') wsShowDiff(gid, fp, true);
+  else wsShowContent(gid, fp, true);
+}
+
+function wsSetViewMode(gid, mode) {
+  const g = wsGetGroup(gid);
+  if (!g) return;
+  g.viewMode = mode;
+  wsSyncVars();
+  renderEditorLayout();
 }
 
 function wsViewMode(mode) {
-  wsViewModeCurrent = mode;
-  document.getElementById('wsBtnContent').classList.toggle('active', mode === 'content');
-  document.getElementById('wsBtnDiff').classList.toggle('active', mode === 'diff');
-  if (wsActiveFile) wsShowFile(wsActiveFile);
+  const g = wsActiveGroup();
+  if (g) wsSetViewMode(g.id, mode);
+}
+
+async function wsShowContent(gid, fp, silent) {
+  const wrap = document.getElementById('wsCode-' + gid);
+  if (!wrap) return;
+  const scrollTop = wrap.scrollTop;
+  if (!silent) wrap.innerHTML = '<div class="ws-empty">Lade...</div>';
+  const [fileData, diffData] = await Promise.all([
+    LG.liveFileContent(repo, fp),
+    LG.fileDiff(repo, fp)
+  ]);
+  if (fileData.deleted) { wrap.innerHTML = '<div class="ws-empty"><div style="color:var(--red)">Datei wurde geloscht</div></div>'; return; }
+  if (fileData.tooLarge) { wrap.innerHTML = '<div class="ws-empty">Datei zu gross</div>'; return; }
+  if (fileData.isDir) { wrap.innerHTML = '<div class="ws-empty">Verzeichnis</div>'; return; }
+  const content = fileData.content || '';
+  const lineMap = parseLineChanges(diffData.diff || '');
+  const lines = content.split('\n');
+  const gutterBg = lines.map((l, i) => {
+    const cls = lineMap.get(i + 1) || '';
+    const bg = cls === 'git-add' ? 'background:rgba(46,160,67,.10);' : cls === 'git-mod' ? 'background:rgba(210,153,34,.08);' : '';
+    return `<span style="${bg}">${i + 1}</span>`;
+  }).join('');
+  wrap.innerHTML = `<div class="ws-editor-wrap">
+    <div class="ws-editor-gutter" id="wsGutter-${gid}">${gutterBg}</div>
+    <textarea class="ws-editor" id="wsEditor-${gid}" spellcheck="false"
+      oninput="wsEditorInput(${gid})" onscroll="wsEditorScroll(${gid})"
+      onkeydown="wsEditorKey(event,${gid})">${esc(content)}</textarea>
+  </div>`;
+  if (silent) {
+    const ta = document.getElementById('wsEditor-' + gid);
+    if (ta) ta.scrollTop = scrollTop;
+  }
+  wsEditorScroll(gid);
+}
+
+function wsEditorInput(gid) {
+  const ta = document.getElementById('wsEditor-' + gid);
+  const gutter = document.getElementById('wsGutter-' + gid);
+  if (!ta || !gutter) return;
+  const lines = ta.value.split('\n');
+  gutter.innerHTML = lines.map((l, i) => `<span>${i + 1}</span>`).join('');
+  const g = wsGetGroup(gid);
+  if (g) g._dirty = true;
+  wsUpdateSaveStatus(gid);
+}
+
+function wsEditorScroll(gid) {
+  const ta = document.getElementById('wsEditor-' + gid);
+  const gutter = document.getElementById('wsGutter-' + gid);
+  if (ta && gutter) gutter.scrollTop = ta.scrollTop;
+}
+
+function wsEditorKey(e, gid) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const ta = e.target;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    ta.value = ta.value.substring(0, start) + '    ' + ta.value.substring(end);
+    ta.selectionStart = ta.selectionEnd = start + 4;
+    wsEditorInput(gid);
+  }
+  if (e.ctrlKey && e.key === 's') {
+    e.preventDefault();
+    wsSaveFile(gid);
+  }
+}
+
+async function wsSaveFile(gid) {
+  const g = wsGetGroup(gid);
+  if (!g || !g.active) return;
+  const ta = document.getElementById('wsEditor-' + gid);
+  if (!ta) return;
+  const label = document.getElementById('wsLabel-' + gid);
+  if (label) label.textContent = g.active + ' ...';
+  const result = await LG.saveFile(repo, g.active, ta.value);
+  if (result.ok) {
+    g._dirty = false;
+    wsUpdateSaveStatus(gid);
+    if (label) label.textContent = g.active;
+  } else {
+    if (label) label.textContent = g.active + ' [Fehler]';
+  }
+}
+
+function wsUpdateSaveStatus(gid) {
+  const g = wsGetGroup(gid);
+  if (!g) return;
+  const label = document.getElementById('wsLabel-' + gid);
+  if (label && g.active) {
+    label.textContent = g.active + (g._dirty ? ' \u2022' : '');
+  }
+}
+
+async function wsShowDiff(gid, fp, silent) {
+  const wrap = document.getElementById('wsCode-' + gid);
+  if (!wrap) return;
+  const scrollTop = wrap.scrollTop;
+  if (!silent) wrap.innerHTML = '<div class="ws-empty">Lade Diff...</div>';
+  const d = await LG.fileDiff(repo, fp);
+  if (!d.diff) { wrap.innerHTML = '<div class="ws-empty" style="color:var(--green)">Keine Aenderungen gegenueber Git</div>'; return; }
+  wrap.innerHTML = `<div class="ws-code">${renderInlineDiff(d.diff)}</div>`;
+  if (silent) wrap.scrollTop = scrollTop;
+}
+
+async function wsShowMarkdown(gid, fp, silent) {
+  const wrap = document.getElementById('wsCode-' + gid);
+  if (!wrap) return;
+  const scrollTop = wrap.scrollTop;
+  if (!silent) wrap.innerHTML = '<div class="ws-empty">Lade...</div>';
+  const d = await LG.liveFileContent(repo, fp);
+  if (d.deleted) { wrap.innerHTML = '<div class="ws-empty"><div style="color:var(--red)">Datei wurde geloscht</div></div>'; return; }
+  wrap.innerHTML = `<div class="ws-md-preview">${renderMarkdown(d.content || '')}</div>`;
+  if (silent) wrap.scrollTop = scrollTop;
+}
+
+async function wsShowMdSplit(gid, fp) {
+  const wrap = document.getElementById('wsCode-' + gid);
+  if (!wrap) return;
+  wrap.innerHTML = '<div class="ws-empty">Lade...</div>';
+  const fileData = await LG.liveFileContent(repo, fp);
+  if (fileData.deleted) { wrap.innerHTML = '<div class="ws-empty"><div style="color:var(--red)">Datei wurde geloscht</div></div>'; return; }
+  const content = fileData.content || '';
+  const lines = content.split('\n');
+  const gutterBg = lines.map((l, i) => `<span>${i + 1}</span>`).join('');
+  wrap.innerHTML = `<div class="ws-md-split">
+    <div class="ws-editor-wrap">
+      <div class="ws-editor-gutter" id="wsGutter-${gid}">${gutterBg}</div>
+      <textarea class="ws-editor" id="wsEditor-${gid}" spellcheck="false"
+        oninput="wsEditorInput(${gid});wsMdSplitPreview(${gid})"
+        onscroll="wsEditorScroll(${gid})"
+        onkeydown="wsEditorKey(event,${gid})">${esc(content)}</textarea>
+    </div>
+    <div class="ws-md-split-preview" id="wsMdPreview-${gid}"><div class="ws-md-preview">${renderMarkdown(content)}</div></div>
+  </div>`;
+}
+
+function wsMdSplitPreview(gid) {
+  const ta = document.getElementById('wsEditor-' + gid);
+  const prev = document.getElementById('wsMdPreview-' + gid);
+  if (ta && prev) prev.innerHTML = `<div class="ws-md-preview">${renderMarkdown(ta.value)}</div>`;
+}
+
+// Tab drag-and-drop
+function wsTabDragStart(e, gid, fp) {
+  wsDragInfo = { groupId: gid, filePath: fp };
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', fp);
+  requestAnimationFrame(() => {
+    e.target.classList.add('dragging');
+    document.querySelectorAll('.ws-group').forEach(el => el.classList.add('drag-over'));
+  });
+}
+
+function wsTabDragEnd(e) {
+  wsDragInfo = null;
+  e.target.classList.remove('dragging');
+  document.querySelectorAll('.ws-group').forEach(el => el.classList.remove('drag-over'));
+  document.querySelectorAll('.ws-drop-zone').forEach(el => el.classList.remove('highlight'));
+  document.querySelectorAll('.ws-editor-tab').forEach(el => { el.classList.remove('tab-drop-left', 'tab-drop-right'); });
+}
+
+function wsSetupDnD() {
+  const el = document.getElementById('wsEditors');
+  if (!el) return;
+  el.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    if (!wsDragInfo) return;
+    e.dataTransfer.dropEffect = 'move';
+    document.querySelectorAll('.ws-drop-zone').forEach(z => z.classList.remove('highlight'));
+    document.querySelectorAll('.ws-editor-tab').forEach(t => t.classList.remove('tab-drop-left', 'tab-drop-right'));
+    const tab = e.target.closest('.ws-editor-tab');
+    if (tab && !tab.classList.contains('dragging')) {
+      const rect = tab.getBoundingClientRect();
+      if (e.clientX < rect.left + rect.width / 2) tab.classList.add('tab-drop-left');
+      else tab.classList.add('tab-drop-right');
+      return;
+    }
+    const group = e.target.closest('.ws-group');
+    if (!group) return;
+    const rect = group.getBoundingClientRect();
+    const rx = (e.clientX - rect.left) / rect.width;
+    const ry = (e.clientY - rect.top) / rect.height;
+    let zone = 'center';
+    const th = 0.25;
+    if (ry < th) zone = 'top';
+    else if (ry > 1 - th) zone = 'bottom';
+    else if (rx < th) zone = 'left';
+    else if (rx > 1 - th) zone = 'right';
+    const zoneEl = group.querySelector('.ws-drop-zone.' + zone);
+    if (zoneEl) zoneEl.classList.add('highlight');
+  });
+  el.addEventListener('drop', function(e) {
+    e.preventDefault();
+    if (!wsDragInfo) return;
+    const { groupId: srcGid, filePath: fp } = wsDragInfo;
+    const srcGroup = wsGetGroup(srcGid);
+    if (!srcGroup) return;
+    const tab = e.target.closest('.ws-editor-tab');
+    if (tab && !tab.classList.contains('dragging')) {
+      const tgtGid = parseInt(tab.dataset.group);
+      const tgtIdx = parseInt(tab.dataset.idx);
+      const tgtGroup = wsGetGroup(tgtGid);
+      srcGroup.tabs = srcGroup.tabs.filter(t => t !== fp);
+      if (srcGroup.active === fp) srcGroup.active = srcGroup.tabs[0] || null;
+      const insertBefore = e.clientX < tab.getBoundingClientRect().left + tab.getBoundingClientRect().width / 2;
+      const idx = insertBefore ? tgtIdx : tgtIdx + 1;
+      if (tgtGid === srcGid) {
+        const adjustedIdx = srcGroup.tabs.length >= tgtGroup.tabs.length ? idx : (idx > srcGroup.tabs.indexOf(fp) ? idx - 1 : idx);
+        tgtGroup.tabs.splice(idx, 0, fp);
+      } else {
+        tgtGroup.tabs.splice(idx, 0, fp);
+      }
+      tgtGroup.active = fp;
+      wsActiveGroupId = tgtGid;
+      wsCleanupGroups();
+      wsSyncVars();
+      renderEditorLayout();
+      wsTabDragEnd({ target: document.querySelector('.dragging') || document.body });
+      return;
+    }
+    const zoneEl = e.target.closest('.ws-drop-zone');
+    if (zoneEl) {
+      const group = zoneEl.closest('.ws-group');
+      const tgtGid = parseInt(group.dataset.group);
+      const zone = zoneEl.dataset.drop;
+      if (zone === 'center') {
+        if (tgtGid === srcGid) return;
+        const tgtGroup = wsGetGroup(tgtGid);
+        srcGroup.tabs = srcGroup.tabs.filter(t => t !== fp);
+        tgtGroup.tabs.push(fp);
+        tgtGroup.active = fp;
+        wsActiveGroupId = tgtGid;
+      } else {
+        srcGroup.tabs = srcGroup.tabs.filter(t => t !== fp);
+        if (srcGroup.active === fp) srcGroup.active = srcGroup.tabs[0] || null;
+        const newGroup = { id: wsNextGroupId++, tabs: [fp], active: fp, viewMode: 'content' };
+        if (zone === 'right' || zone === 'left') wsSplitDir = 'horizontal';
+        else wsSplitDir = 'vertical';
+        const tgtIdx = wsGroups.findIndex(g => g.id === tgtGid);
+        if (zone === 'right' || zone === 'bottom') wsGroups.splice(tgtIdx + 1, 0, newGroup);
+        else wsGroups.splice(tgtIdx, 0, newGroup);
+        wsActiveGroupId = newGroup.id;
+      }
+      wsCleanupGroups();
+      wsSyncVars();
+      renderEditorLayout();
+      wsTabDragEnd({ target: document.querySelector('.dragging') || document.body });
+    }
+  });
+}
+
+function wsCleanupGroups() {
+  wsGroups = wsGroups.filter(g => g.tabs.length > 0 || wsGroups.length === 1);
+  if (!wsGroups.find(g => g.id === wsActiveGroupId)) wsActiveGroupId = wsGroups[0].id;
+}
+
+function renderMarkdown(md) {
+  const codeBlocks = [];
+  let html = md.replace(/```(\w*)\n([\s\S]*?)```/g, function(m, lang, code) {
+    const idx = codeBlocks.length;
+    const langAttr = lang ? ' class="language-' + lang + '"' : '';
+    const langLabel = lang ? '<div style="font-size:10px;color:var(--t4);margin-bottom:8px;font-weight:600;text-transform:uppercase">' + esc(lang) + '</div>' : '';
+    codeBlocks.push(langLabel + '<pre><code' + langAttr + '>' + esc(code.replace(/^\n/, '')) + '</code></pre>');
+    return '%%CODEBLOCK_' + idx + '%%';
+  });
+  html = esc(html);
+  codeBlocks.forEach((block, i) => {
+    html = html.replace('%%CODEBLOCK_' + i + '%%', block);
+  });
+  html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+  html = html.replace(/^---$/gm, '<hr>');
+  html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  html = html.replace(/~~(.+?)~~/g, '<del>$1</del>');
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img alt="$1" src="$2">');
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" onclick="event.preventDefault()">$1</a>');
+  html = html.replace(/^(\s*)[-*] \[x\] (.+)$/gm, '$1<input type="checkbox" checked disabled>$2');
+  html = html.replace(/^(\s*)[-*] \[ \] (.+)$/gm, '$1<input type="checkbox" disabled>$2');
+  html = html.replace(/^(\s*)[-*] (.+)$/gm, '<li>$2</li>');
+  html = html.replace(/^(\s*)\d+\. (.+)$/gm, '<li>$2</li>');
+  html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+  html = html.replace(/<\/blockquote>\n<blockquote>/g, '\n');
+  html = html.replace(/^(?!<[hbul]|<hr|<li|<code|<pre|<blockquote|<input|<img|<div)(.+)$/gm, function(m, c) {
+    if (c.trim() === '') return '';
+    return '<p>' + c + '</p>';
+  });
+  html = html.replace(/<p><\/p>/g, '');
+  return html;
 }
 
 function highlight(code, ext) {
+  return highlightWithGit(code, ext, null);
+}
+
+function highlightWithGit(code, ext, lineMap) {
   const lines = code.split('\n');
   return lines.map((l, i) => {
     const hl = syntaxHL(l, ext);
-    return `<div class="ws-line"><span class="ws-lnum">${i+1}</span><span class="ws-lcode">${hl}</span></div>`;
+    const cls = lineMap ? (lineMap.get(i + 1) || '') : '';
+    return `<div class="ws-line ${cls}"><span class="ws-gutter"></span><span class="ws-lnum">${i+1}</span>${hl}</div>`;
   }).join('');
+}
+
+function parseLineChanges(diffText) {
+  const map = new Map();
+  if (!diffText) return map;
+  const lines = diffText.split('\n');
+  let newLine = 0;
+  let inHunk = false;
+  let pendingDeletes = 0;
+  for (const line of lines) {
+    const hunkMatch = line.match(/^@@\s+-(\d+)(?:,\d+)?\s+\+(\d+)(?:,\d+)?\s+@@/);
+    if (hunkMatch) {
+      newLine = parseInt(hunkMatch[2], 10);
+      inHunk = true;
+      pendingDeletes = 0;
+      continue;
+    }
+    if (!inHunk) continue;
+    if (line.startsWith('diff --git') || line.startsWith('---') || line.startsWith('+++') || line.startsWith('index ')) {
+      inHunk = false;
+      continue;
+    }
+    if (line.startsWith('-')) {
+      pendingDeletes++;
+      continue;
+    }
+    if (line.startsWith('+')) {
+      if (pendingDeletes > 0) {
+        map.set(newLine, 'git-mod');
+        pendingDeletes--;
+      } else {
+        map.set(newLine, 'git-add');
+      }
+      newLine++;
+      continue;
+    }
+    pendingDeletes = 0;
+    newLine++;
+  }
+  return map;
 }
 
 function syntaxHL(line, ext) {
@@ -595,15 +1121,35 @@ function renderInlineDiff(text) {
   if (!text) return '<div class="ws-empty">Keine Aenderungen</div>';
   const lines = text.split('\n');
   let html = '';
-  for (const line of lines) {
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
     if (line.startsWith('diff --git') || line.startsWith('+++') || line.startsWith('---') || line.startsWith('index ') || line.startsWith('Binary')) {
-      if (line.startsWith('diff --git')) html += `<div class="ws-line" style="background:var(--bg3);font-weight:600"><span class="ws-lnum"></span><span class="ws-lcode" style="color:var(--t1)">${esc(line)}</span></div>`;
+      if (line.startsWith('diff --git')) html += `<div class="ws-line" style="background:var(--bg3);font-weight:600"><span class="ws-lnum"></span>${esc(line)}</div>`;
+      i++; continue;
+    }
+    if (line.startsWith('@@')) { html += `<div class="ws-line" style="background:rgba(88,166,255,.08)"><span class="ws-lnum"></span><span style="color:var(--blue)">${esc(line)}</span></div>`; i++; continue; }
+    if (line.startsWith('-')||line.startsWith('+')) {
+      const dg=[], ag=[];
+      while(i<lines.length&&lines[i].startsWith('-')&&!lines[i].startsWith('---')){dg.push(lines[i].slice(1));i++;}
+      while(i<lines.length&&lines[i].startsWith('+')&&!lines[i].startsWith('+++')){ag.push(lines[i].slice(1));i++;}
+      const pairs=Math.min(dg.length,ag.length);
+      for(let p=0;p<pairs;p++){
+        const cd=charDiff(dg[p],ag[p]);
+        if(cd){
+          html+=`<div class="ws-line git-del"><span class="ws-gutter"></span><span class="ws-lnum"></span>${renderCharDiffDel(cd)}</div>`;
+          html+=`<div class="ws-line git-add"><span class="ws-gutter"></span><span class="ws-lnum"></span>${renderCharDiffAdd(cd)}</div>`;
+        }else{
+          html+=`<div class="ws-line git-del"><span class="ws-gutter"></span><span class="ws-lnum"></span>${esc(dg[p])}</div>`;
+          html+=`<div class="ws-line git-add"><span class="ws-gutter"></span><span class="ws-lnum"></span>${esc(ag[p])}</div>`;
+        }
+      }
+      for(let p=pairs;p<dg.length;p++) html+=`<div class="ws-line git-del"><span class="ws-gutter"></span><span class="ws-lnum"></span>${esc(dg[p])}</div>`;
+      for(let p=pairs;p<ag.length;p++) html+=`<div class="ws-line git-add"><span class="ws-gutter"></span><span class="ws-lnum"></span>${esc(ag[p])}</div>`;
       continue;
     }
-    if (line.startsWith('@@')) { html += `<div class="ws-line" style="background:rgba(88,166,255,.08)"><span class="ws-lnum"></span><span class="ws-lcode" style="color:var(--blue)">${esc(line)}</span></div>`; continue; }
-    if (line.startsWith('+')) html += `<div class="ws-line added"><span class="ws-lnum"></span><span class="ws-lcode">${esc(line.slice(1))}</span></div>`;
-    else if (line.startsWith('-')) html += `<div class="ws-line removed"><span class="ws-lnum"></span><span class="ws-lcode">${esc(line.slice(1))}</span></div>`;
-    else html += `<div class="ws-line"><span class="ws-lnum"></span><span class="ws-lcode" style="color:var(--t2)">${esc(line.startsWith(' ')?line.slice(1):line)}</span></div>`;
+    html+=`<div class="ws-line"><span class="ws-lnum"></span><span style="color:var(--t2)">${esc(line.startsWith(' ')?line.slice(1):line)}</span></div>`;
+    i++;
   }
   return html;
 }
@@ -724,24 +1270,46 @@ async function showDiff(hash) {
   document.getElementById('diffBody').innerHTML = d.error ? `<div class="empty-msg">${esc(d.error)}</div>` : renderDiff(d.diff);
 }
 
-async function showFileDiff(fp) { wsOpenFile(fp); switchTab('workspace'); wsViewModeCurrent = 'diff'; document.getElementById('wsBtnContent').classList.remove('active'); document.getElementById('wsBtnDiff').classList.add('active'); wsShowDiff(fp); }
+async function showFileDiff(fp) { await wsOpenFile(fp); switchTab('workspace'); const g = wsActiveGroup(); if (g) { g.viewMode = 'diff'; wsSyncVars(); renderEditorLayout(); } }
 
 function renderDiff(text) {
   if (!text) return '<div class="empty-msg">Keine Aenderungen</div>';
   const lines = text.split('\n');
   let html = '', inD = false, adds = 0, dels = 0;
-  for (const line of lines) {
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
     if (line.startsWith('diff --git')) {
       if (inD) html += '</div>';
       const m = line.match(/b\/(.+)$/);
       html += `<div class="dfile">${esc(m?m[1]:line)} <span class="stats"><span class="dstats-a">+${adds}</span><span class="dstats-d">-${dels}</span></span></div><div>`;
-      inD=true;adds=0;dels=0;continue;
+      inD=true;adds=0;dels=0;i++;continue;
     }
-    if (line.startsWith('@@')){html+=`<div class="dline hunk"><span class="ln"></span><span class="lc">${esc(line)}</span></div>`;continue;}
-    if (line.startsWith('+++')||line.startsWith('---')||line.startsWith('index ')||line.startsWith('Binary'))continue;
-    if(line.startsWith('+')){adds++;html+=`<div class="dline add"><span class="ln"></span><span class="lc">${esc(line.slice(1))}</span></div>`;}
-    else if(line.startsWith('-')){dels++;html+=`<div class="dline del"><span class="ln"></span><span class="lc">${esc(line.slice(1))}</span></div>`;}
-    else{html+=`<div class="dline ctx"><span class="ln"></span><span class="lc">${esc(line.startsWith(' ')?line.slice(1):line)}</span></div>`;}
+    if (line.startsWith('@@')){html+=`<div class="dline hunk"><span class="ln"></span><span class="lc">${esc(line)}</span></div>`;i++;continue;}
+    if (line.startsWith('+++')||line.startsWith('---')||line.startsWith('index ')||line.startsWith('Binary')){i++;continue;}
+    if (line.startsWith('-')||line.startsWith('+')) {
+      const dg=[], ag=[];
+      while(i<lines.length&&lines[i].startsWith('-')&&!lines[i].startsWith('---')){dg.push(lines[i].slice(1));i++;}
+      while(i<lines.length&&lines[i].startsWith('+')&&!lines[i].startsWith('+++')){ag.push(lines[i].slice(1));i++;}
+      const pairs=Math.min(dg.length,ag.length);
+      for(let p=0;p<pairs;p++){
+        dels++;adds++;
+        const cd=charDiff(dg[p],ag[p]);
+        if(cd){
+          html+=`<div class="dline del"><span class="ln"></span><span class="lc">${renderCharDiffDel(cd)}</span></div>`;
+          html+=`<div class="dline add"><span class="ln"></span><span class="lc">${renderCharDiffAdd(cd)}</span></div>`;
+        }else{
+          html+=`<div class="dline del"><span class="ln"></span><span class="lc">${esc(dg[p])}</span></div>`;
+          html+=`<div class="dline add"><span class="ln"></span><span class="lc">${esc(ag[p])}</span></div>`;
+        }
+      }
+      for(let p=pairs;p<dg.length;p++){dels++;html+=`<div class="dline del"><span class="ln"></span><span class="lc">${esc(dg[p])}</span></div>`;}
+      for(let p=pairs;p<ag.length;p++){adds++;html+=`<div class="dline add"><span class="ln"></span><span class="lc">${esc(ag[p])}</span></div>`;}
+      continue;
+    }
+    const ctx=line.startsWith(' ')?line.slice(1):line;
+    html+=`<div class="dline ctx"><span class="ln"></span><span class="lc">${esc(ctx)}</span></div>`;
+    i++;
   }
   if(inD)html+='</div>';
   return html;
@@ -778,6 +1346,109 @@ function showToast(type, file) {
   setTimeout(()=>{if(t.parentNode)t.remove();},4000);
   while(c.children.length>5)c.removeChild(c.firstChild);
 }
+
+// =================== RESIZERS ===================
+(function initResizers() {
+  let dragType = null, startPos = 0, startSize = 0, target = null;
+
+  function onDown(e, type) {
+    e.preventDefault();
+    dragType = type;
+    const ev = e.touches ? e.touches[0] : e;
+    if (type === 'v') {
+      startPos = ev.clientX;
+      startSize = document.querySelector('.ws-sidebar').offsetWidth;
+      target = document.querySelector('.ws-sidebar');
+      document.getElementById('resizerV').classList.add('active');
+    } else {
+      startPos = ev.clientY;
+      startSize = document.getElementById('wsLiveStrip').offsetHeight;
+      target = document.getElementById('wsLiveStrip');
+      document.getElementById('resizerH').classList.add('active');
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onUp);
+    document.body.style.cursor = type === 'v' ? 'col-resize' : 'row-resize';
+    document.body.style.userSelect = 'none';
+  }
+
+  function onMove(e) {
+    if (!dragType) return;
+    e.preventDefault();
+    const ev = e.touches ? e.touches[0] : e;
+    if (dragType === 'v') {
+      const dx = ev.clientX - startPos;
+      const nw = Math.max(160, Math.min(600, startSize + dx));
+      target.style.width = nw + 'px';
+    } else {
+      const dy = startPos - ev.clientY;
+      const nh = Math.max(60, Math.min(500, startSize + dy));
+      target.style.height = nh + 'px';
+    }
+  }
+
+  function onUp() {
+    if (!dragType) return;
+    document.getElementById('resizerV').classList.remove('active');
+    document.getElementById('resizerH').classList.remove('active');
+    dragType = null;
+    target = null;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onUp);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const rv = document.getElementById('resizerV');
+    const rh = document.getElementById('resizerH');
+    if (rv) { rv.addEventListener('mousedown', e => onDown(e, 'v')); rv.addEventListener('touchstart', e => onDown(e, 'v'), { passive: false }); }
+    if (rh) { rh.addEventListener('mousedown', e => onDown(e, 'h')); rh.addEventListener('touchstart', e => onDown(e, 'h'), { passive: false }); }
+  });
+})();
+
+// =================== GROUP RESIZERS & DND INIT ===================
+let _grpResize = null;
+function initGroupResizers() {
+  document.querySelectorAll('[data-group-resizer]').forEach(rv => {
+    rv.onmousedown = function(e) {
+      e.preventDefault();
+      const resizerEl = rv;
+      resizerEl.classList.add('active');
+      const gid = parseInt(rv.dataset.groupResizer);
+      const groupEl = rv.previousElementSibling;
+      const isHoriz = wsSplitDir === 'horizontal';
+      const startPos = isHoriz ? e.clientX : e.clientY;
+      const startSize = isHoriz ? groupEl.offsetWidth : groupEl.offsetHeight;
+      document.body.style.cursor = isHoriz ? 'col-resize' : 'row-resize';
+      document.body.style.userSelect = 'none';
+      function onMove(e2) {
+        const delta = isHoriz ? (e2.clientX - startPos) : (e2.clientY - startPos);
+        const ns = Math.max(120, startSize + delta);
+        if (isHoriz) groupEl.style.flex = 'none'; 
+        groupEl.style[isHoriz ? 'width' : 'height'] = ns + 'px';
+      }
+      function onUp() {
+        resizerEl.classList.remove('active');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    };
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  wsSetupDnD();
+  renderEditorLayout();
+});
 
 // =================== LIVE CHANGES ===================
 LG.onLiveChange(async (data) => {
@@ -836,9 +1507,11 @@ LG.onLiveChange(async (data) => {
   while (feed.children.length > 80) feed.removeChild(feed.lastChild);
 
   // auto-refresh code viewer
-  if (wsActiveFile === data.file && (data.event === 'change' || data.event === 'add')) {
-    wsShowFile(wsActiveFile);
-  }
+  wsGroups.forEach(g => {
+    if (g.active === data.file && (data.event === 'change' || data.event === 'add')) {
+      wsLoadContentSilent(g.id);
+    }
+  });
 
   const mod = document.getElementById('iModified');
   if (data.event === 'change' || data.event === 'unlink') mod.textContent = parseInt(mod.textContent || '0') + 1;
@@ -986,7 +1659,15 @@ function renderSideBySide(diffText, fileName) {
     if (!rv) { alignedL.push(lv); alignedR.push(null); ri++; continue; }
     if (lv.t === 'hdr' && rv.t === 'hdr') { alignedL.push(lv); alignedR.push(rv); li++; ri++; continue; }
     if (lv.t === 'ctx' && rv.t === 'ctx') { alignedL.push(lv); alignedR.push(rv); li++; ri++; continue; }
-    if (lv.t === 'del') { alignedL.push(lv); alignedR.push(rv && rv.t === 'add' ? rv : null); li++; if (rv && rv.t === 'add') ri++; continue; }
+    if (lv.t === 'del') {
+      if (rv && rv.t === 'add') {
+        const cd = charDiff(lv.s, rv.s);
+        alignedL.push({...lv, cd}); alignedR.push({...rv, cd});
+      } else {
+        alignedL.push(lv); alignedR.push(null);
+      }
+      li++; if (rv && rv.t === 'add') ri++; continue;
+    }
     if (rv.t === 'add') { alignedL.push(lv && lv.t === 'del' ? lv : null); alignedR.push(rv); if (lv && lv.t !== 'del') li++; ri++; continue; }
     alignedL.push(lv); alignedR.push(rv); li++; ri++;
   }
@@ -994,8 +1675,8 @@ function renderSideBySide(diffText, fileName) {
   let leftHtml = '', rightHtml = '';
   for (let i = 0; i < alignedL.length; i++) {
     const lv = alignedL[i], rv = alignedR[i];
-    leftHtml += cmpLine(lv ? lv.t : 'empty', lv ? lv.n : '', lv ? lv.s : '');
-    rightHtml += cmpLine(rv ? rv.t : 'empty', rv ? rv.n : '', rv ? rv.s : '');
+    leftHtml += cmpLine(lv ? lv.t : 'empty', lv ? lv.n : '', lv ? lv.s : '', lv ? lv.cd : null);
+    rightHtml += cmpLine(rv ? rv.t : 'empty', rv ? rv.n : '', rv ? rv.s : '', rv ? rv.cd : null);
   }
 
   wrap.innerHTML = `<div class="cmp-split">
@@ -1010,8 +1691,13 @@ function renderSideBySide(diffText, fileName) {
   </div>`;
 }
 
-function cmpLine(type, num, text) {
-  return `<div class="cmp-line ${type}"><span class="cln">${num || ''}</span><span class="ctext">${esc(text)}</span></div>`;
+function cmpLine(type, num, text, cd) {
+  let content = esc(text);
+  if (cd) {
+    if (type === 'del') content = renderCharDiffDel(cd);
+    else if (type === 'add') content = renderCharDiffAdd(cd);
+  }
+  return `<div class="cmp-line ${type}"><span class="cln">${num || ''}</span><span class="ctext">${content}</span></div>`;
 }
 
 // =================== LIVE TAB ===================

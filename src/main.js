@@ -401,6 +401,15 @@ ipcMain.handle('git:liveFileContent', async (_, repoPath, filePath) => {
     }
 });
 
+ipcMain.handle('git:saveFile', async (_, repoPath, filePath, content) => {
+    try {
+        const full = path.join(repoPath, filePath);
+        fs.writeFileSync(full, content, 'utf8');
+        return { ok: true };
+    } catch (err) {
+        return { error: err.message };
+    }
+});
 ipcMain.handle('git:compare', async (_, repoPath, hashFrom, hashTo) => {
     try {
         const git = simpleGit(repoPath);
