@@ -122,8 +122,8 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .ws-editor{flex:1;width:100%;background:none;color:var(--t1);border:none;outline:none;resize:none;font-family:'Cascadia Code','Consolas','Fira Code',monospace;font-size:13px;line-height:1.7;padding:0 16px 0 62px;tab-size:4;white-space:pre;overflow:auto}
 .ws-editor-gutter{position:absolute;left:0;top:0;bottom:0;width:54px;overflow:hidden;pointer-events:none;background:var(--bg1);z-index:1}
 .ws-editor-gutter span{display:block;height:calc(13px * 1.7);line-height:calc(13px * 1.7);text-align:right;padding-right:14px;color:var(--t4);font-size:12px;font-family:'Cascadia Code','Consolas',monospace}
-.ws-editor-wrap{position:relative;flex:1;overflow:hidden;display:flex;flex-direction:column}
-.ws-editor-wrap .ws-editor{padding-left:62px}
+.ws-editor-wrap{position:relative;flex:1;overflow:hidden}
+.ws-editor-wrap .ws-editor{position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;padding:0 16px 0 62px}
 .ws-code{font-family:'Cascadia Code','Consolas','Fira Code',monospace;font-size:13px;line-height:1.7;min-height:100%;user-select:text}
 .ws-line{display:block;position:relative;padding:0 16px 0 62px;min-height:23px;white-space:pre;user-select:text}
 .ws-line:hover{background:rgba(255,255,255,.015)}
@@ -628,17 +628,19 @@ function wsBottomTab(tab, btn) {
 }
 
 async function loadChangesOverview() {
-  const data = await LG.changesOverview(repo);
-  const el = document.getElementById('wsChangesList');
-  const cnt = document.getElementById('wsChangesCount');
-  if (!data || data.error || !data.files.length) {
-    if (cnt) cnt.textContent = '0';
-    el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--t4);font-size:12px">Arbeitsverzeichnis sauber</div>';
-    return;
-  }
-  if (cnt) cnt.textContent = data.files.length;
-  el.innerHTML = data.files.map(f => {
-    return `<div class="ws-change-row" onclick="wsOpenFile('${esc(f.file)}');switchTab('workspace')" oncontextmenu="fileContextMenu(event,'${esc(f.file)}')">
+  try {
+    const data = await LG.changesOverview(repo);
+    const el = document.getElementById('wsChangesList');
+    const cnt = document.getElementById('wsChangesCount');
+    if (!el) return;
+    if (!data || data.error || !data.files || !data.files.length) {
+      if (cnt) cnt.textContent = '0';
+      el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--t4);font-size:12px">Arbeitsverzeichnis sauber</div>';
+      return;
+    }
+    if (cnt) cnt.textContent = data.files.length;
+    el.innerHTML = data.files.map(f => {
+      return `<div class="ws-change-row" onclick="wsOpenFile('${esc(f.file)}');switchTab('workspace')" oncontextmenu="fileContextMenu(event,'${esc(f.file)}')">
       <span class="cr-badge st-${f.status}">${f.status}</span>
       <span class="cr-file">${esc(f.file)}</span>
       <span class="cr-stats">${f.adds ? '<span class="cs-a">+' + f.adds + '</span>' : ''}${f.dels ? '<span class="cs-d">-' + f.dels + '</span>' : ''}</span>
@@ -646,7 +648,11 @@ async function loadChangesOverview() {
       <span class="cr-msg">${esc(f.message)}</span>
       <span class="cr-date">${fmtDate(f.date)}</span>
     </div>`;
-  }).join('');
+    }).join('');
+  } catch (err) {
+    const el = document.getElementById('wsChangesList');
+    if (el) el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--red);font-size:12px">Fehler: ' + esc(err.message || 'unbekannt') + '</div>';
+  }
 }
 
 async function loadWorkspace() {
