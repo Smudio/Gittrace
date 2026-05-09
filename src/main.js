@@ -448,3 +448,59 @@ ipcMain.handle('git:commitFileContent', async (_, repoPath, hash, filePath) => {
         return { content: '', error: err.message };
     }
 });
+
+ipcMain.handle('git:changesOverview', async (_, repoPath) => {
+    try {
+        const git = simpleGit(repoPath);
+        const status = await git.status();
+        const fileStatusMap = {};
+        (status.staged || []).forEach(f => { fileStatusMap[f] = 'S'; });
+        (status.modified || []).forEach(f => { if (!fileStatusMap[f]) fileStatusMap[f] = 'M'; });
+        (status.created || []).forEach(f => { if (!fileStatusMap[f]) fileStatusMap[f] = 'A'; });
+        (status.deleted || []).forEach(f => { if (!fileStatusMap[f]) fileStatusMap[f] = 'D'; });
+        (status.conflicted || []).forEach(f => { if (!fileStatusMap[f]) fileStatusMap[f] = 'C'; });
+        (status.renamed || []).forEach(f => { if (!fileStatusMap[f]) fileStatusMap[f] = 'R'; });
+        const allFiles = Object.keys(fileStatusMap);
+        if (!allFiles.length) return { files: [] };
+
+        const numstatMap = {};
+        try {
+            const raw = await git.diff(['--numstat']);
+            raw.trim().split('\n').filter(Boolean).forEach(line => {
+                const p = line.split('\t');
+                if (p.length >= 3) numstatMap[p[2]] = { adds: parseInt(p[0]) || 0, dels: parseInt(p[1]) || 0 };
+            });
+        } catch {}
+        try {
+            const rawC = await git.diff(['--cached', '--numstat']);
+            rawC.trim().split('\n').filter(Boolean).forEach(line => {
+                const p = line.split('\t');
+                if (p.length >= 3) {
+                    const key = p[2];
+                    const cur = numstatMap[key] || { adds: 0, dels: 0 };
+                    numstatMap[key] = { adds: cur.adds + (parseInt(p[0]) || 0), dels: cur.dels + (parseInt(p[1]) || 0) };
+                }
+            });
+        } catch {}
+
+        const fileInfos = await Promise.all(allFiles.map(async f => {
+            let author = '', message = '', date = '';
+            try {
+                const log = await git.log(['-1', '--', f]);
+                if (log.latest) {
+                    author = log.latest.author_name || '';
+                    message = (log.latest.message || '').split('\n')[0].substring(0, 60);
+                    date = log.latest.date || '';
+                }
+            } catch {}
+            const ns = numstatMap[f] || { adds: 0, dels: 0 };
+            return { file: f, status: fileStatusMap[f], adds: ns.adds, dels: ns.dels, author, message, date };
+        }));
+
+        const order = { C: 0, M: 1, A: 2, D: 3, R: 4, S: 5 };
+        fileInfos.sort((a, b) => (order[a.status] ?? 9) - (order[b.status] ?? 9) || a.file.localeCompare(b.file));
+        return { files: fileInfos };
+    } catch (err) {
+        return { error: err.message, files: [] };
+    }
+});

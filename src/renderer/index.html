@@ -115,13 +115,14 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .ws-editor-tab:hover{background:var(--bg3);color:var(--t1)}
 .ws-editor-tab.active{background:var(--bg1);color:var(--t1);border-bottom-color:var(--blue)}
 .ws-editor-tab .tab-status{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.ws-editor-tab .tab-close{font-size:14px;color:var(--t4);margin-left:4px}
-.ws-editor-tab .tab-close:hover{color:var(--red)}
+.ws-editor-tab .tab-close{font-size:14px;color:var(--t4);margin-left:4px;cursor:pointer;padding:2px 4px;border-radius:3px;line-height:1;min-width:18px;text-align:center}
+.ws-editor-tab .tab-close:hover{color:var(--red);background:rgba(248,81,73,.15)}
+.ws-editor-tab.tab-selected{background:rgba(88,166,255,.12);outline:1px solid rgba(88,166,255,.4);outline-offset:-1px}
 .ws-code-wrap{flex:1;overflow:auto;background:var(--bg1);position:relative;display:flex;flex-direction:column}
 .ws-editor{flex:1;width:100%;background:none;color:var(--t1);border:none;outline:none;resize:none;font-family:'Cascadia Code','Consolas','Fira Code',monospace;font-size:13px;line-height:1.7;padding:0 16px 0 62px;tab-size:4;white-space:pre;overflow:auto}
 .ws-editor-gutter{position:absolute;left:0;top:0;bottom:0;width:54px;overflow:hidden;pointer-events:none;background:var(--bg1);z-index:1}
 .ws-editor-gutter span{display:block;height:calc(13px * 1.7);line-height:calc(13px * 1.7);text-align:right;padding-right:14px;color:var(--t4);font-size:12px;font-family:'Cascadia Code','Consolas',monospace}
-.ws-editor-wrap{position:relative;flex:1;overflow:hidden}
+.ws-editor-wrap{position:relative;flex:1;overflow:hidden;display:flex;flex-direction:column}
 .ws-editor-wrap .ws-editor{padding-left:62px}
 .ws-code{font-family:'Cascadia Code','Consolas','Fira Code',monospace;font-size:13px;line-height:1.7;min-height:100%;user-select:text}
 .ws-line{display:block;position:relative;padding:0 16px 0 62px;min-height:23px;white-space:pre;user-select:text}
@@ -166,6 +167,29 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .ws-md-preview input[type="checkbox"]{margin-right:6px}
 
 .ws-live-strip{height:120px;min-height:60px;max-height:500px;background:var(--bg2);border-top:none;overflow-y:auto;flex-shrink:0;padding:6px 10px;display:flex;flex-direction:column-reverse;gap:3px}
+.ws-bottom-panel{min-height:80px;max-height:500px;height:180px;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;overflow:hidden}
+.ws-bottom-tabs{display:flex;align-items:center;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;padding:0 8px}
+.ws-bottom-tabs button{padding:5px 12px;background:none;border:none;color:var(--t3);font-size:11px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .12s}
+.ws-bottom-tabs button:hover{color:var(--t1)}
+.ws-bottom-tabs button.active{color:var(--t1);border-bottom-color:var(--blue)}
+.ws-bottom-tabs .bt-count{font-size:10px;padding:1px 6px;border-radius:8px;background:rgba(88,166,255,.15);color:var(--blue);margin-left:4px;font-weight:600}
+.ws-bottom-content{flex:1;overflow-y:auto}
+.ws-changes-list{padding:0}
+.ws-change-row{display:flex;align-items:center;gap:8px;padding:4px 12px;font-size:11px;cursor:pointer;transition:background .1s;border-left:3px solid transparent}
+.ws-change-row:hover{background:var(--bg3)}
+.ws-change-row .cr-badge{font-size:9px;padding:1px 6px;border-radius:8px;font-weight:700;min-width:16px;text-align:center;flex-shrink:0}
+.ws-change-row .cr-badge.st-M{background:rgba(210,153,34,.18);color:var(--orange)}
+.ws-change-row .cr-badge.st-A{background:rgba(63,185,80,.18);color:var(--green)}
+.ws-change-row .cr-badge.st-D{background:rgba(248,81,73,.18);color:var(--red)}
+.ws-change-row .cr-badge.st-S{background:rgba(88,166,255,.18);color:var(--blue)}
+.ws-change-row .cr-badge.st-C{background:rgba(248,81,73,.25);color:var(--red)}
+.ws-change-row .cr-badge.st-R{background:rgba(188,140,255,.18);color:var(--purple)}
+.ws-change-row .cr-file{font-family:'Cascadia Code','Consolas',monospace;font-size:11px;color:var(--t1);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ws-change-row .cr-stats{display:flex;gap:6px;font-size:10px;font-weight:600;flex-shrink:0}
+.ws-change-row .cr-stats .cs-a{color:var(--green)}.ws-change-row .cr-stats .cs-d{color:var(--red)}
+.ws-change-row .cr-author{font-size:10px;color:var(--t3);min-width:80px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
+.ws-change-row .cr-date{font-size:10px;color:var(--t4);min-width:55px;text-align:right;flex-shrink:0}
+.ws-change-row .cr-msg{font-size:10px;color:var(--t4);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
 .ws-resizer-h{height:5px;cursor:row-resize;background:var(--border);flex-shrink:0;transition:background .15s}
 .ws-resizer-h:hover,.ws-resizer-h.active{background:var(--blue)}
 
@@ -300,14 +324,15 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .cmp-fi .cfi-a{color:var(--green)}.cmp-fi .cfi-d{color:var(--red)}
 .cmp-diff-area{flex:1;overflow:auto}
 .cmp-empty-msg{text-align:center;padding:60px;color:var(--t4);font-size:13px}
-.cmp-split{display:flex;width:100%}
-.cmp-side{flex:1;min-width:0;overflow:hidden}
-.cmp-side:first-child{border-right:2px solid var(--border)}
+.cmp-split{display:flex;width:100%;position:relative}
+.cmp-side{flex:1;min-width:0;overflow:auto}
+.cmp-v-resizer{width:5px;cursor:col-resize;background:var(--border);flex-shrink:0;transition:background .15s;z-index:2}
+.cmp-v-resizer:hover,.cmp-v-resizer.active{background:var(--blue)}
 .cmp-side-head{padding:6px 14px;background:var(--bg3);font-size:11px;font-weight:600;color:var(--t2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:1}
 .cmp-side-head .csh-file{font-family:'Cascadia Code','Consolas',monospace;color:var(--t1)}
 .cmp-line{display:flex;min-height:21px;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;line-height:1.6}
 .cmp-line .cln{width:48px;text-align:right;padding-right:12px;color:var(--t4);user-select:none;flex-shrink:0;font-size:11px;background:rgba(0,0,0,.15)}
-.cmp-line .ctext{flex:1;white-space:pre;overflow-x:auto;padding:0 8px}
+.cmp-line .ctext{flex:1;white-space:pre;padding:0 8px}
 .cmp-line.ctx{color:var(--t2)}
 .cmp-line.add{background:rgba(46,160,67,.12)}.cmp-line.add .ctext{color:var(--t1)}
 .cmp-line.del{background:rgba(248,81,73,.08)}.cmp-line.del .ctext{color:var(--t2)}
@@ -328,7 +353,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
     <div class="titlebar-dot dot-min" onclick="livegit.minimize()">&#8211;</div>
     <div class="titlebar-dot dot-max" onclick="livegit.maximize()">&#9723;</div>
   </div>
-  <div class="titlebar-title">LiveGit <span style="font-size:10px;color:var(--t4);font-weight:400">v1.1.0</span></div>
+  <div class="titlebar-title">LiveGit <span style="font-size:10px;color:var(--t4);font-weight:400">v1.2.0</span></div>
   <div class="titlebar-path" id="titlePath"></div>
 </div>
 
@@ -384,7 +409,16 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <div class="ws-right">
         <div class="ws-editors horizontal" id="wsEditors"></div>
         <div class="ws-resizer-h" id="resizerH"></div>
-        <div class="ws-live-strip" id="wsLiveStrip"></div>
+        <div class="ws-bottom-panel" id="wsBottomPanel">
+          <div class="ws-bottom-tabs">
+            <button class="active" onclick="wsBottomTab('changes',this)">Anderungen<span class="bt-count" id="wsChangesCount">0</span></button>
+            <button onclick="wsBottomTab('live',this)">Live</button>
+          </div>
+          <div class="ws-bottom-content" id="wsBottomContent">
+            <div class="ws-changes-list" id="wsChangesList"></div>
+            <div class="ws-live-strip" id="wsLiveStrip" style="display:none"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -447,6 +481,8 @@ let wsActiveFile = null;
 let wsViewModeCurrent = 'content';
 let wsOpenTabs = [];
 let wsDragInfo = null;
+let wsSelectedTabs = new Set();
+let wsLastSelectedTab = null;
 
 function wsGetGroup(id) { return wsGroups.find(g => g.id === id); }
 function wsActiveGroup() { return wsGetGroup(wsActiveGroupId); }
@@ -459,9 +495,29 @@ function wsSyncVars() {
 }
 let wsLiveEvents = [];
 let charDiffEnabled = true;
+let simpleDiffEnabled = false;
 
 function toggleCharDiff() {
   charDiffEnabled = !charDiffEnabled;
+  const btn = document.getElementById('charDiffBtn');
+  if (btn) btn.classList.toggle('primary', charDiffEnabled);
+  wsGroups.forEach(g => { if (g.active) wsLoadContent(g.id); });
+}
+
+async function diffContextMenu(e, gid) {
+  e.preventDefault(); e.stopPropagation();
+  const action = await LG.contextMenu([
+    {id:'char-on', label: (charDiffEnabled ? '● ' : '') + 'Zeichen-Diff'},
+    {id:'char-off', label: (!charDiffEnabled ? '● ' : '') + 'Zeilen-Diff'},
+    {id:'sep1', label: '───'},
+    {id:'simple-on', label: (simpleDiffEnabled ? '● ' : '') + 'Vereinfachte Darstellung'},
+    {id:'simple-off', label: (!simpleDiffEnabled ? '● ' : '') + 'Normale Darstellung'}
+  ]);
+  if (!action) return;
+  if (action === 'char-on') charDiffEnabled = true;
+  else if (action === 'char-off') charDiffEnabled = false;
+  else if (action === 'simple-on') simpleDiffEnabled = true;
+  else if (action === 'simple-off') simpleDiffEnabled = false;
   const btn = document.getElementById('charDiffBtn');
   if (btn) btn.classList.toggle('primary', charDiffEnabled);
   wsGroups.forEach(g => { if (g.active) wsLoadContent(g.id); });
@@ -559,6 +615,40 @@ function renderRepo(d) {
 }
 
 // =================== WORKSPACE ===================
+let wsBottomActiveTab = 'changes';
+
+function wsBottomTab(tab, btn) {
+  wsBottomActiveTab = tab;
+  document.querySelectorAll('.ws-bottom-tabs button').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const cl = document.getElementById('wsChangesList');
+  const ls = document.getElementById('wsLiveStrip');
+  if (tab === 'changes') { cl.style.display = ''; ls.style.display = 'none'; }
+  else { cl.style.display = 'none'; ls.style.display = ''; }
+}
+
+async function loadChangesOverview() {
+  const data = await LG.changesOverview(repo);
+  const el = document.getElementById('wsChangesList');
+  const cnt = document.getElementById('wsChangesCount');
+  if (!data || data.error || !data.files.length) {
+    if (cnt) cnt.textContent = '0';
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--t4);font-size:12px">Arbeitsverzeichnis sauber</div>';
+    return;
+  }
+  if (cnt) cnt.textContent = data.files.length;
+  el.innerHTML = data.files.map(f => {
+    return `<div class="ws-change-row" onclick="wsOpenFile('${esc(f.file)}');switchTab('workspace')" oncontextmenu="fileContextMenu(event,'${esc(f.file)}')">
+      <span class="cr-badge st-${f.status}">${f.status}</span>
+      <span class="cr-file">${esc(f.file)}</span>
+      <span class="cr-stats">${f.adds ? '<span class="cs-a">+' + f.adds + '</span>' : ''}${f.dels ? '<span class="cs-d">-' + f.dels + '</span>' : ''}</span>
+      <span class="cr-author">${esc(f.author)}</span>
+      <span class="cr-msg">${esc(f.message)}</span>
+      <span class="cr-date">${fmtDate(f.date)}</span>
+    </div>`;
+  }).join('');
+}
+
 async function loadWorkspace() {
   const [treeData, hotData] = await Promise.all([LG.dirTree(repo), LG.hotFiles(repo)]);
   hotFilesMap = {};
@@ -566,6 +656,8 @@ async function loadWorkspace() {
   renderWsTree(treeData.tree || []);
   document.getElementById('wsLiveStrip').innerHTML = '';
   wsLiveEvents = [];
+  loadChangesOverview();
+  wsBottomTab('changes', document.querySelector('.ws-bottom-tabs button.active'));
 }
 
 function renderWsTree(tree) {
@@ -637,7 +729,7 @@ function renderEditorLayout() {
     html += `<div class="ws-editor-tabs" id="wsTabs-${g.id}">${renderGroupTabsHTML(g)}</div>`;
     html += `<div class="ws-diff-toggle" id="wsToolbar-${g.id}" style="display:${g.active ? 'flex' : 'none'}">`;
     html += `<button class="${vm==='content'?'active':''}" onclick="wsSetViewMode(${g.id},'content')">Inhalt</button>`;
-    html += `<button class="${vm==='diff'?'active':''}" onclick="wsSetViewMode(${g.id},'diff')">Diff</button>`;
+    html += `<button class="${vm==='diff'?'active':''}" onclick="wsSetViewMode(${g.id},'diff')" oncontextmenu="event.preventDefault();diffContextMenu(event,${g.id})">Diff</button>`;
     if (isMd) {
       html += `<button class="${vm==='md'?'active':''}" onclick="wsSetViewMode(${g.id},'md')">Vorschau</button>`;
       html += `<button class="${vm==='md-split'?'active':''}" onclick="wsSetViewMode(${g.id},'md-split')">Split</button>`;
@@ -661,15 +753,52 @@ function renderGroupTabsHTML(g) {
   return g.tabs.map((fp, i) => {
     const name = fp.split('/').pop();
     const active = fp === g.active;
-    return `<div class="ws-editor-tab${active ? ' active' : ''}" draggable="true" data-group="${g.id}" data-file="${esc(fp)}" data-idx="${i}"
+    const sel = wsSelectedTabs.has(g.id + ':' + fp) ? ' tab-selected' : '';
+    return `<div class="ws-editor-tab${active ? ' active' : ''}${sel}" draggable="true" data-group="${g.id}" data-file="${esc(fp)}" data-idx="${i}"
       ondragstart="wsTabDragStart(event,${g.id},'${esc(fp)}')"
       ondragend="wsTabDragEnd(event)"
-      onclick="wsActivateTab(${g.id},'${esc(fp)}')">
+      onclick="wsTabClick(event,${g.id},'${esc(fp)}',${i})">
       <span class="tab-status" style="background:var(--t4)"></span>
       ${esc(name)}
-      <span class="tab-close" onclick="event.stopPropagation();wsCloseTab(${g.id},'${esc(fp)}')">&times;</span>
+      <span class="tab-close" onclick="event.stopPropagation();wsCloseTabs(${g.id},'${esc(fp)}')">&times;</span>
     </div>`;
   }).join('');
+}
+
+function wsTabClick(e, gid, fp, idx) {
+  const g = wsGetGroup(gid);
+  if (!g) return;
+  if (e.shiftKey && wsLastSelectedTab && wsLastSelectedTab.gid === gid) {
+    const lastIdx = g.tabs.indexOf(wsLastSelectedTab.fp);
+    if (lastIdx >= 0) {
+      const from = Math.min(lastIdx, idx);
+      const to = Math.max(lastIdx, idx);
+      for (let i = from; i <= to; i++) wsSelectedTabs.add(gid + ':' + g.tabs[i]);
+    }
+    renderEditorLayout();
+    return;
+  }
+  wsSelectedTabs.clear();
+  wsLastSelectedTab = { gid, fp };
+  wsActivateTab(gid, fp);
+}
+
+function wsCloseTabs(gid, fp) {
+  const g = wsGetGroup(gid);
+  if (!g) return;
+  if (wsSelectedTabs.size > 0) {
+    const toClose = [];
+    wsSelectedTabs.forEach(key => {
+      const [gIdStr, ...rest] = key.split(':');
+      if (parseInt(gIdStr) === gid) toClose.push(rest.join(':'));
+    });
+    if (toClose.length > 0) {
+      toClose.forEach(f => wsCloseTab(gid, f));
+      wsSelectedTabs.clear();
+      return;
+    }
+  }
+  wsCloseTab(gid, fp);
 }
 
 function renderWsTabs() { renderEditorLayout(); }
@@ -884,6 +1013,7 @@ function wsMdSplitPreview(gid) {
 
 // Tab drag-and-drop
 function wsTabDragStart(e, gid, fp) {
+  wsSelectedTabs.clear();
   wsDragInfo = { groupId: gid, filePath: fp };
   e.dataTransfer.effectAllowed = 'move';
   e.dataTransfer.setData('text/plain', fp);
@@ -1362,8 +1492,8 @@ function showToast(type, file) {
       document.getElementById('resizerV').classList.add('active');
     } else {
       startPos = ev.clientY;
-      startSize = document.getElementById('wsLiveStrip').offsetHeight;
-      target = document.getElementById('wsLiveStrip');
+      startSize = document.getElementById('wsBottomPanel').offsetHeight;
+      target = document.getElementById('wsBottomPanel');
       document.getElementById('resizerH').classList.add('active');
     }
     document.addEventListener('mousemove', onMove);
@@ -1515,6 +1645,8 @@ LG.onLiveChange(async (data) => {
 
   const mod = document.getElementById('iModified');
   if (data.event === 'change' || data.event === 'unlink') mod.textContent = parseInt(mod.textContent || '0') + 1;
+
+  loadChangesOverview();
 });
 
 // =================== COMPARE (side-by-side diff) ===================
@@ -1679,16 +1811,19 @@ function renderSideBySide(diffText, fileName) {
     rightHtml += cmpLine(rv ? rv.t : 'empty', rv ? rv.n : '', rv ? rv.s : '', rv ? rv.cd : null);
   }
 
-  wrap.innerHTML = `<div class="cmp-split">
-    <div class="cmp-side">
+  wrap.innerHTML = `<div class="cmp-split" id="cmpSplit">
+    <div class="cmp-side" id="cmpSideL" onscroll="cmpSyncScroll('L')">
       <div class="cmp-side-head"><span style="color:var(--red)">&#8592;</span> <span class="csh-file">${esc(window._cmpFromLabel || 'Von')}</span></div>
       ${leftHtml}
     </div>
-    <div class="cmp-side">
+    <div class="cmp-v-resizer" id="cmpVResizer"></div>
+    <div class="cmp-side" id="cmpSideR" onscroll="cmpSyncScroll('R')">
       <div class="cmp-side-head"><span style="color:var(--green)">&#8594;</span> <span class="csh-file">${esc(window._cmpToLabel || 'Nach')}</span></div>
       ${rightHtml}
     </div>
   </div>`;
+  initCmpResizer();
+  initCmpSyncScroll();
 }
 
 function cmpLine(type, num, text, cd) {
@@ -1698,6 +1833,56 @@ function cmpLine(type, num, text, cd) {
     else if (type === 'add') content = renderCharDiffAdd(cd);
   }
   return `<div class="cmp-line ${type}"><span class="cln">${num || ''}</span><span class="ctext">${content}</span></div>`;
+}
+
+let _cmpSyncLock = null;
+function cmpSyncScroll(side) {
+  if (_cmpSyncLock && _cmpSyncLock !== side) return;
+  _cmpSyncLock = side;
+  const l = document.getElementById('cmpSideL');
+  const r = document.getElementById('cmpSideR');
+  if (!l || !r) return;
+  if (side === 'L') { r.scrollTop = l.scrollTop; }
+  else { l.scrollTop = r.scrollTop; }
+  requestAnimationFrame(() => { _cmpSyncLock = null; });
+}
+
+function initCmpSyncScroll() {
+  const l = document.getElementById('cmpSideL');
+  const r = document.getElementById('cmpSideR');
+  if (l) l.scrollTop = 0;
+  if (r) r.scrollTop = 0;
+}
+
+function initCmpResizer() {
+  const rv = document.getElementById('cmpVResizer');
+  const l = document.getElementById('cmpSideL');
+  if (!rv || !l) return;
+  rv.onmousedown = function(e) {
+    e.preventDefault();
+    rv.classList.add('active');
+    const split = rv.parentElement;
+    const totalW = split.offsetWidth - 5;
+    const startX = e.clientX;
+    const startLW = l.offsetWidth;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    function onMove(e2) {
+      const delta = e2.clientX - startX;
+      const nw = Math.max(120, Math.min(totalW - 120, startLW + delta));
+      l.style.flex = 'none';
+      l.style.width = nw + 'px';
+    }
+    function onUp() {
+      rv.classList.remove('active');
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  };
 }
 
 // =================== LIVE TAB ===================
