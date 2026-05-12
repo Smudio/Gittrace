@@ -16,8 +16,6 @@ function createWindow() {
         title: 'Gittrace',
         backgroundColor: '#0d1117',
         frame: false,
-        titleBarStyle: 'hidden',
-        trafficLightPosition: { x: 16, y: 16 },
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
@@ -214,10 +212,6 @@ ipcMain.handle('shell:openPath', (_, fullPath) => {
     shell.openPath(fullPath);
 });
 
-ipcMain.handle('shell:openExternal', (_, url) => {
-    shell.openExternal(url);
-});
-
 ipcMain.handle('git:diffStats', async (_, repoPath, filePath) => {
     try {
         const git = simpleGit(repoPath);
@@ -403,7 +397,8 @@ ipcMain.handle('git:liveFileContent', async (_, repoPath, filePath) => {
 
 ipcMain.handle('git:saveFile', async (_, repoPath, filePath, content) => {
     try {
-        const full = path.join(repoPath, filePath);
+        const full = path.resolve(path.join(repoPath, filePath));
+        if (!full.startsWith(path.resolve(repoPath))) return { error: 'Invalid path' };
         fs.writeFileSync(full, content, 'utf8');
         return { ok: true };
     } catch (err) {
@@ -418,20 +413,18 @@ ipcMain.handle('git:compare', async (_, repoPath, hashFrom, hashTo) => {
             : (hashFrom === 'WORKING')
                 ? [hashTo]
                 : [hashFrom, hashTo];
-        const [diff, statRaw] = await Promise.all([
+        const [diff, numstatRaw] = await Promise.all([
             git.diff([...args]),
-            git.diff(['--stat=300', ...args])
+            git.diff(['--numstat', ...args])
         ]);
         const files = [];
-        for (const line of statRaw.trim().split('\n')) {
-            if (!line.includes('|')) continue;
-            const pipeIdx = line.indexOf('|');
-            const name = line.substring(0, pipeIdx).trim();
-            const rest = line.substring(pipeIdx + 1);
+        for (const line of numstatRaw.trim().split('\n')) {
+            if (!line.trim()) continue;
+            const parts = line.split('\t');
+            if (parts.length < 3) continue;
+            const name = parts[2].trim();
             if (!name) continue;
-            const inserts = (rest.match(/\+/g) || []).length;
-            const deletes = (rest.match(/-/g) || []).length;
-            files.push({ file: name, adds: inserts, dels: deletes, binary: rest.includes('Bin') });
+            files.push({ file: name, adds: parseInt(parts[0]) || 0, dels: parseInt(parts[1]) || 0, binary: parts[0] === '-' });
         }
         return { diff, files };
     } catch (err) {

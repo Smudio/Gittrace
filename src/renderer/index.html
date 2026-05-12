@@ -220,8 +220,6 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .ws-live-event .le-file:hover{color:var(--t1);text-decoration:underline}
 .ws-live-event .le-time{color:var(--t4);font-size:9px;flex-shrink:0}
 
-.kw{color:#ff7b72}.str{color:#a5d6ff}.num{color:#79c0ff}.cm{color:#6e7681;font-style:italic}.fn{color:#d2a8ff}.typ{color:#ffa657}.op{color:#79c0ff}.dec{color:#ffa657}
-
 .modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
 .modal{background:var(--bg2);border-radius:10px;width:92%;max-width:1050px;max-height:82vh;display:flex;flex-direction:column;border:1px solid var(--border);box-shadow:0 16px 48px rgba(0,0,0,.5)}
 .modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);flex-shrink:0}
@@ -353,7 +351,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 
 <div class="titlebar">
   <div class="titlebar-path" id="titlePath"></div>
-  <div class="titlebar-title">Gittrace <span style="font-size:10px;color:var(--t4);font-weight:400">v1.3.0</span></div>
+  <div class="titlebar-title">Gittrace <span style="font-size:10px;color:var(--t4);font-weight:400">v1.4.0</span></div>
   <div class="titlebar-winctl">
     <button class="winctl-btn" onclick="gittrace.minimize()" title="Minimieren"><svg viewBox="0 0 10 10"><line x1="0" y1="5" x2="10" y2="5"/></svg></button>
     <button class="winctl-btn" onclick="gittrace.maximize()" title="Maximieren"><svg viewBox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9"/></svg></button>
@@ -481,8 +479,6 @@ let wsActiveGroupId = 0;
 let wsNextGroupId = 1;
 let wsSplitDir = 'horizontal';
 let wsActiveFile = null;
-let wsViewModeCurrent = 'content';
-let wsOpenTabs = [];
 let wsDragInfo = null;
 let wsSelectedTabs = new Set();
 let wsLastSelectedTab = null;
@@ -495,26 +491,15 @@ function wsFindFileGroup(fp) { return wsGroups.find(g => g.tabs.includes(fp)); }
 function wsSyncVars() {
   const g = wsActiveGroup();
   wsActiveFile = g ? g.active : null;
-  wsViewModeCurrent = g ? g.viewMode : 'content';
-  wsOpenTabs = g ? g.tabs.slice() : [];
 }
-let wsLiveEvents = [];
 let charDiffEnabled = true;
 let simpleDiffEnabled = false;
-
-function toggleCharDiff() {
-  charDiffEnabled = !charDiffEnabled;
-  const btn = document.getElementById('charDiffBtn');
-  if (btn) btn.classList.toggle('primary', charDiffEnabled);
-  wsGroups.forEach(g => { if (g.active) wsLoadContent(g.id); });
-}
 
 async function diffContextMenu(e, gid) {
   e.preventDefault(); e.stopPropagation();
   const action = await LG.contextMenu([
     {id:'char-on', label: (charDiffEnabled ? '● ' : '') + 'Zeichen-Diff'},
     {id:'char-off', label: (!charDiffEnabled ? '● ' : '') + 'Zeilen-Diff'},
-    {id:'sep1', label: '───'},
     {id:'simple-on', label: (simpleDiffEnabled ? '● ' : '') + 'Vereinfachte Darstellung'},
     {id:'simple-off', label: (!simpleDiffEnabled ? '● ' : '') + 'Normale Darstellung'}
   ]);
@@ -595,6 +580,12 @@ async function loadRepo(p) { repo = p; const d = await LG.openRepo(p); if (d.err
 async function refreshRepo() { if (!repo) return; const d = await LG.openRepo(repo); if (!d.error) renderRepo(d); }
 
 function renderRepo(d) {
+  wsGroups = [{ id: 0, tabs: [], active: null, viewMode: 'content' }];
+  wsActiveGroupId = 0;
+  wsSelectedTabs.clear();
+  wsDeletedFiles.clear();
+  wsGitStatusMap = {};
+  wsLastSelectedTab = null;
   document.getElementById('p-welcome').classList.remove('active');
   document.getElementById('titlePath').textContent = d.path;
   document.getElementById('repoName').style.display = 'flex';
@@ -666,13 +657,10 @@ async function loadWorkspace() {
   (hotData.files||[]).forEach(f => hotFilesMap[f.file] = f.changes);
   renderWsTree(treeData.tree || []);
   document.getElementById('wsLiveStrip').innerHTML = '';
-  wsLiveEvents = [];
   loadChangesOverview();
   wsBottomTab('changes', document.querySelector('.ws-bottom-tabs button.active'));
   refreshTabStatuses();
-}
-
-async function refreshTabStatuses() {
+}async function refreshTabStatuses() {
   try {
     const data = await LG.statusMap(repo);
     if (data && data.map) {
@@ -789,6 +777,7 @@ function renderEditorLayout() {
     html += `</div>`;
   });
   el.innerHTML = html;
+  wsGroups.forEach(g => { if (g.active && g._dirty) wsPreserveEdit(g.id); });
   wsGroups.forEach(g => { if (g.active) wsLoadContent(g.id); });
   initGroupResizers();
 }
@@ -848,8 +837,6 @@ function wsCloseTabs(gid, fp) {
   }
   wsCloseTab(gid, fp);
 }
-
-function renderWsTabs() { renderEditorLayout(); }
 
 function wsFocusGroup(gid) {
   wsActiveGroupId = gid;
@@ -931,8 +918,10 @@ async function wsShowContent(gid, fp, silent) {
   if (fileData.tooLarge) { wrap.innerHTML = '<div class="ws-empty">Datei zu gross</div>'; return; }
   if (fileData.isDir) { wrap.innerHTML = '<div class="ws-empty">Verzeichnis</div>'; return; }
   const content = fileData.content || '';
+  const useContent = g._pendingContent != null ? g._pendingContent : content;
+  g._pendingContent = null;
   const lineMap = parseLineChanges(diffData.diff || '');
-  const lines = content.split('\n');
+  const lines = useContent.split('\n');
   const gutterBg = lines.map((l, i) => {
     const cls = lineMap.get(i + 1) || '';
     const bg = cls === 'git-add' ? 'background:rgba(46,160,67,.10);' : cls === 'git-mod' ? 'background:rgba(210,153,34,.08);' : '';
@@ -1214,19 +1203,6 @@ function renderMarkdown(md) {
   return html;
 }
 
-function highlight(code, ext) {
-  return highlightWithGit(code, ext, null);
-}
-
-function highlightWithGit(code, ext, lineMap) {
-  const lines = code.split('\n');
-  return lines.map((l, i) => {
-    const hl = syntaxHL(l, ext);
-    const cls = lineMap ? (lineMap.get(i + 1) || '') : '';
-    return `<div class="ws-line ${cls}"><span class="ws-gutter"></span><span class="ws-lnum">${i+1}</span>${hl}</div>`;
-  }).join('');
-}
-
 function parseLineChanges(diffText) {
   const map = new Map();
   if (!diffText) return map;
@@ -1265,34 +1241,6 @@ function parseLineChanges(diffText) {
     newLine++;
   }
   return map;
-}
-
-function syntaxHL(line, ext) {
-  let s = esc(line);
-  const kwSets = {
-    js: ['const','let','var','function','return','if','else','for','while','class','import','export','from','default','new','this','async','await','try','catch','throw','typeof','instanceof','switch','case','break','continue','yield','of','in','true','false','null','undefined'],
-    ts: ['const','let','var','function','return','if','else','for','while','class','import','export','from','default','new','this','async','await','interface','type','enum','extends','implements','readonly','as','is','keyof','infer','never','unknown','any','void','string','number','boolean','true','false','null','undefined'],
-    py: ['def','class','return','if','elif','else','for','while','import','from','as','try','except','finally','with','raise','pass','break','continue','yield','lambda','True','False','None','and','or','not','in','is','global','nonlocal','assert','del'],
-    rs: ['fn','let','mut','const','if','else','for','while','loop','match','return','struct','enum','impl','trait','pub','use','mod','crate','self','super','where','type','as','in','ref','move','async','await','true','false','None','Some','Ok','Err'],
-    go: ['func','var','const','if','else','for','range','return','switch','case','default','type','struct','interface','map','chan','go','defer','select','package','import','true','false','nil','make','append','len','cap'],
-    html: ['DOCTYPE','html','head','body','div','span','class','style','script','link','meta','src','href','type','id'],
-    css: ['color','background','margin','padding','border','display','flex','grid','position','width','height','font','transition','animation','opacity','overflow','none','auto','solid','relative','absolute','fixed'],
-    json: [],
-    sh: ['function','if','then','else','fi','for','do','done','while','case','esac','echo','exit','return','export','source','local','readonly','true','false']
-  };
-  const kws = kwSets[ext] || kwSets['js'];
-  if (kws.length) {
-    const re = new RegExp('\\b(' + kws.join('|') + ')\\b', 'g');
-    s = s.replace(re, '<span class="kw">$1</span>');
-  }
-  s = s.replace(/("(?:[^"\\]|\\.)*")/g, '<span class="str">$1</span>');
-  s = s.replace(/('(?:[^'\\]|\\.)*')/g, '<span class="str">$1</span>');
-  s = s.replace(/(`(?:[^`\\]|\\.)*`)/g, '<span class="str">$1</span>');
-  s = s.replace(/\b(\d+\.?\d*)\b/g, '<span class="num">$1</span>');
-  s = s.replace(/(\/\/.*$)/gm, '<span class="cm">$1</span>');
-  s = s.replace(/(#.*$)/gm, '<span class="cm">$1</span>');
-  s = s.replace(/(\b\w+)\s*\(/g, '<span class="fn">$1</span>(');
-  return s;
 }
 
 function renderInlineDiff(text) {
@@ -1453,17 +1401,20 @@ async function showFileDiff(fp) { await wsOpenFile(fp); switchTab('workspace'); 
 function renderDiff(text) {
   if (!text) return '<div class="empty-msg">Keine Aenderungen</div>';
   const lines = text.split('\n');
-  let html = '', inD = false, adds = 0, dels = 0;
+  let html = '';
+  const fileBlocks = [];
+  let curFile = null;
   let i = 0;
   while (i < lines.length) {
     const line = lines[i];
     if (line.startsWith('diff --git')) {
-      if (inD) html += '</div>';
+      if (curFile) fileBlocks.push(curFile);
       const m = line.match(/b\/(.+)$/);
-      html += `<div class="dfile">${esc(m?m[1]:line)} <span class="stats"><span class="dstats-a">+${adds}</span><span class="dstats-d">-${dels}</span></span></div><div>`;
-      inD=true;adds=0;dels=0;i++;continue;
+      curFile = { name: m ? m[1] : line, body: '', adds: 0, dels: 0 };
+      i++; continue;
     }
-    if (line.startsWith('@@')){html+=`<div class="dline hunk"><span class="ln"></span><span class="lc">${esc(line)}</span></div>`;i++;continue;}
+    if (!curFile) { i++; continue; }
+    if (line.startsWith('@@')){curFile.body+=`<div class="dline hunk"><span class="ln"></span><span class="lc">${esc(line)}</span></div>`;i++;continue;}
     if (line.startsWith('+++')||line.startsWith('---')||line.startsWith('index ')||line.startsWith('Binary')){i++;continue;}
     if (line.startsWith('-')||line.startsWith('+')) {
       const dg=[], ag=[];
@@ -1471,25 +1422,28 @@ function renderDiff(text) {
       while(i<lines.length&&lines[i].startsWith('+')&&!lines[i].startsWith('+++')){ag.push(lines[i].slice(1));i++;}
       const pairs=Math.min(dg.length,ag.length);
       for(let p=0;p<pairs;p++){
-        dels++;adds++;
+        curFile.dels++;curFile.adds++;
         const cd=charDiff(dg[p],ag[p]);
         if(cd){
-          html+=`<div class="dline del"><span class="ln"></span><span class="lc">${renderCharDiffDel(cd)}</span></div>`;
-          html+=`<div class="dline add"><span class="ln"></span><span class="lc">${renderCharDiffAdd(cd)}</span></div>`;
+          curFile.body+=`<div class="dline del"><span class="ln"></span><span class="lc">${renderCharDiffDel(cd)}</span></div>`;
+          curFile.body+=`<div class="dline add"><span class="ln"></span><span class="lc">${renderCharDiffAdd(cd)}</span></div>`;
         }else{
-          html+=`<div class="dline del"><span class="ln"></span><span class="lc">${esc(dg[p])}</span></div>`;
-          html+=`<div class="dline add"><span class="ln"></span><span class="lc">${esc(ag[p])}</span></div>`;
+          curFile.body+=`<div class="dline del"><span class="ln"></span><span class="lc">${esc(dg[p])}</span></div>`;
+          curFile.body+=`<div class="dline add"><span class="ln"></span><span class="lc">${esc(ag[p])}</span></div>`;
         }
       }
-      for(let p=pairs;p<dg.length;p++){dels++;html+=`<div class="dline del"><span class="ln"></span><span class="lc">${esc(dg[p])}</span></div>`;}
-      for(let p=pairs;p<ag.length;p++){adds++;html+=`<div class="dline add"><span class="ln"></span><span class="lc">${esc(ag[p])}</span></div>`;}
+      for(let p=pairs;p<dg.length;p++){curFile.dels++;curFile.body+=`<div class="dline del"><span class="ln"></span><span class="lc">${esc(dg[p])}</span></div>`;}
+      for(let p=pairs;p<ag.length;p++){curFile.adds++;curFile.body+=`<div class="dline add"><span class="ln"></span><span class="lc">${esc(ag[p])}</span></div>`;}
       continue;
     }
     const ctx=line.startsWith(' ')?line.slice(1):line;
-    html+=`<div class="dline ctx"><span class="ln"></span><span class="lc">${esc(ctx)}</span></div>`;
+    curFile.body+=`<div class="dline ctx"><span class="ln"></span><span class="lc">${esc(ctx)}</span></div>`;
     i++;
   }
-  if(inD)html+='</div>';
+  if (curFile) fileBlocks.push(curFile);
+  for (const fb of fileBlocks) {
+    html += `<div class="dfile">${esc(fb.name)} <span class="stats"><span class="dstats-a">+${fb.adds}</span><span class="dstats-d">-${fb.dels}</span></span></div><div>${fb.body}</div>`;
+  }
   return html;
 }
 
@@ -1687,7 +1641,7 @@ LG.onLiveChange(async (data) => {
   // auto-refresh code viewer
   wsGroups.forEach(g => {
     if (g.active === data.file && (data.event === 'change' || data.event === 'add')) {
-      wsLoadContentSilent(g.id);
+      if (!g._dirty) wsLoadContentSilent(g.id);
     }
   });
 
@@ -1850,7 +1804,7 @@ function renderSideBySide(diffText, fileName) {
   while (li < left.length || ri < right.length) {
     const lv = left[li], rv = right[ri];
     if (!lv) { alignedL.push(null); alignedR.push(rv); ri++; continue; }
-    if (!rv) { alignedL.push(lv); alignedR.push(null); ri++; continue; }
+    if (!rv) { alignedL.push(lv); alignedR.push(null); li++; continue; }
     if (lv.t === 'hdr' && rv.t === 'hdr') { alignedL.push(lv); alignedR.push(rv); li++; ri++; continue; }
     if (lv.t === 'ctx' && rv.t === 'ctx') { alignedL.push(lv); alignedR.push(rv); li++; ri++; continue; }
     if (lv.t === 'del') {
@@ -1904,8 +1858,8 @@ function cmpSyncScroll(side) {
   const l = document.getElementById('cmpSideL');
   const r = document.getElementById('cmpSideR');
   if (!l || !r) return;
-  if (side === 'L') { r.scrollTop = l.scrollTop; }
-  else { l.scrollTop = r.scrollTop; }
+  if (side === 'L') { r.scrollTop = l.scrollTop; r.scrollLeft = l.scrollLeft; }
+  else { l.scrollTop = r.scrollTop; l.scrollLeft = r.scrollLeft; }
   requestAnimationFrame(() => { _cmpSyncLock = null; });
 }
 
@@ -1983,7 +1937,7 @@ function fileIcon(n) {
   return m[ext] || '&#128196;';
 }
 
-function esc(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function esc(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 function fmtDate(d) {
   try {
