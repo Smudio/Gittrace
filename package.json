@@ -1,7 +1,7 @@
 {
-  "name": "meshtrace",
+  "name": "gittrace",
   "version": "1.2.0",
-  "description": "Meshtrace - Desktop Git Project Viewer",
+  "description": "Gittrace - Desktop Git Project Viewer",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
@@ -9,8 +9,8 @@
     "build:nsis": "electron-builder --win nsis"
   },
   "build": {
-    "appId": "com.meshtrace.app",
-    "productName": "Meshtrace",
+    "appId": "com.gittrace.app",
+    "productName": "Gittrace",
     "directories": {
       "output": "dist"
     },
@@ -30,11 +30,11 @@
       "signingHashAlgorithms": []
     },
     "portable": {
-      "artifactName": "Meshtrace.exe"
+      "artifactName": "Gittrace.exe"
     },
     "nsis": {
       "oneClick": true,
-      "artifactName": "Meshtrace-Setup.exe"
+      "artifactName": "Gittrace-Setup.exe"
     }
   },
   "devDependencies": {

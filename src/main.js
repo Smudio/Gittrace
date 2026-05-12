@@ -13,7 +13,7 @@ function createWindow() {
         height: 850,
         minWidth: 900,
         minHeight: 600,
-        title: 'Meshtrace',
+        title: 'Gittrace',
         backgroundColor: '#0d1117',
         frame: false,
         titleBarStyle: 'hidden',
