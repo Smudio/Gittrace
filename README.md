@@ -2,8 +2,6 @@
 
 a clean desktop app to watch your git projects in real time.
 
-built with electron. dark by default. stays out of your way.
-
 ---
 
 ## what it does
