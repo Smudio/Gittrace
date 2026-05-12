@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('livegit', {
+contextBridge.exposeInMainWorld('gittrace', {
     openFolder: () => ipcRenderer.invoke('dialog:openFolder'),
     openRepo: (p) => ipcRenderer.invoke('git:open', p),
     commitDiff: (p, h) => ipcRenderer.invoke('git:commitDiff', p, h),

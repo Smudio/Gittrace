@@ -353,11 +353,11 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 
 <div class="titlebar">
   <div class="titlebar-path" id="titlePath"></div>
-  <div class="titlebar-title">Gittrace <span style="font-size:10px;color:var(--t4);font-weight:400">v1.2.0</span></div>
+  <div class="titlebar-title">Gittrace <span style="font-size:10px;color:var(--t4);font-weight:400">v1.3.0</span></div>
   <div class="titlebar-winctl">
-    <button class="winctl-btn" onclick="livegit.minimize()" title="Minimieren"><svg viewBox="0 0 10 10"><line x1="0" y1="5" x2="10" y2="5"/></svg></button>
-    <button class="winctl-btn" onclick="livegit.maximize()" title="Maximieren"><svg viewBox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9"/></svg></button>
-    <button class="winctl-btn wc-close" onclick="livegit.close()" title="Schliessen"><svg viewBox="0 0 10 10"><line x1="0" y1="0" x2="10" y2="10"/><line x1="10" y1="0" x2="0" y2="10"/></svg></button>
+    <button class="winctl-btn" onclick="gittrace.minimize()" title="Minimieren"><svg viewBox="0 0 10 10"><line x1="0" y1="5" x2="10" y2="5"/></svg></button>
+    <button class="winctl-btn" onclick="gittrace.maximize()" title="Maximieren"><svg viewBox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9"/></svg></button>
+    <button class="winctl-btn wc-close" onclick="gittrace.close()" title="Schliessen"><svg viewBox="0 0 10 10"><line x1="0" y1="0" x2="10" y2="10"/><line x1="10" y1="0" x2="0" y2="10"/></svg></button>
   </div>
 </div>
 
@@ -471,7 +471,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 <div class="toast-container" id="toasts"></div>
 
 <script>
-const LG = window.livegit;
+const LG = window.gittrace;
 let repo = '';
 let commits = [];
 let hotFilesMap = {};
