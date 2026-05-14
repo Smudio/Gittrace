@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gittrace</title>
+<link rel="stylesheet" href="../vendor/github-dark.min.css">
+<script src="../vendor/highlight.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -122,12 +124,14 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .ws-editor-tab .tab-close{font-size:14px;color:var(--t4);margin-left:4px;cursor:pointer;padding:2px 4px;border-radius:3px;line-height:1;min-width:18px;text-align:center}
 .ws-editor-tab .tab-close:hover{color:var(--red);background:rgba(248,81,73,.15)}
 .ws-editor-tab.tab-selected{background:rgba(88,166,255,.12);outline:1px solid rgba(88,166,255,.4);outline-offset:-1px}
-.ws-code-wrap{flex:1;overflow:auto;background:var(--bg1);position:relative;display:flex;flex-direction:column}
+.ws-code-wrap{flex:1;overflow:hidden;background:var(--bg1);position:relative;display:flex;flex-direction:column}
 .ws-editor{flex:1;width:100%;background:none;color:var(--t1);border:none;outline:none;resize:none;font-family:'Cascadia Code','Consolas','Fira Code',monospace;font-size:13px;line-height:1.7;padding:0 16px 0 62px;tab-size:4;white-space:pre;overflow:auto}
-.ws-editor-gutter{position:absolute;left:0;top:0;bottom:0;width:54px;overflow:hidden;pointer-events:none;background:var(--bg1);z-index:1}
+.ws-editor-gutter{position:absolute;left:0;top:0;bottom:0;width:54px;overflow:hidden;pointer-events:none;background:var(--bg1);z-index:2}
 .ws-editor-gutter span{display:block;height:calc(13px * 1.7);line-height:calc(13px * 1.7);text-align:right;padding-right:14px;color:var(--t4);font-size:12px;font-family:'Cascadia Code','Consolas',monospace}
 .ws-editor-wrap{position:relative;flex:1;overflow:hidden}
-.ws-editor-wrap .ws-editor{position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;padding:0 16px 0 62px}
+.ws-editor-wrap .ws-editor{position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;padding:0 16px 0 62px;z-index:1}
+.ws-highlight-layer{position:absolute;top:0;left:0;right:0;bottom:0;overflow:auto;pointer-events:none;font-family:'Cascadia Code','Consolas','Fira Code',monospace;font-size:13px;line-height:1.7;white-space:pre;tab-size:4;z-index:0;color:var(--t1);padding:0 16px 0 62px}
+.ws-editor-wrap.hl-active .ws-editor{color:transparent;caret-color:var(--t1);-webkit-text-fill-color:transparent;background:transparent}
 .ws-code{font-family:'Cascadia Code','Consolas','Fira Code',monospace;font-size:13px;line-height:1.7;min-height:100%;user-select:text}
 .ws-line{display:block;position:relative;padding:0 16px 0 62px;min-height:23px;white-space:pre;user-select:text}
 .ws-line:hover{background:rgba(255,255,255,.015)}
@@ -149,6 +153,9 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .ws-diff-toggle button:hover{background:var(--bg4);color:var(--t1)}
 .ws-diff-toggle button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
 .ws-diff-toggle .ws-file-label{font-family:'Cascadia Code','Consolas',monospace;font-size:11px;color:var(--t2);margin-left:auto}
+.ws-lang-select{padding:3px 6px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--t2);font-size:10px;font-family:'Cascadia Code','Consolas',monospace;cursor:pointer;outline:none;margin-left:auto;max-width:120px}
+.ws-lang-select:focus{border-color:var(--blue)}
+.ws-lang-select option{background:var(--bg1);color:var(--t1)}
 .ws-md-preview{padding:24px 32px;color:var(--t1);font-size:14px;line-height:1.75;max-width:800px;user-select:text}
 .ws-md-preview h1{font-size:28px;font-weight:700;margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border);color:var(--t1)}
 .ws-md-preview h2{font-size:22px;font-weight:600;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);color:var(--t1)}
@@ -351,7 +358,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 
 <div class="titlebar">
   <div class="titlebar-path" id="titlePath"></div>
-  <div class="titlebar-title">Gittrace <span style="font-size:10px;color:var(--t4);font-weight:400">v1.4.0</span></div>
+  <div class="titlebar-title">Gittrace <span style="font-size:10px;color:var(--t4);font-weight:400">v1.5.0</span></div>
   <div class="titlebar-winctl">
     <button class="winctl-btn" onclick="gittrace.minimize()" title="Minimieren"><svg viewBox="0 0 10 10"><line x1="0" y1="5" x2="10" y2="5"/></svg></button>
     <button class="winctl-btn" onclick="gittrace.maximize()" title="Maximieren"><svg viewBox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9"/></svg></button>
@@ -494,6 +501,84 @@ function wsSyncVars() {
 }
 let charDiffEnabled = true;
 let simpleDiffEnabled = false;
+let wsLangOverrides = {};
+
+const EXT_LANG_MAP = {
+  '.js':'javascript','.jsx':'javascript','.mjs':'javascript','.cjs':'javascript',
+  '.ts':'typescript','.tsx':'typescript',
+  '.py':'python','.pyw':'python',
+  '.rb':'ruby',
+  '.go':'go',
+  '.rs':'rust',
+  '.java':'java',
+  '.kt':'kotlin','.kts':'kotlin',
+  '.cs':'csharp',
+  '.cpp':'cpp','.cc':'cpp','.cxx':'cpp','.hpp':'cpp','.h':'c','.c':'c',
+  '.html':'xml','.htm':'xml','.xml':'xml','.svg':'xml',
+  '.css':'css','.scss':'scss','.sass':'scss','.less':'less',
+  '.json':'json','.jsonc':'json',
+  '.yaml':'yaml','.yml':'yaml',
+  '.toml':'ini',
+  '.md':'markdown','.mdx':'markdown',
+  '.sh':'bash','.bash':'bash','.zsh':'bash','.fish':'bash',
+  '.ps1':'powershell',
+  '.sql':'sql',
+  '.php':'php',
+  '.swift':'swift',
+  '.dart':'dart',
+  '.lua':'lua',
+  '.r':'r','.R':'r',
+  '.pl':'perl','.pm':'perl',
+  '.ex':'elixir','.exs':'elixir',
+  '.erl':'erlang',
+  '.hs':'haskell',
+  '.scala':'scala',
+  '.clj':'clojure','.cljs':'clojure',
+  '.vue':'xml',
+  '.dockerfile':'dockerfile',
+  '.makefile':'makefile',
+  '.cmake':'cmake',
+  '.gradle':'groovy',
+  '.proto':'protobuf',
+  '.tf':'hcl',
+  '.dockerignore':'bash','.gitignore':'bash','.env':'bash',
+  '.conf':'nginx','.ini':'ini','.cfg':'ini',
+  '.diff':'diff','.patch':'diff',
+  '.graphql':'graphql','.gql':'graphql',
+  '.txt':'plaintext'
+};
+
+function detectLang(filePath) {
+  if (wsLangOverrides[filePath]) return wsLangOverrides[filePath];
+  const name = filePath.toLowerCase();
+  const slashIdx = name.lastIndexOf('/');
+  const baseName = name.substring(slashIdx + 1);
+  for (const [ext, lang] of Object.entries(EXT_LANG_MAP)) {
+    if (baseName.endsWith(ext)) return lang;
+  }
+  if (baseName === 'dockerfile') return 'dockerfile';
+  if (baseName === 'makefile') return 'makefile';
+  if (baseName === 'cmakelists.txt') return 'cmake';
+  return null;
+}
+
+function getSupportedLanguages() {
+  if (!window.hljs) return [];
+  const langs = hljs.listLanguages().slice().sort();
+  langs.unshift('auto');
+  return langs;
+}
+
+function wsSetLang(gid, lang) {
+  const g = wsGetGroup(gid);
+  if (!g || !g.active) return;
+  if (lang === 'auto') {
+    delete wsLangOverrides[g.active];
+  } else {
+    wsLangOverrides[g.active] = lang;
+  }
+  wsUpdateHighlight(gid);
+}
 
 async function diffContextMenu(e, gid) {
   e.preventDefault(); e.stopPropagation();
@@ -767,6 +852,18 @@ function renderEditorLayout() {
       html += `<button class="${vm==='md-split'?'active':''}" onclick="wsSetViewMode(${g.id},'md-split')">Split</button>`;
     }
     html += `<span class="ws-file-label" id="wsLabel-${g.id}">${esc(g.active || '')}</span>`;
+    if (g.active && g.viewMode === 'content') {
+      const curLang = detectLang(g.active);
+      const allLangs = getSupportedLanguages();
+      const selVal = wsLangOverrides[g.active] || 'auto';
+      html += `<select class="ws-lang-select" id="wsLang-${g.id}" onchange="wsSetLang(${g.id},this.value)" title="Sprache waehlen">`;
+      html += `<option value="auto">Auto${curLang ? ' (' + curLang + ')' : ''}</option>`;
+      for (const l of allLangs) {
+        if (l === 'auto') continue;
+        html += `<option value="${l}"${selVal === l ? ' selected' : ''}>${l}</option>`;
+      }
+      html += `</select>`;
+    }
     html += `</div>`;
     html += `<div class="ws-code-wrap" id="wsCode-${g.id}"></div>`;
     html += `<div class="ws-drop-zone top" data-drop="top"></div>`;
@@ -906,6 +1003,7 @@ function wsViewMode(mode) {
 }
 
 async function wsShowContent(gid, fp, silent) {
+  const g = wsGetGroup(gid);
   const wrap = document.getElementById('wsCode-' + gid);
   if (!wrap) return;
   const scrollTop = wrap.scrollTop;
@@ -918,8 +1016,8 @@ async function wsShowContent(gid, fp, silent) {
   if (fileData.tooLarge) { wrap.innerHTML = '<div class="ws-empty">Datei zu gross</div>'; return; }
   if (fileData.isDir) { wrap.innerHTML = '<div class="ws-empty">Verzeichnis</div>'; return; }
   const content = fileData.content || '';
-  const useContent = g._pendingContent != null ? g._pendingContent : content;
-  g._pendingContent = null;
+  const useContent = g && g._pendingContent != null ? g._pendingContent : content;
+  if (g) g._pendingContent = null;
   const lineMap = parseLineChanges(diffData.diff || '');
   const lines = useContent.split('\n');
   const gutterBg = lines.map((l, i) => {
@@ -927,12 +1025,14 @@ async function wsShowContent(gid, fp, silent) {
     const bg = cls === 'git-add' ? 'background:rgba(46,160,67,.10);' : cls === 'git-mod' ? 'background:rgba(210,153,34,.08);' : '';
     return `<span style="${bg}">${i + 1}</span>`;
   }).join('');
-  wrap.innerHTML = `<div class="ws-editor-wrap">
+  wrap.innerHTML = `<div class="ws-editor-wrap hl-active">
     <div class="ws-editor-gutter" id="wsGutter-${gid}">${gutterBg}</div>
+    <pre class="ws-highlight-layer" id="wsHL-${gid}"></pre>
     <textarea class="ws-editor" id="wsEditor-${gid}" spellcheck="false"
       oninput="wsEditorInput(${gid})" onscroll="wsEditorScroll(${gid})"
       onkeydown="wsEditorKey(event,${gid})">${esc(content)}</textarea>
   </div>`;
+  wsUpdateHighlight(gid);
   if (silent) {
     const ta = document.getElementById('wsEditor-' + gid);
     if (ta) ta.scrollTop = scrollTop;
@@ -949,12 +1049,32 @@ function wsEditorInput(gid) {
   const g = wsGetGroup(gid);
   if (g) g._dirty = true;
   wsUpdateSaveStatus(gid);
+  wsUpdateHighlight(gid);
+}
+
+function wsUpdateHighlight(gid) {
+  const ta = document.getElementById('wsEditor-' + gid);
+  const hl = document.getElementById('wsHL-' + gid);
+  if (!ta || !hl) return;
+  const text = ta.value;
+  const g = wsGetGroup(gid);
+  const fp = g ? g.active : null;
+  const lang = fp ? detectLang(fp) : null;
+  if (window.hljs && lang) {
+    try { hl.innerHTML = hljs.highlight(text, { language: lang }).value; } catch(e) { hl.textContent = text; }
+  } else if (window.hljs) {
+    try { hl.innerHTML = hljs.highlightAuto(text).value; } catch(e) { hl.textContent = text; }
+  } else {
+    hl.textContent = text;
+  }
 }
 
 function wsEditorScroll(gid) {
   const ta = document.getElementById('wsEditor-' + gid);
   const gutter = document.getElementById('wsGutter-' + gid);
+  const hl = document.getElementById('wsHL-' + gid);
   if (ta && gutter) gutter.scrollTop = ta.scrollTop;
+  if (ta && hl) { hl.scrollTop = ta.scrollTop; hl.scrollLeft = ta.scrollLeft; }
 }
 
 function wsEditorKey(e, gid) {
@@ -1036,7 +1156,7 @@ async function wsShowMdSplit(gid, fp) {
       <textarea class="ws-editor" id="wsEditor-${gid}" spellcheck="false"
         oninput="wsEditorInput(${gid});wsMdSplitPreview(${gid})"
         onscroll="wsEditorScroll(${gid})"
-        onkeydown="wsEditorKey(event,${gid})">${esc(content)}</textarea>
+      onkeydown="wsEditorKey(event,${gid})">${esc(useContent)}</textarea>
     </div>
     <div class="ws-md-split-preview" id="wsMdPreview-${gid}"><div class="ws-md-preview">${renderMarkdown(content)}</div></div>
   </div>`;

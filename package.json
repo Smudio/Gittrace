@@ -1,6 +1,6 @@
 {
   "name": "gittrace",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Gittrace - Desktop Git Project Viewer",
   "main": "src/main.js",
   "scripts": {

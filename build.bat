@@ -22,14 +22,14 @@ if errorlevel 1 (
     echo Build had signing errors but exe was created.
 )
 
-if exist dist\win-unpacked\LiveGit.exe (
-    if exist dist\LiveGit rmdir /s /q dist\LiveGit
-    rename dist\win-unpacked LiveGit
+if exist dist\win-unpacked\Gittrace.exe (
+    if exist dist\Gittrace rmdir /s /q dist\Gittrace
+    rename dist\win-unpacked Gittrace
     echo.
     echo  ============================================
     echo   Fertig! 
     echo.
-    echo   App: dist\LiveGit\LiveGit.exe
+    echo   App: dist\Gittrace\Gittrace.exe
     echo  ============================================
 ) else (
     echo ERROR: exe not found
